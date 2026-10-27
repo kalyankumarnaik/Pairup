@@ -650,9 +650,10 @@ export class AuthService {
       sessionId,
     };
 
+    const expiresIn = this.configService.get<string>('jwt.accessExpiration', '7d');
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('jwt.accessSecret', 'pairup_dev_jwt_access_secret_super_secure_key_12345'),
-      expiresIn: '15m',
+      expiresIn,
     });
   }
 
