@@ -1,8 +1,9 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../constants/system.constant';
 import { RedisService } from '../../redis/redis.service';
+import { DomainErrorCode, DomainException } from '../exceptions/domain.exception';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -29,10 +30,46 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       const token = authHeader.substring(7);
       const isBlacklisted = await this.redisService.isTokenBlacklisted(token);
       if (isBlacklisted) {
-        throw new UnauthorizedException('Access token has been revoked');
+        throw new DomainException(
+          'Access token has been revoked',
+          DomainErrorCode.SESSION_REVOKED,
+          HttpStatus.UNAUTHORIZED,
+        );
       }
     }
 
     return (await super.canActivate(context)) as boolean;
+  }
+
+  handleRequest(err: any, user: any, info: any) {
+    if (info instanceof Error) {
+      if (info.name === 'TokenExpiredError') {
+        throw new DomainException(
+          'Access token has expired. Please refresh your session via /api/v1/auth/refresh or log in again.',
+          DomainErrorCode.TOKEN_EXPIRED,
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      if (info.name === 'JsonWebTokenError') {
+        throw new DomainException(
+          'Invalid or malformed access token',
+          DomainErrorCode.TOKEN_INVALID,
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+    }
+
+    if (err || !user) {
+      throw (
+        err ||
+        new DomainException(
+          'Authentication bearer token is required to access this resource',
+          DomainErrorCode.TOKEN_INVALID,
+          HttpStatus.UNAUTHORIZED,
+        )
+      );
+    }
+
+    return user;
   }
 }

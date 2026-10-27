@@ -77,7 +77,7 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Revoke active session and blacklist bearer token' })
   @ApiResponse({ status: 200, description: 'Successfully logged out' })

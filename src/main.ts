@@ -51,6 +51,7 @@ async function bootstrap() {
           'Includes Authentication, User Profiles, Discovery Swiping, Mutual Matching, Safety & Inter-Module Contracts.',
       )
       .setVersion('1.0.0')
+      .addBearerAuth()
       .addBearerAuth(
         {
           type: 'http',
