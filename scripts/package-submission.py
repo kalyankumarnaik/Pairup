@@ -3,7 +3,7 @@ import sys
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_ZIP = os.path.join(os.path.dirname(ROOT), "PairUp-submission.zip")
+OUTPUT_ZIP = os.path.join(ROOT, "PairUp-submission.zip")
 
 IGNORED_DIRS = {
     'node_modules',
@@ -14,6 +14,10 @@ IGNORED_DIRS = {
     'coverage',
     '.cache',
     'Pairup', # duplicate clone folder
+}
+
+IGNORED_FILES = {
+    'PairUp-submission.zip',
 }
 
 def make_submission_zip():
@@ -28,6 +32,8 @@ def make_submission_zip():
             dirs[:] = [d for d in dirs if d not in IGNORED_DIRS]
             
             for file in files:
+                if file in IGNORED_FILES or file.endswith('.zip'):
+                    continue
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, ROOT)
                 zipf.write(full_path, rel_path)
@@ -36,9 +42,9 @@ def make_submission_zip():
                     git_file_count += 1
 
     size_mb = os.path.getsize(OUTPUT_ZIP) / (1024 * 1024)
-    print(f"✓ Archive created successfully!")
-    print(f"✓ Total files: {file_count} (including {git_file_count} .git tracking files)")
-    print(f"✓ Output location: {OUTPUT_ZIP} ({size_mb:.2f} MB)")
+    print(f"[OK] Archive created successfully!")
+    print(f"[OK] Total files: {file_count} (including {git_file_count} .git tracking files)")
+    print(f"[OK] Output location: {OUTPUT_ZIP} ({size_mb:.2f} MB)")
 
 if __name__ == '__main__':
     make_submission_zip()

@@ -10,6 +10,7 @@ build/
 .next/
 out/
 .turbo/
+*.zip
 .output/
 .nuxt/
 .vuepress/dist
