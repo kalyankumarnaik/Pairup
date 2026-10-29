@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Check,
   Crown,
@@ -13,6 +13,8 @@ import {
   Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { apiClient } from '../lib/api';
+import { SwipeAction } from '@pairup/domain-types';
 
 interface LikeReceived {
   id: string;
@@ -80,15 +82,35 @@ export const LikesPage: React.FC = () => {
   const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
   const [celebrationMatch, setCelebrationMatch] = useState<LikeReceived | null>(null);
 
+  useEffect(() => {
+    loadLikes();
+  }, []);
+
+  const loadLikes = async () => {
+    try {
+      const res = await apiClient.getLikesReceived();
+      if (res.data && res.data.length > 0) {
+        setLikes(res.data);
+      }
+    } catch {
+      // Keep MOCK_LIKES
+    }
+  };
+
   const filteredLikes = likes.filter((l) => {
     if (filterType === 'SUPER') return l.isSuperLike;
     if (filterType === 'NEARBY') return l.distanceKm <= 5.0;
     return true;
   });
 
-  const handleMatchInstantly = (like: LikeReceived) => {
+  const handleMatchInstantly = async (like: LikeReceived) => {
     setMatchedIds((prev) => ({ ...prev, [like.id]: true }));
     setCelebrationMatch(like);
+    try {
+      await apiClient.swipe(like.id, SwipeAction.LIKE, 'DATING');
+    } catch {
+      // Offline fallback
+    }
   };
 
   return (

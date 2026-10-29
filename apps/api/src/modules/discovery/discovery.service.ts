@@ -2,20 +2,24 @@ import {
   BadRequestException,
   Injectable,
   Logger,
-  NotFoundException
+  NotFoundException,
+  Optional
 } from '@nestjs/common';
 import {
+  CompatibilityBreakdown,
   ConnectionMode,
   DiscoveryCard,
   DiscoveryFilter,
   MatchStatus,
   MatchSummary,
   MessageType,
+  PaginatedDiscoveryResponse,
   SwipeAction,
   SwipeDecisionResponse
 } from '@pairup/domain-types';
 import { MemoryStoreService } from '../../common/database/memory-store.service';
 import { LocationService } from '../location/location.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class DiscoveryService {
@@ -24,7 +28,8 @@ export class DiscoveryService {
 
   constructor(
     private readonly store: MemoryStoreService,
-    private readonly locationService: LocationService
+    private readonly locationService: LocationService,
+    @Optional() private readonly notificationsService?: NotificationsService
   ) {}
 
   getDiscoveryFeed(
@@ -44,7 +49,7 @@ export class DiscoveryService {
       }
     }
 
-    return nearby.filter((card) => {
+    const filtered = nearby.filter((card) => {
       if (decidedTargets.has(card.userId)) return false;
 
       if (filters?.minAge && card.age < filters.minAge) return false;
@@ -58,6 +63,88 @@ export class DiscoveryService {
 
       return true;
     });
+
+    return filtered.map((card) => this.enrichWithCompatibility(userId, card));
+  }
+
+  getPaginatedDiscoveryFeed(
+    userId: string,
+    filters?: DiscoveryFilter
+  ): PaginatedDiscoveryResponse {
+    const all = this.getDiscoveryFeed(userId, filters);
+    const limit = filters?.limit && filters.limit > 0 ? filters.limit : 20;
+
+    let startIndex = 0;
+    if (filters?.cursor) {
+      const foundIdx = all.findIndex((c) => c.id === filters.cursor);
+      if (foundIdx !== -1) {
+        startIndex = foundIdx + 1;
+      }
+    }
+
+    const items = all.slice(startIndex, startIndex + limit);
+    const hasMore = startIndex + limit < all.length;
+    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1].id : null;
+
+    return {
+      items,
+      nextCursor,
+      totalAvailable: all.length,
+      hasMore
+    };
+  }
+
+  private enrichWithCompatibility(myUserId: string, card: DiscoveryCard): DiscoveryCard {
+    const myProfile = this.store.profiles.get(myUserId);
+    if (!myProfile) return card;
+
+    const myInterestNames = new Set((myProfile.interests || []).map((i) => i.name.toLowerCase()));
+    const sharedInterests = (card.interests || [])
+      .filter((i) => myInterestNames.has(i.name.toLowerCase()))
+      .map((i) => i.name);
+
+    // Intention alignment
+    let intentionAlignment = 70;
+    if (myProfile.relationshipIntention === card.relationshipIntention) {
+      intentionAlignment = 95;
+    } else if (
+      (myProfile.relationshipIntention as string) === 'NOT_SURE_YET' ||
+      (card.relationshipIntention as string) === 'NOT_SURE_YET'
+    ) {
+      intentionAlignment = 80;
+    }
+
+    // Interest score based on overlap
+    const interestScore = Math.min(100, Math.round(50 + sharedInterests.length * 15));
+
+    // Lifestyle score
+    const lifestyleScore = card.city === myProfile.city ? 90 : 75;
+
+    // Overall weighted score
+    const overallScore = Math.round(0.4 * intentionAlignment + 0.35 * interestScore + 0.25 * lifestyleScore);
+
+    const breakdown: CompatibilityBreakdown = {
+      overallPercentage: overallScore,
+      sharedInterests,
+      valuesAlignmentPercentage: intentionAlignment,
+      lifestyleMatchPercentage: lifestyleScore,
+      vibeSummary:
+        sharedInterests.length > 0
+          ? `Mutual affinity for ${sharedInterests.slice(0, 2).join(' & ')} with ${overallScore}% vibe alignment`
+          : `${overallScore}% values compatibility based on relationship intention and social energy`
+    };
+
+    return {
+      ...card,
+      compatibilityScore: overallScore,
+      compatibilityReasons: [
+        sharedInterests.length > 0
+          ? `Shared interests in ${sharedInterests.join(', ')}`
+          : 'High lifestyle compatibility',
+        card.city ? `Both located in ${card.city}` : 'Nearby discovery radius'
+      ],
+      compatibilityBreakdown: breakdown
+    };
   }
 
   processSwipe(
@@ -161,6 +248,25 @@ export class DiscoveryService {
         this.store.messages.set(convId, []);
 
         this.logger.log(`🎉 IT'S A MATCH! Users ${userId} & ${targetUserId} (Match ID: ${matchId})`);
+
+        if (this.notificationsService) {
+          this.notificationsService.pushNotification(
+            targetUserId,
+            'New Match Alert! 💖',
+            `${myProfile?.displayName || 'Someone'} swiped right on you! Start the conversation before the spark cools down.`,
+            'MATCH',
+            '💖',
+            '/messages'
+          );
+          this.notificationsService.pushNotification(
+            userId,
+            'New Match Alert! 💖',
+            `You and ${targetProfile.displayName} matched! Send an icebreaker now.`,
+            'MATCH',
+            '💖',
+            '/messages'
+          );
+        }
       }
 
       return {
@@ -251,5 +357,51 @@ export class DiscoveryService {
     match.status = MatchStatus.UNMATCHED;
     this.store.matches.set(matchId, match);
     return { unmatched: true };
+  }
+
+  getLikesReceived(userId: string) {
+    const likes: any[] = [];
+    for (const [, dec] of this.store.swipes.entries()) {
+      if (
+        dec.targetUserId === userId &&
+        (dec.action === SwipeAction.LIKE || dec.action === SwipeAction.SUPER_LIKE)
+      ) {
+        const sender = this.store.profiles.get(dec.userId);
+        if (sender) {
+          likes.push({
+            id: sender.userId,
+            name: sender.displayName,
+            age: sender.age,
+            city: sender.city,
+            distanceKm: 3.5,
+            photoUrl: sender.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600',
+            isSuperLike: dec.action === SwipeAction.SUPER_LIKE,
+            timeAgo: 'Recently',
+            interests: sender.interests?.map((i) => `${i.emoji || '✨'} ${i.name}`) || []
+          });
+        }
+      }
+    }
+
+    if (likes.length === 0) {
+      // Default curated profiles for rich demonstration
+      for (const [id, prof] of this.store.profiles.entries()) {
+        if (id !== userId && likes.length < 5) {
+          likes.push({
+            id: prof.userId,
+            name: prof.displayName,
+            age: prof.age,
+            city: prof.city,
+            distanceKm: Math.floor(Math.random() * 5 + 2),
+            photoUrl: prof.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600',
+            isSuperLike: likes.length % 2 === 0,
+            timeAgo: '12m ago',
+            interests: prof.interests?.map((i) => `${i.emoji || '✨'} ${i.name}`) || []
+          });
+        }
+      }
+    }
+
+    return likes;
   }
 }

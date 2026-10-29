@@ -22,6 +22,7 @@ import { CommunitiesPage } from './pages/CommunitiesPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { AdminPage } from './pages/AdminPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 
 const ProtectedLayout: React.FC<{ children: React.ReactNode; requireAdmin?: boolean }> = ({
   children,
@@ -103,6 +104,14 @@ export function App() {
           <Route path="/safety" element={<SafetyRoute />} />
 
           {/* Protected Application Routes */}
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedLayout>
+                <OnboardingPage />
+              </ProtectedLayout>
+            }
+          />
           <Route
             path="/home"
             element={

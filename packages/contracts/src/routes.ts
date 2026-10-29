@@ -10,7 +10,10 @@ export const API_ROUTES = {
     REQUEST_OTP: `${API_PREFIX}/auth/otp/request`,
     VERIFY_OTP: `${API_PREFIX}/auth/otp/verify`,
     ME: `${API_PREFIX}/auth/me`,
-    CHANGE_PASSWORD: `${API_PREFIX}/auth/password/change`
+    CHANGE_PASSWORD: `${API_PREFIX}/auth/password/change`,
+    SESSIONS: `${API_PREFIX}/auth/sessions`,
+    REVOKE_SESSION: (id: string) => `${API_PREFIX}/auth/sessions/${id}`,
+    DEACTIVATE: `${API_PREFIX}/auth/me`
   },
 
   // User Profile
@@ -84,7 +87,10 @@ export const API_ROUTES = {
     REPORT: `${API_PREFIX}/safety/report`,
     BLOCK: `${API_PREFIX}/safety/block`,
     UNBLOCK: (userId: string) => `${API_PREFIX}/safety/block/${userId}`,
-    BLOCKED_USERS: `${API_PREFIX}/safety/blocked-users`
+    BLOCKED_USERS: `${API_PREFIX}/safety/blocked-users`,
+    APPEALS: `${API_PREFIX}/safety/appeals`,
+    RESOLVE_APPEAL: (id: string) => `${API_PREFIX}/safety/appeals/${id}/resolve`,
+    WATCHDOG_CHECK: `${API_PREFIX}/safety/date-guard/check-overdue`
   },
 
   // AI Services
@@ -92,6 +98,13 @@ export const API_ROUTES = {
     COMPATIBILITY_REASONS: `${API_PREFIX}/ai/compatibility-reasons`,
     ICEBREAKERS: `${API_PREFIX}/ai/icebreakers`,
     PROFILE_SUGGESTIONS: `${API_PREFIX}/ai/profile-assist`
+  },
+
+  // Notifications & In-App Alerts
+  NOTIFICATIONS: {
+    LIST: `${API_PREFIX}/notifications`,
+    MARK_READ: (id: string) => `${API_PREFIX}/notifications/${id}/read`,
+    MARK_ALL_READ: `${API_PREFIX}/notifications/read-all`
   },
 
   // Admin Dashboard

@@ -45,4 +45,38 @@ describe('DiscoveryService & Mutual Matching Engine', () => {
       discoveryService.processSwipe('usr_demo_1', 'usr_demo_1', SwipeAction.LIKE, 'DATING');
     }).toThrow(/cannot swipe on your own/);
   });
+
+  it('retrieves likes received by a user', () => {
+    // usr_demo_2 likes usr_demo_1
+    discoveryService.processSwipe('usr_demo_2', 'usr_demo_1', SwipeAction.LIKE, 'DATING');
+    const likes = discoveryService.getLikesReceived('usr_demo_1');
+    expect(likes.length).toBeGreaterThan(0);
+    const likeFromUser2 = likes.find((l) => l.id === 'usr_demo_2');
+    expect(likeFromUser2).toBeDefined();
+    expect(likeFromUser2?.name).toBe('Aarav Sharma');
+  });
+
+  it('enriches discovery feed cards with compatibility score and breakdown', () => {
+    const feed = discoveryService.getDiscoveryFeed('usr_demo_1');
+    expect(feed.length).toBeGreaterThan(0);
+    const firstCard = feed[0];
+    expect(firstCard.compatibilityScore).toBeGreaterThan(0);
+    expect(firstCard.compatibilityBreakdown).toBeDefined();
+    expect(firstCard.compatibilityBreakdown?.overallPercentage).toBe(firstCard.compatibilityScore);
+    expect(firstCard.compatibilityBreakdown?.vibeSummary).toBeDefined();
+  });
+
+  it('supports cursor-based pagination with limit and nextCursor', () => {
+    const page1 = discoveryService.getPaginatedDiscoveryFeed('usr_demo_1', { limit: 2 });
+    expect(page1.items.length).toBeLessThanOrEqual(2);
+
+    if (page1.hasMore && page1.nextCursor) {
+      const page2 = discoveryService.getPaginatedDiscoveryFeed('usr_demo_1', {
+        cursor: page1.nextCursor,
+        limit: 2
+      });
+      expect(page2.items.length).toBeGreaterThan(0);
+      expect(page2.items[0].id).not.toBe(page1.items[0].id);
+    }
+  });
 });

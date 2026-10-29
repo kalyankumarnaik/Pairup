@@ -155,9 +155,14 @@ export class AuthService {
       throw new UnauthorizedException('This account has been suspended for policy violations');
     }
 
+    if (foundUser.status === AccountStatus.DEACTIVATED || foundUser.status === AccountStatus.DELETED) {
+      throw new UnauthorizedException('This account has been deactivated or deleted');
+    }
+
     foundUser.lastLoginAt = new Date().toISOString();
     const profile = this.store.profiles.get(foundUser.id);
     const tokens = this.generateTokens(foundUser);
+    this.recordSession(foundUser.id, 'Browser Login Session', '127.0.0.1', tokens.refreshToken);
 
     return {
       user: {
@@ -256,22 +261,159 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string): Promise<AuthTokens> {
+    if (this.store.revokedTokens.has(refreshToken)) {
+      throw new UnauthorizedException('Refresh token has been revoked or already rotated');
+    }
+
     try {
       const payload = this.jwtService.verify(refreshToken);
       const user = this.store.users.get(payload.sub);
       if (!user) {
         throw new UnauthorizedException('Invalid refresh token');
       }
-      return this.generateTokens(user);
+
+      // Rotate: revoke the used refresh token
+      this.store.revokedTokens.add(refreshToken);
+      const newTokens = this.generateTokens(user);
+
+      // Update session with new token
+      this.recordSession(user.id, 'Browser Session (Rotated)', '127.0.0.1', newTokens.refreshToken);
+
+      return newTokens;
     } catch {
       throw new UnauthorizedException('Expired or invalid refresh token');
     }
   }
 
+  recordSession(
+    userId: string,
+    userAgent?: string,
+    ipAddress?: string,
+    refreshToken?: string
+  ) {
+    const sessions = this.store.userSessions.get(userId) || [];
+    const newSession = {
+      id: `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId,
+      userAgent: userAgent || 'PairUp Web Client / 1.0',
+      ipAddress: ipAddress || '127.0.0.1',
+      refreshTokenHash: refreshToken ? refreshToken.slice(-10) : 'direct_login',
+      isRevoked: false,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    };
+
+    // Keep up to 10 active sessions
+    const updated = [newSession, ...sessions.filter((s) => !s.isRevoked)].slice(0, 10);
+    this.store.userSessions.set(userId, updated);
+    return newSession;
+  }
+
+  getUserSessions(userId: string) {
+    const sessions = this.store.userSessions.get(userId) || [];
+    return sessions.map((s) => ({
+      id: s.id,
+      userAgent: s.userAgent,
+      ipAddress: s.ipAddress,
+      createdAt: s.createdAt,
+      expiresAt: s.expiresAt,
+      isRevoked: Boolean(s.isRevoked)
+    }));
+  }
+
+  revokeSession(userId: string, sessionId: string): { revoked: boolean } {
+    const sessions = this.store.userSessions.get(userId) || [];
+    const session = sessions.find((s) => s.id === sessionId);
+    if (!session) {
+      throw new NotFoundException('Session not found');
+    }
+
+    session.isRevoked = true;
+    this.store.userSessions.set(userId, sessions);
+    return { revoked: true };
+  }
+
+  revokeAllOtherSessions(userId: string, currentSessionId?: string): { revokedCount: number } {
+    const sessions = this.store.userSessions.get(userId) || [];
+    let count = 0;
+    sessions.forEach((s) => {
+      if (s.id !== currentSessionId && !s.isRevoked) {
+        s.isRevoked = true;
+        count++;
+      }
+    });
+    this.store.userSessions.set(userId, sessions);
+    return { revokedCount: count };
+  }
+
+  async logout(userId: string, refreshToken?: string): Promise<{ loggedOut: boolean }> {
+    if (refreshToken) {
+      this.store.revokedTokens.add(refreshToken);
+    }
+    const sessions = this.store.userSessions.get(userId) || [];
+    if (sessions.length > 0) {
+      sessions[0].isRevoked = true;
+      this.store.userSessions.set(userId, sessions);
+    }
+    return { loggedOut: true };
+  }
+
+  async changePassword(
+    userId: string,
+    oldPasswordPlain: string,
+    newPasswordPlain: string
+  ): Promise<{ success: boolean; message: string }> {
+    const user = this.store.users.get(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(oldPasswordPlain, user.passwordHash);
+    if (!isMatch && user.rawPassword !== oldPasswordPlain) {
+      throw new BadRequestException('Incorrect current password');
+    }
+
+    if (!newPasswordPlain || newPasswordPlain.length < 8) {
+      throw new BadRequestException('New password must be at least 8 characters long');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(newPasswordPlain, salt);
+    user.rawPassword = newPasswordPlain;
+    user.updatedAt = new Date().toISOString();
+    this.store.users.set(userId, user);
+
+    // Invalidate other sessions
+    this.revokeAllOtherSessions(userId);
+
+    this.logger.log(`Password changed successfully for user: ${userId}`);
+    return { success: true, message: 'Password updated successfully' };
+  }
+
+  deactivateAccount(userId: string): { deactivated: boolean } {
+    const user = this.store.users.get(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.status = AccountStatus.DEACTIVATED;
+    user.updatedAt = new Date().toISOString();
+    this.store.users.set(userId, user);
+
+    // Revoke all sessions
+    const sessions = this.store.userSessions.get(userId) || [];
+    sessions.forEach((s) => (s.isRevoked = true));
+    this.store.userSessions.set(userId, sessions);
+
+    this.logger.log(`Account deactivated for user: ${userId}`);
+    return { deactivated: true };
+  }
+
   private generateTokens(user: User): AuthTokens {
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const jti = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const payload = { sub: user.id, email: user.email, role: user.role, jti };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
-    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const refreshToken = this.jwtService.sign({ ...payload, type: 'refresh' }, { expiresIn: '7d' });
 
     return {
       accessToken,

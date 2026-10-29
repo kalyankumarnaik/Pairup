@@ -22,14 +22,27 @@ export class DiscoveryController {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   @Get('feed')
-  @ApiOperation({ summary: 'Get personalized card deck for swiping discovery' })
+  @ApiOperation({ summary: 'Get personalized card deck for swiping discovery with optional cursor pagination' })
   getFeed(
     @CurrentUser('id') userId: string,
     @Query('minAge') minAge?: string,
     @Query('maxAge') maxAge?: string,
     @Query('maxDistanceKm') maxDistanceKm?: string,
-    @Query('connectionMode') connectionMode?: string
+    @Query('connectionMode') connectionMode?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string
   ) {
+    if (cursor !== undefined || limit !== undefined) {
+      return this.discoveryService.getPaginatedDiscoveryFeed(userId, {
+        minAge: minAge ? parseInt(minAge, 10) : undefined,
+        maxAge: maxAge ? parseInt(maxAge, 10) : undefined,
+        maxDistanceKm: maxDistanceKm ? parseInt(maxDistanceKm, 10) : undefined,
+        connectionMode: connectionMode as any,
+        cursor,
+        limit: limit ? parseInt(limit, 10) : 20
+      });
+    }
+
     return this.discoveryService.getDiscoveryFeed(userId, {
       minAge: minAge ? parseInt(minAge, 10) : undefined,
       maxAge: maxAge ? parseInt(maxAge, 10) : undefined,
@@ -56,6 +69,12 @@ export class DiscoveryController {
   @ApiOperation({ summary: 'Undo and rewind the previous swipe decision' })
   rewind(@CurrentUser('id') userId: string) {
     return this.discoveryService.rewindLastDecision(userId);
+  }
+
+  @Get('likes-received')
+  @ApiOperation({ summary: 'List users who sent a Like or Super Like to current profile' })
+  getLikesReceived(@CurrentUser('id') userId: string) {
+    return this.discoveryService.getLikesReceived(userId);
   }
 
   @Get('matches')

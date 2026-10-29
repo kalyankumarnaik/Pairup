@@ -3,6 +3,7 @@ export enum AccountStatus {
   ACTIVE = 'ACTIVE',
   PAUSED = 'PAUSED',
   SUSPENDED = 'SUSPENDED',
+  DEACTIVATED = 'DEACTIVATED',
   DELETED = 'DELETED'
 }
 

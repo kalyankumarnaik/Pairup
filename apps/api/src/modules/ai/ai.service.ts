@@ -67,8 +67,8 @@ export class AiService {
       intentionAlignmentScore = 25;
       reasons.push('Aligned intentions: both seeking the same journey');
     } else if (
-      profA.relationshipIntention === RelationshipIntention.OPEN_TO_DISCUSS ||
-      profB.relationshipIntention === RelationshipIntention.OPEN_TO_DISCUSS
+      profA.relationshipIntention === RelationshipIntention.NOT_SURE_YET ||
+      profB.relationshipIntention === RelationshipIntention.NOT_SURE_YET
     ) {
       intentionAlignmentScore = 18;
       reasons.push('Open-minded approaches to genuine connection');

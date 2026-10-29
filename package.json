@@ -4,7 +4,7 @@
   "private": true,
   "description": "PairUp - Full-Stack Dating, Friendship & Social Discovery Platform",
   "scripts": {
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev",
     "dev:api": "pnpm --filter @pairup/api dev",
     "dev:web": "pnpm --filter @pairup/web dev",
     "dev:worker": "pnpm --filter @pairup/worker dev",

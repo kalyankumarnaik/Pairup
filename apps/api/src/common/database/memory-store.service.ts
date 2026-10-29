@@ -38,6 +38,8 @@ export class MemoryStoreService implements OnModuleInit {
   public blockedUsers: Map<string, Set<string>> = new Map(); // userId -> Set(blockedUserIds)
   public auditLogs: any[] = [];
   public otpStore: Map<string, { code: string; expiresAt: number }> = new Map();
+  public userSessions: Map<string, any[]> = new Map(); // userId -> sessions[]
+  public revokedTokens: Set<string> = new Set(); // revoked JWT access/refresh jtis or hashes
 
   onModuleInit() {
     this.seedInitialData();

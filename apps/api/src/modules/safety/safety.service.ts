@@ -10,8 +10,22 @@ export interface DateCheckInGuard {
   emergencyContact: string;
   durationMinutes: number;
   scheduledCheckInTime: string;
-  status: 'ACTIVE' | 'EXTENDED' | 'CONCLUDED_SAFE' | 'EMERGENCY_SOS';
+  status: 'ACTIVE' | 'EXTENDED' | 'CONCLUDED_SAFE' | 'EMERGENCY_SOS' | 'OVERDUE';
   createdAt: string;
+}
+
+export interface SafetyAppeal {
+  id: string;
+  reportId: string;
+  userId: string;
+  userDisplayName: string;
+  reason: string;
+  statementOfTruth: boolean;
+  status: 'PENDING' | 'UPHELD' | 'OVERTURNED';
+  moderatorId?: string;
+  moderatorNotes?: string;
+  createdAt: string;
+  resolvedAt?: string;
 }
 
 export interface UserSafetyPreferences {
@@ -25,8 +39,24 @@ export interface UserSafetyPreferences {
 export class SafetyService {
   private readonly dateGuards = new Map<string, DateCheckInGuard>();
   private readonly userSafetyPrefs = new Map<string, UserSafetyPreferences>();
+  private readonly appeals = new Map<string, SafetyAppeal>();
 
-  constructor(private readonly store: MemoryStoreService) {}
+  constructor(private readonly store: MemoryStoreService) {
+    this.seedDefaultAppeals();
+  }
+
+  private seedDefaultAppeals() {
+    this.appeals.set('app_1', {
+      id: 'app_1',
+      reportId: 'rep_seed_1',
+      userId: 'usr_demo_3',
+      userDisplayName: 'Rohan Mehra',
+      reason: 'My account was falsely flagged for spam after sending icebreaker questions in 3 matches.',
+      statementOfTruth: true,
+      status: 'PENDING',
+      createdAt: new Date(Date.now() - 3600000 * 5).toISOString()
+    });
+  }
 
   reportUser(
     reporterId: string,
@@ -201,5 +231,93 @@ export class SafetyService {
     const updated = { ...current, ...updates };
     this.userSafetyPrefs.set(userId, updated);
     return updated;
+  }
+
+  // ---------------------------------------------------------------------------
+  // APPEALS WORKFLOW
+  // ---------------------------------------------------------------------------
+  submitAppeal(
+    userId: string,
+    reportId: string,
+    reason: string,
+    statementOfTruth: boolean = true
+  ): SafetyAppeal {
+    if (!reason || reason.trim().length < 10) {
+      throw new BadRequestException('Appeal reason must be at least 10 characters');
+    }
+
+    const userProfile = this.store.profiles.get(userId);
+    const appealId = `app_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+
+    const appeal: SafetyAppeal = {
+      id: appealId,
+      reportId,
+      userId,
+      userDisplayName: userProfile?.displayName || 'User',
+      reason,
+      statementOfTruth,
+      status: 'PENDING',
+      createdAt: new Date().toISOString()
+    };
+
+    this.appeals.set(appealId, appeal);
+    return appeal;
+  }
+
+  getAppeals(status?: 'PENDING' | 'UPHELD' | 'OVERTURNED'): SafetyAppeal[] {
+    const list = Array.from(this.appeals.values());
+    if (status) {
+      return list.filter((a) => a.status === status);
+    }
+    return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  resolveAppeal(
+    appealId: string,
+    moderatorId: string,
+    action: 'UPHELD' | 'OVERTURNED',
+    moderatorNotes?: string
+  ): SafetyAppeal {
+    const appeal = this.appeals.get(appealId);
+    if (!appeal) {
+      throw new NotFoundException('Appeal not found');
+    }
+
+    appeal.status = action;
+    appeal.moderatorId = moderatorId;
+    appeal.moderatorNotes = moderatorNotes || (action === 'OVERTURNED' ? 'Restriction lifted after appeal review' : 'Appeal denied; penalty maintained');
+    appeal.resolvedAt = new Date().toISOString();
+
+    this.appeals.set(appealId, appeal);
+    return appeal;
+  }
+
+  // ---------------------------------------------------------------------------
+  // OVERDUE WATCHDOG & ESCALATION
+  // ---------------------------------------------------------------------------
+  getActiveDateGuards(): DateCheckInGuard[] {
+    return Array.from(this.dateGuards.values()).filter(
+      (g) => g.status === 'ACTIVE' || g.status === 'EXTENDED'
+    );
+  }
+
+  escalateOverdueGuards(): { escalatedCount: number; overdueGuards: DateCheckInGuard[] } {
+    const now = Date.now();
+    const overdue: DateCheckInGuard[] = [];
+
+    for (const [, guard] of this.dateGuards.entries()) {
+      if (guard.status === 'ACTIVE' || guard.status === 'EXTENDED') {
+        const scheduled = new Date(guard.scheduledCheckInTime).getTime();
+        if (scheduled <= now) {
+          guard.status = 'OVERDUE';
+          overdue.push(guard);
+        }
+      }
+    }
+
+    return {
+      escalatedCount: overdue.length,
+      overdueGuards: overdue
+    };
   }
 }

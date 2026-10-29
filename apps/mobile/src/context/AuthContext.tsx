@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserProfile, Gender, RelationshipIntention, ConnectionMode, VerificationStatus } from '@pairup/domain-types';
+import { mobileApiClient } from '../lib/api';
 
 export interface MobileAuthState {
   user: User | null;
@@ -105,7 +106,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (identifier: string, secret: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      // In mobile environment, support instant authentication
+      const res = await mobileApiClient.login(identifier, secret);
+      if (res.success && res.data) {
+        setUser(res.data.user);
+        setProfile(res.data.profile as any);
+        setToken(res.data.tokens.accessToken);
+        setRefreshToken(res.data.tokens.refreshToken || null);
+        setIsAuthenticated(true);
+        setIsAdultVerified(true);
+        return { success: true };
+      }
+      if (res.error && res.error.code !== 'NETWORK_ERROR') {
+        return { success: false, error: res.message || 'Invalid credentials' };
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    try {
+      // Fallback demo user
       setUser(defaultMockUser);
       setProfile(defaultMockProfile);
       setToken('pairup_mobile_demo_token_xyz');
@@ -137,6 +156,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: 'PairUp is strictly for adults aged 18 and older.' };
       }
 
+      const res = await mobileApiClient.signup({
+        email: payload.email,
+        phone: payload.phone,
+        password: payload.password,
+        displayName: payload.displayName,
+        birthDate: payload.birthDate,
+        acceptedTerms: true
+      });
+
+      if (res.success && res.data) {
+        setUser(res.data.user);
+        setProfile(res.data.profile as any);
+        setToken(res.data.tokens.accessToken);
+        setRefreshToken(res.data.tokens.refreshToken || null);
+        setIsAuthenticated(true);
+        setIsAdultVerified(true);
+        return { success: true };
+      }
+      if (res.error && res.error.code !== 'NETWORK_ERROR') {
+        return { success: false, error: res.message || 'Signup failed' };
+      }
+    } catch {
+      // Offline fallback
+    }
+
       const newUser: User = {
         id: `usr_${Date.now()}`,
         email: payload.email || null,
@@ -157,7 +201,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         birthDate: bDate,
         age: calculatedAge,
         gender: Gender.OTHER,
-        relationshipIntention: RelationshipIntention.OPEN_TO_DISCUSS,
+        relationshipIntention: RelationshipIntention.NOT_SURE_YET,
         connectionMode: ConnectionMode.DATING,
         bio: '',
         interests: [],

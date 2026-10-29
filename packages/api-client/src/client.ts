@@ -112,6 +112,40 @@ export class PairUpApiClient {
     return this.request(API_ROUTES.AUTH.ME);
   }
 
+  async changePassword(oldPassword: string, newPassword: string): Promise<ApiResponse<{ success: boolean; message: string }>> {
+    return this.request(API_ROUTES.AUTH.CHANGE_PASSWORD, {
+      method: 'POST',
+      body: JSON.stringify({ oldPassword, newPassword })
+    });
+  }
+
+  async getUserSessions(): Promise<ApiResponse<any[]>> {
+    return this.request(API_ROUTES.AUTH.SESSIONS);
+  }
+
+  async revokeSession(sessionId: string): Promise<ApiResponse<{ revoked: boolean }>> {
+    return this.request(API_ROUTES.AUTH.REVOKE_SESSION(sessionId), {
+      method: 'DELETE'
+    });
+  }
+
+  async deactivateAccount(): Promise<ApiResponse<{ deactivated: boolean }>> {
+    return this.request(API_ROUTES.AUTH.DEACTIVATE, {
+      method: 'DELETE'
+    });
+  }
+
+  async logout(refreshToken?: string): Promise<ApiResponse<{ loggedOut: boolean }>> {
+    const res = await this.request<{ loggedOut: boolean }>(API_ROUTES.AUTH.LOGOUT, {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken })
+    });
+    if (this.setAccessToken) {
+      this.setAccessToken(null);
+    }
+    return res;
+  }
+
   // ---------------------------------------------------------------------------
   // PROFILE
   // ---------------------------------------------------------------------------
@@ -210,6 +244,16 @@ export class PairUpApiClient {
 
   async getMatches(): Promise<ApiResponse<MatchSummary[]>> {
     return this.request<MatchSummary[]>(API_ROUTES.DISCOVERY.MATCHES);
+  }
+
+  async getLikesReceived(): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(API_ROUTES.DISCOVERY.LIKES_RECEIVED);
+  }
+
+  async unmatch(matchId: string): Promise<ApiResponse<{ unmatched: boolean }>> {
+    return this.request<{ unmatched: boolean }>(API_ROUTES.DISCOVERY.UNMATCH(matchId), {
+      method: 'DELETE'
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -447,17 +491,17 @@ export class PairUpApiClient {
   // NOTIFICATIONS
   // ---------------------------------------------------------------------------
   async getNotifications(): Promise<ApiResponse<{ items: any[]; unreadCount: number }>> {
-    return this.request('/api/v1/notifications');
+    return this.request(API_ROUTES.NOTIFICATIONS.LIST);
   }
 
   async markNotificationRead(id: string): Promise<ApiResponse<{ success: boolean }>> {
-    return this.request(`/api/v1/notifications/${id}/read`, {
+    return this.request(API_ROUTES.NOTIFICATIONS.MARK_READ(id), {
       method: 'POST'
     });
   }
 
   async markAllNotificationsRead(): Promise<ApiResponse<{ markedCount: number }>> {
-    return this.request('/api/v1/notifications/read-all', {
+    return this.request(API_ROUTES.NOTIFICATIONS.MARK_ALL_READ, {
       method: 'POST'
     });
   }
@@ -491,6 +535,31 @@ export class PairUpApiClient {
     return this.request('/api/v1/safety/sos', {
       method: 'POST',
       body: JSON.stringify({ guardId, coordinates })
+    });
+  }
+
+  async submitAppeal(data: { reportId: string; reason: string; statementOfTruth?: boolean }): Promise<ApiResponse<any>> {
+    return this.request(API_ROUTES.SAFETY.APPEALS, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getAppeals(status?: string): Promise<ApiResponse<any[]>> {
+    const q = status ? `?status=${encodeURIComponent(status)}` : '';
+    return this.request(`${API_ROUTES.SAFETY.APPEALS}${q}`);
+  }
+
+  async resolveAppeal(appealId: string, action: 'UPHELD' | 'OVERTURNED', moderatorNotes?: string): Promise<ApiResponse<any>> {
+    return this.request(API_ROUTES.SAFETY.RESOLVE_APPEAL(appealId), {
+      method: 'POST',
+      body: JSON.stringify({ action, moderatorNotes })
+    });
+  }
+
+  async runSafetyWatchdog(): Promise<ApiResponse<{ escalatedCount: number; overdueGuards: any[] }>> {
+    return this.request(API_ROUTES.SAFETY.WATCHDOG_CHECK, {
+      method: 'POST'
     });
   }
 

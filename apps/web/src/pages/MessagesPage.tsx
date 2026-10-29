@@ -108,6 +108,10 @@ export const MessagesPage: React.FC = () => {
   useEffect(() => {
     if (activeConvId) {
       loadMessages(activeConvId);
+      const interval = setInterval(() => {
+        loadMessages(activeConvId);
+      }, 4000);
+      return () => clearInterval(interval);
     }
   }, [activeConvId]);
 

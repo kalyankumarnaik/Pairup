@@ -12,6 +12,14 @@ export enum MatchStatus {
   BLOCKED = 'BLOCKED'
 }
 
+export interface CompatibilityBreakdown {
+  overallPercentage: number;
+  sharedInterests: string[];
+  valuesAlignmentPercentage: number;
+  lifestyleMatchPercentage: number;
+  vibeSummary: string;
+}
+
 export interface DiscoveryCard {
   id: string;
   userId: string;
@@ -30,6 +38,7 @@ export interface DiscoveryCard {
   verificationStatus: VerificationStatus;
   compatibilityScore?: number;
   compatibilityReasons?: string[];
+  compatibilityBreakdown?: CompatibilityBreakdown;
 }
 
 export interface SwipeDecisionRequest {
@@ -73,6 +82,15 @@ export interface DiscoveryFilter {
   connectionMode?: ConnectionMode;
   categories?: string[];
   hasVerifiedPhotos?: boolean;
+  cursor?: string;
+  limit?: number;
+}
+
+export interface PaginatedDiscoveryResponse {
+  items: DiscoveryCard[];
+  nextCursor: string | null;
+  totalAvailable: number;
+  hasMore: boolean;
 }
 
 export interface UserLocationRecord {

@@ -72,7 +72,7 @@ export const AuthPage: React.FC = () => {
         });
 
         if (res.success) {
-          navigate('/home');
+          navigate('/onboarding');
         } else {
           setError(res.message || 'Signup failed');
         }

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards
 } from '@nestjs/common';
@@ -72,10 +74,55 @@ export class AuthController {
     };
   }
 
+  @Delete('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deactivate current authenticated account' })
+  async deactivateMe(@CurrentUser('id') userId: string) {
+    return this.authService.deactivateAccount(userId);
+  }
+
+  @Get('sessions')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List active login sessions and devices' })
+  async getSessions(@CurrentUser('id') userId: string) {
+    return this.authService.getUserSessions(userId);
+  }
+
+  @Delete('sessions/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Revoke an active login session' })
+  async revokeSession(
+    @CurrentUser('id') userId: string,
+    @Param('id') sessionId: string
+  ) {
+    return this.authService.revokeSession(userId, sessionId);
+  }
+
+  @Post('password/change')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change user account password' })
+  async changePassword(
+    @CurrentUser('id') userId: string,
+    @Body('oldPassword') oldPass: string,
+    @Body('newPassword') newPass: string
+  ) {
+    return this.authService.changePassword(userId, oldPass, newPass);
+  }
+
   @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Logout and terminate active session' })
-  async logout() {
-    return { loggedOut: true };
+  async logout(
+    @CurrentUser('id') userId: string,
+    @Body('refreshToken') refreshToken?: string
+  ) {
+    return this.authService.logout(userId, refreshToken);
   }
 }

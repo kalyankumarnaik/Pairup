@@ -151,9 +151,9 @@ export default function MobileSignupScreen() {
           <View style={styles.pillRow}>
             {[
               { id: RelationshipIntention.LONG_TERM, label: 'Long-term Partner 💍' },
-              { id: RelationshipIntention.SHORT_TERM, label: 'Casual Dating 🥂' },
+              { id: RelationshipIntention.CASUAL, label: 'Casual Dating 🥂' },
               { id: RelationshipIntention.NEW_FRIENDS, label: 'New Friends 🫶' },
-              { id: RelationshipIntention.OPEN_TO_DISCUSS, label: 'Open to Anything 🌈' }
+              { id: RelationshipIntention.NOT_SURE_YET, label: 'Open to Anything 🌈' }
             ].map((intent) => (
               <TouchableOpacity
                 key={intent.id}

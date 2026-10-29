@@ -3,7 +3,10 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle,
+  Clock,
   FileText,
+  Play,
+  Scale,
   Search,
   Shield,
   ShieldAlert,
@@ -20,9 +23,11 @@ export const AdminPage: React.FC = () => {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<AdminDashboardMetrics | null>(null);
   const [reports, setReports] = useState<ReportItem[]>([]);
+  const [appeals, setAppeals] = useState<any[]>([]);
   const [userList, setUserList] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionMessage, setActionMessage] = useState('');
+  const [isWatchdogRunning, setIsWatchdogRunning] = useState(false);
 
   useEffect(() => {
     loadAdminData();
@@ -30,13 +35,15 @@ export const AdminPage: React.FC = () => {
 
   const loadAdminData = async () => {
     try {
-      const [mRes, rRes] = await Promise.all([
+      const [mRes, rRes, aRes] = await Promise.all([
         apiClient.getAdminMetrics(),
-        apiClient.getAdminReports()
+        apiClient.getAdminReports(),
+        apiClient.getAppeals('PENDING')
       ]);
 
       if (mRes.data) setMetrics(mRes.data);
       if (rRes.data) setReports(rRes.data);
+      if (aRes.data) setAppeals(aRes.data);
     } catch (err) {
       console.error(err);
     }
@@ -50,6 +57,31 @@ export const AdminPage: React.FC = () => {
       setTimeout(() => setActionMessage(''), 4000);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleResolveAppeal = async (appealId: string, action: 'UPHELD' | 'OVERTURNED') => {
+    try {
+      await apiClient.resolveAppeal(appealId, action, `Appeal ${action.toLowerCase()} by moderator.`);
+      setAppeals((prev) => prev.filter((a) => a.id !== appealId));
+      setActionMessage(`Appeal #${appealId} successfully ${action.toLowerCase()}!`);
+      setTimeout(() => setActionMessage(''), 4000);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRunWatchdogAudit = async () => {
+    setIsWatchdogRunning(true);
+    try {
+      const res = await apiClient.runSafetyWatchdog();
+      const count = res.data?.escalatedCount ?? 0;
+      setActionMessage(`Date Guard Watchdog executed: ${count} overdue check-ins audited and processed.`);
+      setTimeout(() => setActionMessage(''), 5000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsWatchdogRunning(false);
     }
   };
 
@@ -68,9 +100,19 @@ export const AdminPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="px-3 py-1.5 rounded-xl bg-success/20 border border-success/30 text-success text-xs font-bold flex items-center gap-1.5">
-          <Activity className="w-4 h-4 animate-pulse" />
-          <span>API 99.98% Health</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleRunWatchdogAudit}
+            disabled={isWatchdogRunning}
+            className="px-3.5 py-1.5 rounded-xl bg-violet/20 hover:bg-violet/30 border border-violet/40 text-violet-light text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
+          >
+            <Clock className={`w-3.5 h-3.5 ${isWatchdogRunning ? 'animate-spin' : ''}`} />
+            <span>Audit Date Watchdog</span>
+          </button>
+          <div className="px-3 py-1.5 rounded-xl bg-success/20 border border-success/30 text-success text-xs font-bold flex items-center gap-1.5">
+            <Activity className="w-4 h-4 animate-pulse" />
+            <span>API 99.98% Health</span>
+          </div>
         </div>
       </div>
 
@@ -174,6 +216,71 @@ export const AdminPage: React.FC = () => {
             <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
             <p className="font-bold text-ink">Zero pending reports!</p>
             <p className="text-[11px] mt-0.5">Community guidelines are being respected.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Due Process & Account Appeals Queue */}
+      <div className="p-6 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-display font-bold text-ink flex items-center gap-2">
+            <Scale className="w-5 h-5 text-violet" />
+            <span>Due Process & Account Appeals ({appeals.length})</span>
+          </h2>
+          <span className="text-xs text-ink-muted font-medium">Fair Hearing & Restorations</span>
+        </div>
+
+        {appeals.length > 0 ? (
+          <div className="divide-y divide-borderSoft">
+            {appeals.map((appeal) => (
+              <div
+                key={appeal.id}
+                className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+              >
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs px-2.5 py-0.5 rounded-md font-bold uppercase bg-violet-light text-violet">
+                      Appeal ID: {appeal.id}
+                    </span>
+                    <span className="text-xs text-ink-muted">
+                      Target Report: {appeal.reportId}
+                    </span>
+                    {appeal.statementOfTruth && (
+                      <span className="text-[10px] font-bold text-emerald bg-emerald/10 px-2 py-0.5 rounded-full">
+                        Truth Affirmed
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs font-bold text-ink">
+                    User: {appeal.userDisplayName} ({appeal.userId})
+                  </p>
+                  <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
+                    Statement: "{appeal.reason}"
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 self-end sm:self-center">
+                  <button
+                    onClick={() => handleResolveAppeal(appeal.id, 'OVERTURNED')}
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald hover:bg-emerald/90 text-white text-xs font-bold transition-all shadow-xs"
+                  >
+                    Overturn & Restore
+                  </button>
+                  <button
+                    onClick={() => handleResolveAppeal(appeal.id, 'UPHELD')}
+                    className="px-3.5 py-1.5 rounded-xl border border-borderSoft hover:bg-cloud text-ink text-xs font-semibold transition-colors"
+                  >
+                    Uphold Penalty
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-xs text-ink-muted">
+            <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
+            <p className="font-bold text-ink">Zero pending appeals!</p>
+            <p className="text-[11px] mt-0.5">All due process cases have been addressed.</p>
           </div>
         )}
       </div>

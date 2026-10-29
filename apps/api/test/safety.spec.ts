@@ -94,4 +94,48 @@ describe('SafetyService - Date Guard, SOS & Reports', () => {
     const unblockRes = safetyService.unblockUser('usr_demo_1', 'usr_demo_2');
     expect(unblockRes.unblocked).toBe(true);
   });
+
+  it('submits and resolves an appeal against a report', () => {
+    const appeal = safetyService.submitAppeal(
+      'usr_demo_3',
+      'rep_test_1',
+      'This report was filed in bad faith due to disagreement on meetup timing.',
+      true
+    );
+
+    expect(appeal.id).toBeDefined();
+    expect(appeal.status).toBe('PENDING');
+
+    const pendingList = safetyService.getAppeals('PENDING');
+    expect(pendingList.some((a) => a.id === appeal.id)).toBe(true);
+
+    const resolved = safetyService.resolveAppeal(
+      appeal.id,
+      'usr_admin_1',
+      'OVERTURNED',
+      'Verified chat logs show no harassment. Warning lifted.'
+    );
+
+    expect(resolved.status).toBe('OVERTURNED');
+    expect(resolved.moderatorId).toBe('usr_admin_1');
+    expect(resolved.moderatorNotes).toContain('Warning lifted');
+  });
+
+  it('detects and escalates overdue Date Guard sessions in watchdog pass', () => {
+    // Create an expired date guard session by setting scheduled check-in in the past
+    const session = safetyService.createDateCheckInGuard('usr_demo_1', {
+      partnerName: 'Past Meetup',
+      venue: 'Coffee House',
+      emergencyContact: '+919999999999',
+      durationMinutes: -5 // Expired 5 mins ago
+    });
+
+    expect(session.status).toBe('ACTIVE');
+
+    const watchdogResult = safetyService.escalateOverdueGuards();
+    expect(watchdogResult.escalatedCount).toBeGreaterThan(0);
+    const overdueSession = watchdogResult.overdueGuards.find((g) => g.id === session.id);
+    expect(overdueSession).toBeDefined();
+    expect(overdueSession?.status).toBe('OVERDUE');
+  });
 });

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -114,5 +115,58 @@ export class SafetyController {
     @Body() updates: Partial<UserSafetyPreferences>
   ) {
     return this.safetyService.updateSafetyPreferences(userId, updates);
+  }
+
+  // ---------------------------------------------------------------------------
+  // APPEALS WORKFLOW
+  // ---------------------------------------------------------------------------
+  @Post('appeals')
+  @ApiOperation({ summary: 'Submit an appeal against an account restriction or moderation decision' })
+  submitAppeal(
+    @CurrentUser('id') userId: string,
+    @Body() body: { reportId: string; reason: string; statementOfTruth?: boolean }
+  ) {
+    return this.safetyService.submitAppeal(
+      userId,
+      body.reportId,
+      body.reason,
+      body.statementOfTruth ?? true
+    );
+  }
+
+  @Get('appeals')
+  @ApiOperation({ summary: 'List appeals for moderator review or tracking' })
+  getAppeals(@Query('status') status?: any) {
+    return this.safetyService.getAppeals(status);
+  }
+
+  @Post('appeals/:id/resolve')
+  @ApiOperation({ summary: 'Resolve an appeal (UPHELD or OVERTURNED)' })
+  resolveAppeal(
+    @CurrentUser('id') moderatorId: string,
+    @Param('id') appealId: string,
+    @Body() body: { action: 'UPHELD' | 'OVERTURNED'; moderatorNotes?: string }
+  ) {
+    return this.safetyService.resolveAppeal(
+      appealId,
+      moderatorId,
+      body.action,
+      body.moderatorNotes
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // WATCHDOG OVERDUE VERIFICATION
+  // ---------------------------------------------------------------------------
+  @Get('date-guard/active')
+  @ApiOperation({ summary: 'List all active date check-in sessions' })
+  getActiveGuards() {
+    return this.safetyService.getActiveDateGuards();
+  }
+
+  @Post('date-guard/check-overdue')
+  @ApiOperation({ summary: 'Background job trigger to escalate overdue date guards' })
+  checkOverdueGuards() {
+    return this.safetyService.escalateOverdueGuards();
   }
 }

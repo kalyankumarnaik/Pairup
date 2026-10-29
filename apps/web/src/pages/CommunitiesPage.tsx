@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Compass,
   Heart,
@@ -11,6 +11,7 @@ import {
   Users,
   X
 } from 'lucide-react';
+import { apiClient } from '../lib/api';
 
 interface CommunityClub {
   id: string;
@@ -112,7 +113,52 @@ export const CommunitiesPage: React.FC = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
 
-  const toggleJoinClub = (clubId: string) => {
+  useEffect(() => {
+    loadCommunities();
+  }, []);
+
+  const loadCommunities = async () => {
+    try {
+      const res = await apiClient.getCommunities();
+      if (res.data && res.data.length > 0) {
+        setClubs(
+          res.data.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            category: c.category || 'Lifestyle',
+            emoji: c.emoji || '✨',
+            memberCount: c.memberCount || 100,
+            description: c.description || '',
+            isJoined: Boolean(c.isJoined)
+          }))
+        );
+
+        // Load posts for the first community or all
+        const postRes = await apiClient.getCommunityPosts(res.data[0].id);
+        if (postRes.data && postRes.data.length > 0) {
+          setPosts(
+            postRes.data.map((p: any) => ({
+              id: p.id,
+              clubId: p.communityId,
+              clubName: p.communityName || 'Community Discussion',
+              authorName: p.authorName || 'Community Member',
+              authorAvatar: p.authorPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
+              timeAgo: 'Recently',
+              title: p.title,
+              content: p.content,
+              likesCount: p.upvotesCount || 0,
+              commentsCount: p.commentsCount || 0,
+              hasLiked: Boolean(p.isUpvoted)
+            }))
+          );
+        }
+      }
+    } catch {
+      // Keep MOCK_CLUBS & MOCK_POSTS
+    }
+  };
+
+  const toggleJoinClub = async (clubId: string) => {
     setClubs((prev) =>
       prev.map((c) =>
         c.id === clubId
@@ -124,9 +170,14 @@ export const CommunitiesPage: React.FC = () => {
           : c
       )
     );
+    try {
+      await apiClient.toggleJoinCommunity(clubId);
+    } catch {
+      // Offline fallback
+    }
   };
 
-  const handleLikePost = (postId: string) => {
+  const handleLikePost = async (postId: string) => {
     setPosts((prev) =>
       prev.map((p) =>
         p.id === postId
@@ -138,16 +189,23 @@ export const CommunitiesPage: React.FC = () => {
           : p
       )
     );
+    try {
+      await apiClient.toggleUpvoteCommunityPost(postId);
+    } catch {
+      // Offline fallback
+    }
   };
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!postTitle.trim() || !postContent.trim()) return;
 
+    const targetClub = clubs.find((c) => selectedClubId !== 'ALL' ? c.id === selectedClubId : true) || clubs[0];
+
     const newPost: CommunityPost = {
       id: `post_${Date.now()}`,
-      clubId: 'c1',
-      clubName: 'Bandra Coffee & Aesthetic Cafes',
+      clubId: targetClub ? targetClub.id : 'c1',
+      clubName: targetClub ? targetClub.name : 'PairUp Club',
       authorName: 'You',
       authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
       timeAgo: 'Just now',
@@ -162,6 +220,12 @@ export const CommunitiesPage: React.FC = () => {
     setPostTitle('');
     setPostContent('');
     setShowCreatePost(false);
+
+    try {
+      await apiClient.createCommunityPost(newPost.clubId, newPost.title, newPost.content);
+    } catch {
+      // Offline fallback
+    }
   };
 
   const filteredPosts = posts.filter((p) =>
