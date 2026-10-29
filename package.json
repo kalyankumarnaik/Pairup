@@ -14,7 +14,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
     "db:generate": "pnpm --filter @pairup/database db:generate",
     "db:push": "pnpm --filter @pairup/database db:push",
-    "db:seed": "pnpm --filter @pairup/database db:seed"
+    "db:seed": "pnpm --filter @pairup/database db:seed",
+    "package": "python scripts/package-submission.py"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
