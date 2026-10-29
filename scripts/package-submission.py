@@ -11,7 +11,6 @@ IGNORED_DIRS = {
     'build',
     '.turbo',
     '.next',
-    'coverage',
     '.cache',
     'Pairup', # duplicate clone folder
 }

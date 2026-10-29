@@ -44,9 +44,16 @@ Clone the repository and install all monorepo workspace dependencies:
 git clone https://github.com/pairup/pairup.git
 cd PairUp
 pnpm install
+# Or with standard npm:
+npm install
 ```
 
-*(Alternatively, you may run `npm install` across workspaces).*
+For Python-based automation and packaging scripts:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt 2>/dev/null || true
+```
 
 ### 2. Configure Environment Variables
 

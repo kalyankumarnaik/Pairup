@@ -9,7 +9,11 @@
     "dev:web": "pnpm --filter @pairup/web dev",
     "dev:worker": "pnpm --filter @pairup/worker dev",
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/",
+    "test:cov": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:monorepo": "turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
     "db:generate": "pnpm --filter @pairup/database db:generate",
@@ -22,7 +26,9 @@
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
     "turbo": "^2.1.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.2",
+    "@vitest/coverage-v8": "^2.1.2"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {
