@@ -23,10 +23,10 @@ out/
 *.tsbuildinfo
 
 # Environment files
-.env
-.env.local
-.env.*.local
-!.env.example
+.env*
+*.env
+!.gitkeep
+!example.env
 
 # Logs
 npm-debug.log*
