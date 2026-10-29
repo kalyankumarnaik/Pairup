@@ -16,6 +16,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { CommunitiesModule } from './modules/communities/communities.module';
 import { SurgeModule } from './modules/surge/surge.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { EnterprisePlatformModule } from './modules/enterprise/enterprise.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     SubscriptionsModule,
     CommunitiesModule,
     SurgeModule,
-    NotificationsModule
+    NotificationsModule,
+    EnterprisePlatformModule
   ]
 })
 export class AppModule {}
