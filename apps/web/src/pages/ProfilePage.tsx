@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import {
   BadgeCheck,
+  Briefcase,
   Camera,
   Check,
+  CheckCircle2,
   Heart,
   Image as ImageIcon,
+  MapPin,
   Plus,
   Save,
   Sparkles,
@@ -41,6 +45,20 @@ const AVAILABLE_INTERESTS = [
   { id: 'int_11', name: 'Reading & Books', category: 'Interests', emoji: '📚' },
   { id: 'int_12', name: 'Dogs & Pets', category: 'Lifestyle', emoji: '🐶' }
 ];
+
+const MODE_LABELS: Record<string, string> = {
+  [ConnectionMode.DATING]: 'Dating Only 💖',
+  [ConnectionMode.FRIENDSHIP]: 'Friendship Only 🫶',
+  [ConnectionMode.BOTH]: 'Both Dating & Friends ✨'
+};
+
+const INTENTION_LABELS: Record<string, string> = {
+  [RelationshipIntention.DATING_TO_MARRY]: 'Dating to Marry 💍',
+  [RelationshipIntention.LONG_TERM]: 'Long-Term Relationship 💘',
+  [RelationshipIntention.CASUAL]: 'Casual Dating ☕',
+  [RelationshipIntention.NEW_FRIENDS]: 'New Friends in City 🌈',
+  [RelationshipIntention.NOT_SURE_YET]: 'Still Figuring It Out 💫'
+};
 
 export const ProfilePage: React.FC = () => {
   const { profile, updateProfile, addPhoto, deletePhoto, setPrimaryPhoto } = useAuth();
@@ -83,6 +101,23 @@ export const ProfilePage: React.FC = () => {
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [savedMessage, setSavedMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Changes saved popup details modal state
+  const [showSavedModal, setShowSavedModal] = useState(false);
+  const [savedSummary, setSavedSummary] = useState<{
+    displayName: string;
+    bio: string;
+    pronouns: string;
+    city: string;
+    mode: ConnectionMode;
+    intention: RelationshipIntention;
+    occupation: string;
+    education: string;
+    interests: string[];
+    promptAnswer: string;
+    completenessScore: number;
+    savedAt: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -161,13 +196,52 @@ export const ProfilePage: React.FC = () => {
       // Local storage full or unavailable
     }
 
+    const summaryData = {
+      displayName: displayName.trim(),
+      bio: bio.trim(),
+      pronouns: pronouns.trim(),
+      city,
+      mode,
+      intention,
+      occupation: occupation.trim(),
+      education: education.trim(),
+      interests: [...selectedInterests],
+      promptAnswer: promptAnswer.trim(),
+      completenessScore: profileData.completenessScore,
+      savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
     try {
       await updateProfile(profileData);
+      setSavedSummary(summaryData);
+      setShowSavedModal(true);
       setSavedMessage('Profile saved! Details persist across page refreshes ✨');
       setTimeout(() => setSavedMessage(''), 4000);
+      try {
+        confetti({
+          particleCount: 55,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FF4F81', '#7C3AED', '#FF8A5B', '#10B981']
+        });
+      } catch {
+        // Confetti fallback
+      }
     } catch {
+      setSavedSummary(summaryData);
+      setShowSavedModal(true);
       setSavedMessage('Profile saved locally! Details persist across page refreshes ✨');
       setTimeout(() => setSavedMessage(''), 4000);
+      try {
+        confetti({
+          particleCount: 55,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FF4F81', '#7C3AED', '#FF8A5B', '#10B981']
+        });
+      } catch {
+        // Confetti fallback
+      }
     } finally {
       setIsSaving(false);
     }
@@ -658,6 +732,182 @@ export const ProfilePage: React.FC = () => {
           </motion.div>
         </div>
       )}
+
+      {/* Changes Saved Details Popup Modal */}
+      <AnimatePresence>
+        {showSavedModal && savedSummary && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-md"
+            onClick={() => setShowSavedModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.88, y: 16 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-lg bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-borderSoft max-h-[90vh] overflow-y-auto"
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setShowSavedModal(false)}
+                className="absolute top-5 right-5 p-2 rounded-full text-ink-muted hover:text-ink hover:bg-cloud transition-colors"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Header with success badge */}
+              <div className="flex items-start gap-4 mb-5 pr-8">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                  <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold uppercase tracking-wider mb-1 border border-emerald-200">
+                    <Sparkles className="w-3 h-3 text-emerald-600" />
+                    <span>Saved at {savedSummary.savedAt}</span>
+                  </div>
+                  <h3 className="text-xl font-display font-extrabold text-ink">
+                    Changes Were Saved!
+                  </h3>
+                  <p className="text-xs text-ink-muted">
+                    Your profile details & intentions have been successfully updated.
+                  </p>
+                </div>
+              </div>
+
+              {/* Summary Details Card */}
+              <div className="rounded-2xl bg-cloud/70 border border-borderSoft p-4 sm:p-5 space-y-4 text-xs">
+                {/* Name & Pronouns */}
+                <div className="flex items-center justify-between border-b border-borderSoft/60 pb-3">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5">
+                      Display Name
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-base font-bold text-ink">
+                        {savedSummary.displayName || 'No Name'}
+                      </span>
+                      {savedSummary.pronouns && (
+                        <span className="px-2 py-0.5 rounded-md bg-white border border-borderSoft text-ink-muted font-medium text-[11px]">
+                          {savedSummary.pronouns}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5">
+                      Profile Completeness
+                    </span>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-violet-light text-violet font-bold text-xs">
+                      {savedSummary.completenessScore}% Complete
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bio */}
+                {savedSummary.bio ? (
+                  <div className="border-b border-borderSoft/60 pb-3">
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-1">
+                      Bio & About Me
+                    </span>
+                    <p className="text-ink bg-white/90 rounded-xl p-3 border border-borderSoft/60 text-xs leading-relaxed italic">
+                      "{savedSummary.bio}"
+                    </p>
+                  </div>
+                ) : null}
+
+                {/* Grid Attributes */}
+                <div className="grid grid-cols-2 gap-3 border-b border-borderSoft/60 pb-3">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5">
+                      Connection Mode
+                    </span>
+                    <span className="font-semibold text-ink">
+                      {MODE_LABELS[savedSummary.mode] || savedSummary.mode}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5">
+                      Relationship Intention
+                    </span>
+                    <span className="font-semibold text-ink">
+                      {INTENTION_LABELS[savedSummary.intention] || savedSummary.intention}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5 flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-coral" /> City
+                    </span>
+                    <span className="font-semibold text-ink">{savedSummary.city}</span>
+                  </div>
+
+                  {(savedSummary.occupation || savedSummary.education) ? (
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-0.5 flex items-center gap-1">
+                        <Briefcase className="w-3 h-3 text-violet" /> Work & Education
+                      </span>
+                      <span className="font-semibold text-ink line-clamp-1">
+                        {[savedSummary.occupation, savedSummary.education].filter(Boolean).join(' • ')}
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Interests & Passions */}
+                {savedSummary.interests.length > 0 && (
+                  <div className="border-b border-borderSoft/60 pb-3">
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-1.5">
+                      Interests & Passions ({savedSummary.interests.length} selected)
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {savedSummary.interests.map((interest) => {
+                        const item = AVAILABLE_INTERESTS.find((i) => i.name === interest);
+                        return (
+                          <span
+                            key={interest}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-borderSoft text-[11px] font-semibold text-ink shadow-2xs"
+                          >
+                            <span>{item?.emoji || '✨'}</span>
+                            <span>{interest}</span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Profile Prompt */}
+                {savedSummary.promptAnswer ? (
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-ink-muted tracking-wider block mb-1">
+                      Profile Prompt: "A perfect Sunday looks like..."
+                    </span>
+                    <p className="text-ink font-medium bg-white/90 rounded-xl p-3 border border-borderSoft/60 text-xs">
+                      {savedSummary.promptAnswer}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowSavedModal(false)}
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-coral via-rose to-violet text-white text-xs font-bold shadow-md hover:opacity-95 hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4 stroke-[2.5]" />
+                  <span>Done / Dismiss</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
