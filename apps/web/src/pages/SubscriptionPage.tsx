@@ -171,7 +171,7 @@ export const SubscriptionPage: React.FC = () => {
         <h1 className="text-3xl sm:text-4xl font-display font-black text-ink">
           Upgrade Your Social Experience
         </h1>
-        <p className="text-xs sm:text-sm text-ink-muted max-w-xl mx-auto">
+        <p className="text-sm text-slate-600 font-medium max-w-xl mx-auto">
           See who liked you, enjoy unlimited swipes, boost your profile visibility during activity surges, and access VIP voice stages.
         </p>
 
@@ -228,12 +228,12 @@ export const SubscriptionPage: React.FC = () => {
                     <h3 className="font-display font-black text-xl text-ink">{tier.name}</h3>
                     <div className="flex items-baseline gap-1 my-3">
                       <span className="text-3xl font-display font-black text-ink">{tier.price}</span>
-                      <span className="text-xs text-ink-muted font-medium">{tier.period}</span>
+                      <span className="text-xs text-slate-600 font-semibold">{tier.period}</span>
                     </div>
 
                     <ul className="space-y-3 pt-3 border-t border-borderSoft/60">
                       {tier.features.map((f, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs text-ink-muted">
+                        <li key={i} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium">
                           <CheckCircle className="w-4 h-4 text-emerald flex-shrink-0 mt-0.5" />
                           <span className="leading-snug">{f}</span>
                         </li>
@@ -265,8 +265,8 @@ export const SubscriptionPage: React.FC = () => {
           <div className="p-6 rounded-3xl bg-white border border-borderSoft shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h4 className="text-sm font-bold text-ink">Have a Promo Coupon or Gift Code?</h4>
-              <p className="text-xs text-ink-muted">
-                Redeem codes from campus events, brand partnerships, or dating festivals. (Try: <strong className="text-violet">PAIRUPGOLD</strong>)
+              <p className="text-xs text-slate-600 font-medium">
+                Redeem codes from campus events, brand partnerships, or dating festivals. (Try: <strong className="text-violet font-bold">PAIRUPGOLD</strong>)
               </p>
             </div>
 
@@ -276,7 +276,7 @@ export const SubscriptionPage: React.FC = () => {
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
                 placeholder="Enter coupon code"
-                className="px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none uppercase"
+                className="px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-violet focus:outline-none uppercase"
               />
               <button
                 type="submit"
@@ -296,7 +296,7 @@ export const SubscriptionPage: React.FC = () => {
                 <Receipt className="w-4 h-4 text-violet" />
                 <span>Payment Methods & Billing Invoices</span>
               </h3>
-              <p className="text-xs text-ink-muted">
+              <p className="text-xs text-slate-600 font-medium">
                 All transactions are encrypted and processed securely via RBI-compliant UPI & card gateways.
               </p>
             </div>
@@ -310,7 +310,7 @@ export const SubscriptionPage: React.FC = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-ink">UPI AutoPay (Google Pay / PhonePe)</p>
-                <p className="text-[10px] text-ink-muted">Recurring billing renewal • Active</p>
+                <p className="text-xs text-slate-500 font-medium">Recurring billing renewal • Active</p>
               </div>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-emerald/10 text-emerald text-[10px] font-bold">
@@ -320,19 +320,19 @@ export const SubscriptionPage: React.FC = () => {
 
           {/* Past Invoices */}
           <div className="pt-2">
-            <h4 className="text-xs font-bold text-ink uppercase tracking-wider mb-2">Invoice Receipts</h4>
+            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Invoice Receipts</h4>
             <div className="divide-y divide-borderSoft">
               {invoices.map((inv) => (
                 <div key={inv.id} className="py-3 flex items-center justify-between text-xs">
                   <div>
                     <p className="font-bold text-ink">{inv.plan || `PairUp ${inv.tier || 'Plus'} Plan`}</p>
-                    <p className="text-[10px] text-ink-muted">{inv.invoiceNumber || inv.id} • {inv.date || 'Recent'}</p>
+                    <p className="text-xs text-slate-500 font-medium">{inv.invoiceNumber || inv.id} • {inv.date || 'Recent'}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-bold text-ink">{typeof inv.amount === 'number' ? `₹${inv.amount}.00` : inv.amount}</span>
                     <button
                       onClick={() => alert(`Downloading invoice ${inv.id}...`)}
-                      className="p-1.5 rounded-lg hover:bg-cloud text-ink-muted hover:text-ink transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
                       title="Download PDF"
                     >
                       <Download className="w-3.5 h-3.5" />

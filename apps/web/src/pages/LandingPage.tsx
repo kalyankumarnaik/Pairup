@@ -122,7 +122,7 @@ export const LandingPage: React.FC = () => {
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-ink-muted max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
               PairUp connects adults for real dating, genuine friendships, nearby city hangouts, live audio community rooms, and weekend social events. Built for India with 18+ verified profiles and smart privacy controls.
             </p>
 
@@ -146,7 +146,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Safety & Trust Badges */}
-            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs text-ink-muted font-medium">
+            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs text-slate-600 font-semibold">
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-light/80 text-success font-bold">
                 <CheckCircle className="w-4 h-4" />
                 <span>100% 18+ Verified</span>
@@ -173,13 +173,13 @@ export const LandingPage: React.FC = () => {
             <div className="relative w-full max-w-sm">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-coral via-violet to-cyan rounded-[2rem] blur-lg opacity-40 group-hover:opacity-75 transition duration-1000 animate-pulse-glow" />
 
-              <div className="relative w-full h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-midnightInk border-4 border-white">
+              <div className="relative w-full h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-slate-950 border-4 border-white">
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800"
                   alt="Demo Profile"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-midnightInk via-midnightInk/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
                 {/* Compatibility Badge */}
                 <div className="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-coral to-rose backdrop-blur-md text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 animate-bounce">
@@ -228,16 +228,16 @@ export const LandingPage: React.FC = () => {
                     <h3 className="text-2xl font-display font-extrabold">Ananya Verma, 26</h3>
                     <span className="text-sm">✨</span>
                   </div>
-                  <p className="text-xs text-white/90 flex items-center gap-1 mt-1 font-medium">
+                  <p className="text-xs text-slate-100 flex items-center gap-1 mt-1 font-medium">
                     <MapPin className="w-3.5 h-3.5 text-peach" /> Bandra West, Mumbai • ~3.5 km away
                   </p>
-                  <p className="text-xs text-white/80 mt-2 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-200 mt-2 line-clamp-2 leading-relaxed font-normal">
                     Lead urban architect, filter coffee nerd, and vinyl record collector. Looking for weekend cafe walks & museum dates.
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5 mt-3">
-                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-[11px] font-bold">☕ Cafes</span>
-                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-[11px] font-bold">🎨 Art</span>
-                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-[11px] font-bold">🎵 Indie Rock</span>
+                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-xs font-bold text-white">☕ Cafes</span>
+                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-xs font-bold text-white">🎨 Art</span>
+                    <span className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-xs font-bold text-white">🎵 Indie Rock</span>
                   </div>
                 </div>
 
@@ -320,7 +320,7 @@ export const LandingPage: React.FC = () => {
             <h2 className="text-3xl sm:text-4xl font-display font-black text-ink">
               Discover people by what you actually love
             </h2>
-            <p className="text-sm text-ink-muted mt-2">
+            <p className="text-base text-slate-600 font-medium mt-2">
               Toggle effortlessly between romantic dating, genuine friendships, and localized hobby communities.
             </p>
           </div>
@@ -339,7 +339,7 @@ export const LandingPage: React.FC = () => {
                   <h3 className="font-display font-bold text-lg text-ink group-hover:text-violet transition-colors">
                     {c.title}
                   </h3>
-                  <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+                  <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
                     {c.desc}
                   </p>
                 </div>
@@ -359,7 +359,7 @@ export const LandingPage: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-display font-black text-ink">
             Designed for genuine human connection
           </h2>
-          <p className="text-sm text-ink-muted mt-2">
+          <p className="text-base text-slate-600 font-medium mt-2">
             No bots, no fake profiles, and no awkward small talk.
           </p>
         </div>
@@ -372,7 +372,7 @@ export const LandingPage: React.FC = () => {
               <Sparkles className="w-7 h-7" />
             </div>
             <h3 className="text-xl font-display font-bold text-ink mb-2">Intent-Driven Matching</h3>
-            <p className="text-sm text-ink-muted leading-relaxed">
+            <p className="text-sm text-slate-600 font-medium leading-relaxed">
               Match with people whose intentions match yours — whether you want to date to marry, make new friends in a new city, or find weekend activity buddies.
             </p>
           </div>
@@ -384,7 +384,7 @@ export const LandingPage: React.FC = () => {
               <Headphones className="w-7 h-7" />
             </div>
             <h3 className="text-xl font-display font-bold text-ink mb-2">Live Voice Rooms</h3>
-            <p className="text-sm text-ink-muted leading-relaxed">
+            <p className="text-sm text-slate-600 font-medium leading-relaxed">
               Drop into interactive audio stages inspired by FRND. Chat about indie music, tech startups, or late-night chai debates. Raise your hand to speak anytime!
             </p>
           </div>
@@ -396,7 +396,7 @@ export const LandingPage: React.FC = () => {
               <Shield className="w-7 h-7" />
             </div>
             <h3 className="text-xl font-display font-bold text-ink mb-2">Privacy & Location Masking</h3>
-            <p className="text-sm text-ink-muted leading-relaxed">
+            <p className="text-sm text-slate-600 font-medium leading-relaxed">
               Your safety comes first. Raw coordinates are never shared or returned via APIs. Nearby matches only show masked approximate distances.
             </p>
           </div>
@@ -404,7 +404,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* CTA Banner Section */}
-      <section className="py-20 bg-gradient-to-b from-midnightInk to-[#151226] text-white text-center px-4 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-b from-slate-950 to-slate-900 text-white text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet/25 via-coral/15 to-transparent pointer-events-none" />
 
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
@@ -416,7 +416,7 @@ export const LandingPage: React.FC = () => {
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold tracking-tight">
             Ready to meet your people?
           </h2>
-          <p className="text-sm sm:text-base text-white/80 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-200 max-w-md mx-auto leading-relaxed">
             Join verified members across Mumbai, Bengaluru, Delhi, Hyderabad, and beyond. Free to join for adults aged 18 and above.
           </p>
           <div className="pt-4">
@@ -427,7 +427,7 @@ export const LandingPage: React.FC = () => {
               Create Your Free Profile (18+)
             </Link>
           </div>
-          <p className="text-xs text-white/50 pt-4">
+          <p className="text-xs text-slate-400 pt-4 font-medium">
             PairUp Platform © 2026. Strictly 18+. All rights reserved.
           </p>
         </div>

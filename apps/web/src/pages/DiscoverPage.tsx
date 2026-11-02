@@ -182,7 +182,7 @@ export const DiscoverPage: React.FC = () => {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 modeFilter === 'BOTH'
                   ? 'bg-violet text-white shadow-xs'
-                  : 'text-ink-muted hover:text-ink'
+                  : 'text-slate-600 hover:text-slate-900 font-bold'
               }`}
             >
               All ✨
@@ -192,7 +192,7 @@ export const DiscoverPage: React.FC = () => {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 modeFilter === 'DATING'
                   ? 'bg-coral text-white shadow-xs'
-                  : 'text-ink-muted hover:text-ink'
+                  : 'text-slate-600 hover:text-slate-900 font-bold'
               }`}
             >
               Dating 💖
@@ -202,7 +202,7 @@ export const DiscoverPage: React.FC = () => {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 modeFilter === 'FRIENDSHIP'
                   ? 'bg-peach text-white shadow-xs'
-                  : 'text-ink-muted hover:text-ink'
+                  : 'text-slate-600 hover:text-slate-900 font-bold'
               }`}
             >
               Friends 🫶
@@ -216,7 +216,7 @@ export const DiscoverPage: React.FC = () => {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
                 nearbyOnly
                   ? 'bg-coral text-white border-coral shadow-xs'
-                  : 'bg-white text-ink-muted border-borderSoft hover:text-ink hover:border-coral/50'
+                  : 'bg-white text-slate-700 border-borderSoft hover:text-ink hover:border-coral/50'
               }`}
               title="Show profiles within 25 km sorted by closest proximity"
             >
@@ -239,7 +239,7 @@ export const DiscoverPage: React.FC = () => {
             <button
               onClick={loadDeck}
               title="Reload Deck"
-              className="p-2 rounded-xl bg-white border border-borderSoft text-ink-muted hover:text-ink hover:border-violet transition-colors shadow-xs"
+              className="p-2 rounded-xl bg-white border border-borderSoft text-slate-600 hover:text-slate-900 hover:border-violet transition-colors shadow-xs"
             >
               <RotateCcw className="w-4 h-4" />
             </button>

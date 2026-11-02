@@ -32,7 +32,18 @@ export const METRO_CITIES: Record<string, { lat: number; lng: number; state: str
   Kochi: { lat: 9.9312, lng: 76.2673, state: 'Kerala', name: 'Kochi' },
   'San Francisco': { lat: 37.7749, lng: -122.4194, state: 'California', name: 'San Francisco' },
   'New York': { lat: 40.7128, lng: -74.0060, state: 'New York', name: 'New York' },
+  'Los Angeles': { lat: 34.0522, lng: -118.2437, state: 'California', name: 'Los Angeles' },
   London: { lat: 51.5074, lng: -0.1278, state: 'Greater London', name: 'London' },
+  Tokyo: { lat: 35.6762, lng: 139.6503, state: 'Kanto', name: 'Tokyo' },
+  Paris: { lat: 48.8566, lng: 2.3522, state: 'Île-de-France', name: 'Paris' },
+  Berlin: { lat: 52.5200, lng: 13.4050, state: 'Berlin', name: 'Berlin' },
+  Sydney: { lat: -33.8688, lng: 151.2093, state: 'New South Wales', name: 'Sydney' },
+  Toronto: { lat: 43.6532, lng: -79.3832, state: 'Ontario', name: 'Toronto' },
+  'São Paulo': { lat: -23.5505, lng: -46.6333, state: 'São Paulo', name: 'São Paulo' },
+  'Cape Town': { lat: -33.9249, lng: 18.4241, state: 'Western Cape', name: 'Cape Town' },
+  Seoul: { lat: 37.5665, lng: 126.9780, state: 'Seoul', name: 'Seoul' },
+  Amsterdam: { lat: 52.3676, lng: 4.9041, state: 'North Holland', name: 'Amsterdam' },
+  Rome: { lat: 41.9028, lng: 12.4964, state: 'Lazio', name: 'Rome' },
   Singapore: { lat: 1.3521, lng: 103.8198, state: 'Singapore', name: 'Singapore' },
   Dubai: { lat: 25.2048, lng: 55.2708, state: 'Dubai', name: 'Dubai' }
 };
@@ -207,7 +218,17 @@ export const PROFILE_LOCATION_COORDS: Record<string, { lat: number; lng: number;
   usr_demo_7: { lat: 18.5362, lng: 73.8940, locality: 'Koregaon Park, Pune' }, // Tanvi
   usr_demo_8: { lat: 22.5510, lng: 88.3524, locality: 'Park Street, Kolkata' }, // Rohan
   usr_demo_9: { lat: 19.1075, lng: 72.8263, locality: 'Juhu Beach, Mumbai' }, // Sneha
-  usr_demo_10: { lat: 28.6315, lng: 77.2167, locality: 'Connaught Place, Delhi' } // Diya
+  usr_demo_10: { lat: 28.6315, lng: 77.2167, locality: 'Connaught Place, Delhi' }, // Diya
+  usr_demo_11: { lat: 51.5074, lng: -0.1278, locality: 'Covent Garden, London' }, // Elena
+  usr_demo_12: { lat: 37.7749, lng: -122.4194, locality: 'Mission District, San Francisco' }, // Marcus
+  usr_demo_13: { lat: 35.6580, lng: 139.7016, locality: 'Shibuya, Tokyo' }, // Kenji
+  usr_demo_14: { lat: 48.8566, lng: 2.3522, locality: 'Le Marais, Paris' }, // Sophie
+  usr_demo_15: { lat: -33.8688, lng: 151.2093, locality: 'Bondi Beach, Sydney' }, // Liam
+  usr_demo_16: { lat: -23.5505, lng: -46.6333, locality: 'Paulista Avenue, São Paulo' }, // Isabella
+  usr_demo_17: { lat: 52.5200, lng: 13.4050, locality: 'Mitte, Berlin' }, // Lucas
+  usr_demo_18: { lat: 40.7128, lng: -74.0060, locality: 'SoHo, New York' }, // Chloe
+  usr_demo_19: { lat: 1.3521, lng: 103.8198, locality: 'Marina Bay, Singapore' }, // Mia
+  usr_demo_20: { lat: 25.2048, lng: 55.2708, locality: 'Downtown, Dubai' } // Zain
 };
 
 export interface LocationContextType {

@@ -143,7 +143,7 @@ export const EventsPage: React.FC = () => {
             <Calendar className="w-6 h-6 text-peach" />
             <span>Local Discovery Events</span>
           </h1>
-          <p className="text-xs text-ink-muted mt-1">
+          <p className="text-sm text-slate-600 font-medium mt-1">
             Real meetups, cafe mixers, board game nights, and indie concert hangouts with real map proximity.
           </p>
         </div>
@@ -162,7 +162,7 @@ export const EventsPage: React.FC = () => {
       {/* Proximity & City Filter Bar */}
       <div className="flex items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-borderSoft shadow-xs flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1">
+          <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
             <Sliders className="w-3.5 h-3.5 text-violet" />
             <span>Proximity:</span>
           </span>
@@ -171,7 +171,7 @@ export const EventsPage: React.FC = () => {
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               filterRadius === 'ALL'
                 ? 'bg-violet text-white shadow-xs'
-                : 'bg-cloud text-ink-muted hover:text-ink'
+                : 'bg-cloud text-slate-600 hover:text-slate-900 font-bold'
             }`}
           >
             All Events
@@ -181,7 +181,7 @@ export const EventsPage: React.FC = () => {
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               filterRadius === 25
                 ? 'bg-coral text-white shadow-xs'
-                : 'bg-cloud text-ink-muted hover:text-ink'
+                : 'bg-cloud text-slate-600 hover:text-slate-900 font-bold'
             }`}
           >
             Near Me (&le; 25 km)
@@ -195,8 +195,8 @@ export const EventsPage: React.FC = () => {
               onClick={() => setCityFilter(c)}
               className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 cityFilter === c
-                  ? 'bg-midnightInk text-white'
-                  : 'bg-cloud text-ink hover:text-coral'
+                  ? 'bg-slate-900 text-white font-bold'
+                  : 'bg-cloud text-slate-800 hover:text-coral'
               }`}
             >
               {c === 'All' ? '🌐 All Cities' : `📍 ${c}`}
@@ -229,11 +229,11 @@ export const EventsPage: React.FC = () => {
                   </div>
 
                   <h3 className="font-display font-bold text-lg text-ink mb-1">{evt.title}</h3>
-                  <p className="text-xs text-ink-muted leading-relaxed line-clamp-2 mb-4">
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-2 mb-4">
                     {evt.description}
                   </p>
 
-                  <div className="space-y-2 text-xs text-ink-muted border-t border-borderSoft pt-3">
+                  <div className="space-y-2 text-xs text-slate-600 border-t border-borderSoft pt-3">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 truncate">
                         <MapPin className="w-3.5 h-3.5 text-coral flex-shrink-0" />
@@ -258,7 +258,7 @@ export const EventsPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-ink-muted">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
                         <span className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-peach" />
                           <span>Spots Filled</span>
@@ -287,7 +287,7 @@ export const EventsPage: React.FC = () => {
                       evt.isRegistered
                         ? 'bg-emerald-50 text-emerald-600 border border-emerald-300'
                         : isFull
-                          ? 'bg-cloud-dark text-ink-muted cursor-not-allowed'
+                          ? 'bg-cloud-dark text-slate-500 cursor-not-allowed'
                           : 'bg-gradient-to-r from-coral to-violet text-white hover:opacity-95 shadow-md shadow-coral/20'
                     }`}
                   >
@@ -319,13 +319,13 @@ export const EventsPage: React.FC = () => {
 
       {/* Host Event Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-display font-bold text-ink">Host a Social Event</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
+                className="p-1 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -333,7 +333,7 @@ export const EventsPage: React.FC = () => {
 
             <form onSubmit={handleCreateEvent} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Event Title
                 </label>
                 <input
@@ -342,12 +342,12 @@ export const EventsPage: React.FC = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Sunset Acoustic Jam & Mixer"
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Venue Name & Area
                 </label>
                 <input
@@ -356,18 +356,18 @@ export const EventsPage: React.FC = () => {
                   value={venueName}
                   onChange={(e) => setVenueName(e.target.value)}
                   placeholder="e.g. Subko Coffee Roastery, Bandra"
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   City
                 </label>
                 <select
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900"
                 >
                   <option value="Mumbai">Mumbai</option>
                   <option value="Bengaluru">Bengaluru</option>
@@ -377,7 +377,7 @@ export const EventsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Capacity Limit
                 </label>
                 <input
@@ -386,12 +386,12 @@ export const EventsPage: React.FC = () => {
                   max="100"
                   value={capacity}
                   onChange={(e) => setCapacity(Number(e.target.value))}
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Description
                 </label>
                 <textarea
@@ -399,7 +399,7 @@ export const EventsPage: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell people what to expect, what to bring..."
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
                 />
               </div>
 

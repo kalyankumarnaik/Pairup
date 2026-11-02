@@ -36,7 +36,7 @@ export const MatchesPage: React.FC = () => {
             <Heart className="w-6 h-6 text-coral fill-coral" />
             <span>Mutual Matches</span>
           </h1>
-          <p className="text-xs text-ink-muted mt-1">
+          <p className="text-sm text-slate-600 font-medium mt-1">
             People who liked you back! Start a conversation or pick up where you left off.
           </p>
         </div>
@@ -80,10 +80,10 @@ export const MatchesPage: React.FC = () => {
                     {m.connectionMode}
                   </span>
                 </div>
-                <p className="text-xs text-ink-muted truncate mt-1">
+                <p className="text-xs text-slate-600 font-medium truncate mt-1">
                   {m.lastMessageSnippet || 'New match! Say hello ✨'}
                 </p>
-                <p className="text-[10px] text-ink-muted/70 mt-1">
+                <p className="text-xs text-slate-500 font-medium mt-0.5">
                   {m.matchedProfile.city || 'Nearby'}
                 </p>
               </div>
@@ -123,7 +123,7 @@ export const MatchesPage: React.FC = () => {
                 >
                   <Video className="w-4 h-4" />
                 </button>
-                <div className="p-2 rounded-xl bg-white border border-borderSoft group-hover:bg-violet group-hover:text-white text-ink-muted shadow-2xs transition-colors">
+                <div className="p-2 rounded-xl bg-white border border-borderSoft group-hover:bg-violet group-hover:text-white text-slate-500 shadow-2xs transition-colors">
                   <MessageCircle className="w-4 h-4" />
                 </div>
               </div>
@@ -134,7 +134,7 @@ export const MatchesPage: React.FC = () => {
         <div className="p-12 text-center bg-white rounded-3xl border border-borderSoft">
           <p className="text-4xl mb-3">💌</p>
           <h3 className="text-base font-bold text-ink">No matches yet</h3>
-          <p className="text-xs text-ink-muted max-w-sm mx-auto mt-1 mb-6">
+          <p className="text-xs text-slate-600 font-medium max-w-sm mx-auto mt-1 mb-6">
             Swipe right on profiles you like. When they like you back, they will appear here!
           </p>
           <Link

@@ -146,7 +146,7 @@ export const AuthPage: React.FC = () => {
           <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-ink">
             {isSignup ? 'Create Your Account' : 'Welcome to PairUp'}
           </h2>
-          <p className="text-xs text-ink-muted mt-1 font-medium">
+          <p className="text-sm text-slate-600 mt-1 font-medium">
             {isSignup
               ? 'Adults 18+ only • Real Dating & Genuine Social Discovery'
               : 'Log in to connect with your matches and friends'}
@@ -155,7 +155,7 @@ export const AuthPage: React.FC = () => {
 
         {/* Demo Fast Login Buttons */}
         <div className="p-3.5 rounded-2xl bg-gradient-to-r from-lavender-light via-peach-light/30 to-cyan-light/40 border border-violet/20 mb-5 text-xs text-violet-dark">
-          <p className="font-bold flex items-center gap-1.5 mb-2 text-ink">
+          <p className="font-bold flex items-center gap-1.5 mb-2 text-slate-800">
             <Sparkles className="w-3.5 h-3.5 text-coral" />
             <span>✨ 1-Click Demo Accounts:</span>
           </p>
@@ -180,7 +180,7 @@ export const AuthPage: React.FC = () => {
               type="button"
               disabled={loading}
               onClick={() => handleQuickLogin('admin@pairup.ai', 'AdminSecurePairUp2026!')}
-              className="px-2 py-1.5 rounded-xl bg-midnightInk text-white border border-amber/40 hover:border-amber font-bold transition-all shadow-xs text-center hover:scale-105 active:scale-95"
+              className="px-2 py-1.5 rounded-xl bg-slate-900 text-white border border-amber/40 hover:border-amber font-bold transition-all shadow-xs text-center hover:scale-105 active:scale-95"
             >
               🛡️ Admin
             </button>
@@ -197,60 +197,60 @@ export const AuthPage: React.FC = () => {
         <form onSubmit={handleAuth} className="space-y-4">
           {isSignup && (
             <div>
-              <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
                 Display Name
               </label>
               <div className="relative">
-                <UserIcon className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <UserIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   required
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="e.g. Riya Sen"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900 placeholder:text-slate-400"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
               Email or Mobile Number
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="name@example.com or +919876543210"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900 placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900 placeholder:text-slate-400"
               />
             </div>
           </div>
 
           {isSignup && (
             <div>
-              <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
                 Birth Date (Must be 18+)
               </label>
               <input
@@ -259,9 +259,9 @@ export const AuthPage: React.FC = () => {
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
                 max="2008-01-01"
-                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
+                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900"
               />
-              <p className="text-[11px] text-ink-muted mt-1 flex items-center gap-1 font-semibold">
+              <p className="text-xs text-slate-600 mt-1 flex items-center gap-1 font-semibold">
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 <span>Verified: {calculateAge(birthDate)} years old</span>
               </p>
@@ -280,7 +280,7 @@ export const AuthPage: React.FC = () => {
 
         {/* Switch Mode Toggle */}
         <div className="text-center pt-5 mt-5 border-t border-borderSoft">
-          <p className="text-xs text-ink-muted">
+          <p className="text-xs text-slate-600 font-medium">
             {isSignup ? 'Already have an account?' : "Don't have an account yet?"}{' '}
             <button
               onClick={() => {

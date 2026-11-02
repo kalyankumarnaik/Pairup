@@ -29,8 +29,9 @@ import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { MatchModal } from '../components/MatchModal';
 import { RealMapView } from '../components/RealMapView';
 import confetti from 'canvas-confetti';
+import { formatDistance } from '../context/LocationContext';
 
-const RADII_PRESETS = [5, 10, 25, 50];
+const RADII_PRESETS = [10, 50, 250, 1000, 5000, 20000];
 
 export const NearbyPage: React.FC = () => {
   const { profile } = useAuth();
@@ -220,7 +221,7 @@ export const NearbyPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <p className="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            <p className="text-sm text-slate-600 font-medium mt-1 max-w-xl leading-relaxed">
               Find verified members currently within your area. Coordinates are protected by differential privacy and approximate distance fuzzing.
             </p>
           </div>
@@ -248,7 +249,7 @@ export const NearbyPage: React.FC = () => {
               <p className="font-bold text-ink">
                 Want to find matches in your immediate neighborhood?
               </p>
-              <p className="text-ink-muted">
+              <p className="text-slate-600 font-medium">
                 Allow browser location access or select a city below to view members sorted by closest distance.
               </p>
             </div>
@@ -263,7 +264,7 @@ export const NearbyPage: React.FC = () => {
       )}
 
       {statusMessage && statusMessage !== 'Ready' && (
-        <div className="px-4 py-2.5 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold text-ink-muted flex items-center gap-2">
+        <div className="px-4 py-2.5 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold text-slate-600 flex items-center gap-2">
           <Info className="w-4 h-4 text-violet" />
           <span>{statusMessage}</span>
         </div>
@@ -290,7 +291,7 @@ export const NearbyPage: React.FC = () => {
             <p className="text-xs sm:text-sm font-bold text-ink mt-0.5">
               {filteredProfiles.length * 18}+ members active near {selectedCity === 'All' ? location.city : selectedCity}!
             </p>
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-xs text-slate-600 font-medium">
               Connects made during surge hours receive 2.4x faster responses. Send a wave or say hi!
             </p>
           </div>
@@ -302,7 +303,7 @@ export const NearbyPage: React.FC = () => {
             className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
               viewMode === 'map'
                 ? 'bg-gradient-to-r from-coral to-violet text-white shadow-xs'
-                : 'text-ink-muted hover:text-ink'
+                : 'text-slate-600 hover:text-slate-900 font-bold'
             }`}
           >
             <MapIcon className="w-3.5 h-3.5" />
@@ -312,8 +313,8 @@ export const NearbyPage: React.FC = () => {
             onClick={() => setViewMode('radar')}
             className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
               viewMode === 'radar'
-                ? 'bg-midnightInk text-white shadow-xs'
-                : 'text-ink-muted hover:text-ink'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 font-bold'
             }`}
           >
             <Radio className="w-3.5 h-3.5 text-coral" />
@@ -324,7 +325,7 @@ export const NearbyPage: React.FC = () => {
             className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
               viewMode === 'grid'
                 ? 'bg-violet text-white shadow-xs'
-                : 'text-ink-muted hover:text-ink'
+                : 'text-slate-600 hover:text-slate-900 font-bold'
             }`}
           >
             <Grid className="w-3.5 h-3.5" />
@@ -344,33 +345,35 @@ export const NearbyPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
                 <Sliders className="w-3.5 h-3.5 text-violet" />
-                <span>Search Radius:</span>
+                <span>Radar Search Radius:</span>
               </span>
               <span className="px-3 py-1 rounded-xl bg-coral-light text-coral font-black text-xs">
-                {radiusKm} km
+                {radiusKm >= 20000 ? 'Worldwide 🌍 (20,000 km)' : radiusKm >= 1000 ? `${(radiusKm / 1000).toFixed(0)},000 km` : `${radiusKm} km`}
               </span>
             </div>
             <div className="flex items-center gap-3">
               <input
                 type="range"
-                min="1"
-                max="50"
+                min="5"
+                max="20000"
+                step="5"
                 value={radiusKm}
                 onChange={(e) => setRadiusKm(Number(e.target.value))}
                 className="w-full accent-coral cursor-pointer"
               />
-              <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="flex items-center gap-1 flex-shrink-0 flex-wrap sm:flex-nowrap">
                 {RADII_PRESETS.map((r) => (
                   <button
                     key={r}
                     onClick={() => setRadiusKm(r)}
-                    className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all ${
+                    className={`px-2 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all ${
                       radiusKm === r
                         ? 'bg-coral text-white shadow-xs'
                         : 'bg-white border border-borderSoft text-ink hover:text-coral hover:border-coral shadow-2xs'
                     }`}
+                    title={r >= 20000 ? 'Worldwide 20,000 km' : `${r} km`}
                   >
-                    {r}k
+                    {r >= 20000 ? '🌍 World' : r >= 1000 ? `${r / 1000}k` : `${r}k`}
                   </button>
                 ))}
               </div>
@@ -443,17 +446,17 @@ export const NearbyPage: React.FC = () => {
       {/* 5. RADAR VIEW MODE (Interactive Concentric Sweeping Radar) */}
       {/* ================================================================= */}
       {viewMode === 'radar' && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-midnightInk text-white shadow-2xl relative overflow-hidden border border-white/10 flex flex-col items-center">
+        <div className="p-6 sm:p-8 rounded-3xl bg-slate-950 text-white shadow-2xl relative overflow-hidden border border-white/10 flex flex-col items-center">
           {/* Header */}
           <div className="w-full flex items-center justify-between mb-2 z-10">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
               <span className="text-xs font-black uppercase tracking-widest text-emerald-400">
-                PROXIMITY SCAN • {radiusKm} KM RADIUS
+                {radiusKm >= 20000 ? 'WORLDWIDE RADAR SCAN • ALL 7 CONTINENTS' : `PROXIMITY SCAN • ${radiusKm >= 1000 ? `${(radiusKm / 1000).toFixed(0)}k` : radiusKm} KM RADIUS`}
               </span>
             </div>
-            <span className="text-xs text-white/70 font-semibold">
-              {filteredProfiles.length} Members Detected Around {selectedCity === 'All' ? location.city : selectedCity}
+            <span className="text-xs text-slate-200 font-semibold">
+              {filteredProfiles.length} Members Detected Around {selectedCity === 'All' ? (radiusKm >= 20000 ? 'the World 🌍' : location.city) : selectedCity}
             </span>
           </div>
 
@@ -470,14 +473,14 @@ export const NearbyPage: React.FC = () => {
             <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/10 pointer-events-none" />
 
             {/* Distance markers */}
-            <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-white/50 font-mono">
-              {radiusKm} km
+            <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-slate-300 font-mono font-bold">
+              {radiusKm >= 20000 ? '20,000 km (Global)' : radiusKm >= 1000 ? `${(radiusKm / 1000).toFixed(0)}k km` : `${radiusKm} km`}
             </span>
-            <span className="absolute top-10 left-1/2 -translate-x-1/2 text-[10px] text-white/50 font-mono">
-              {Math.round(radiusKm * 0.6)} km
+            <span className="absolute top-10 left-1/2 -translate-x-1/2 text-[10px] text-slate-300 font-mono font-bold">
+              {radiusKm >= 20000 ? '10,000 km' : radiusKm >= 1000 ? `${Math.round((radiusKm * 0.6) / 1000)}k km` : `${Math.round(radiusKm * 0.6)} km`}
             </span>
-            <span className="absolute top-22 left-1/2 -translate-x-1/2 text-[10px] text-white/50 font-mono">
-              {Math.round(radiusKm * 0.3)} km
+            <span className="absolute top-22 left-1/2 -translate-x-1/2 text-[10px] text-slate-300 font-mono font-bold">
+              {radiusKm >= 20000 ? '5,000 km' : radiusKm >= 1000 ? `${Math.round((radiusKm * 0.3) / 1000)}k km` : `${Math.round(radiusKm * 0.3)} km`}
             </span>
 
             {/* Rotating Radar Sweeper Beam */}
@@ -491,7 +494,7 @@ export const NearbyPage: React.FC = () => {
 
             {/* Center Node (Current User) */}
             <div className="relative z-20 w-12 h-12 rounded-full bg-gradient-to-tr from-coral via-rose to-violet p-0.5 shadow-2xl flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-midnightInk flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-xs font-bold text-white">
                 You 📍
               </div>
               <span className="absolute inset-0 rounded-full bg-coral animate-ping opacity-60 pointer-events-none" />
@@ -518,7 +521,7 @@ export const NearbyPage: React.FC = () => {
                         : 'hover:scale-125 ring-2 ring-white/60'
                     }`}
                   >
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-midnightInk">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-900">
                       <img
                         src={p.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
                         alt=""
@@ -531,6 +534,10 @@ export const NearbyPage: React.FC = () => {
                       <span className="absolute -top-1 -right-1 text-xs animate-bounce">💖</span>
                     )}
                   </button>
+                  {/* Tooltip badge */}
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md bg-slate-900/95 text-[10px] text-white font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-40 border border-white/20 shadow-lg">
+                    {p.displayName} • {p.city} ({formatDistance(distance)})
+                  </div>
                 </div>
               );
             })}
@@ -555,7 +562,7 @@ export const NearbyPage: React.FC = () => {
                     <MapPin className="w-3.5 h-3.5" />
                     <span>~{selectedRadarProfile.approximateDistanceKm} km away in {selectedRadarProfile.city}</span>
                   </p>
-                  <p className="text-[11px] text-white/80 line-clamp-1 mt-1">
+                  <p className="text-xs text-slate-200 line-clamp-1 mt-1">
                     {selectedRadarProfile.bio || 'Say hello and start chatting!'}
                   </p>
                 </div>
@@ -582,7 +589,7 @@ export const NearbyPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <p className="text-xs text-white/60 text-center mt-2 flex items-center gap-1.5">
+            <p className="text-xs text-slate-300 text-center mt-2 flex items-center gap-1.5 font-medium">
               <span>💡</span>
               <span>Tap any radar blip to see how close they are and send an instant wave!</span>
             </p>
@@ -594,7 +601,7 @@ export const NearbyPage: React.FC = () => {
       {/* 5. GRID VIEW MODE */}
       {/* ================================================================= */}
       {loading ? (
-        <div className="py-20 text-center text-sm font-semibold text-ink-muted">
+        <div className="py-20 text-center text-sm font-semibold text-slate-600">
           Scanning nearby area for matches...
         </div>
       ) : filteredProfiles.length > 0 ? (
@@ -606,7 +613,7 @@ export const NearbyPage: React.FC = () => {
                 {filteredProfiles.length} verified
               </span>
             </h3>
-            <span className="text-xs text-ink-muted font-medium">Sorted by closest proximity</span>
+            <span className="text-xs text-slate-600 font-semibold">Sorted by closest proximity</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -619,16 +626,16 @@ export const NearbyPage: React.FC = () => {
                   className="group rounded-3xl overflow-hidden bg-white border border-borderSoft shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
                 >
                   {/* Photo Container */}
-                  <div className="relative h-72 overflow-hidden bg-midnightInk">
+                  <div className="relative h-72 overflow-hidden bg-slate-950">
                     <img
                       src={p.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600'}
                       alt={p.displayName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-midnightInk via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
                     {/* Proximity Distance Badge */}
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-midnightInk/80 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 shadow-md">
+                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 shadow-md">
                       <MapPin className="w-3.5 h-3.5 text-peach" />
                       <span>~{p.approximateDistanceKm} km away</span>
                     </div>
@@ -655,13 +662,13 @@ export const NearbyPage: React.FC = () => {
                           <span className="text-xs text-sky-400" title="18+ Verified">✓</span>
                         )}
                       </h3>
-                      <p className="text-xs text-white/80">{p.city}</p>
+                      <p className="text-xs text-slate-200 font-medium">{p.city}</p>
                     </div>
                   </div>
 
                   {/* Bio & Interests */}
                   <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">
                       {p.bio || 'Say hello and start a conversation!'}
                     </p>
 
@@ -669,7 +676,7 @@ export const NearbyPage: React.FC = () => {
                       {p.interests.slice(0, 3).map((int) => (
                         <span
                           key={int.id}
-                          className="px-2.5 py-1 rounded-xl bg-cloud text-[11px] font-semibold text-ink"
+                          className="px-2.5 py-1 rounded-xl bg-slate-100 text-xs font-bold text-slate-800"
                         >
                           {int.emoji} {int.name}
                         </span>
@@ -683,7 +690,7 @@ export const NearbyPage: React.FC = () => {
                         className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 ${
                           hasWaved
                             ? 'bg-emerald-50 text-emerald-600 border-2 border-emerald-400 font-bold'
-                            : 'bg-white hover:bg-coral-light border border-borderSoft text-ink hover:text-coral hover:border-coral/40 font-bold shadow-2xs'
+                            : 'bg-white hover:bg-coral-light border border-borderSoft text-slate-800 hover:text-coral hover:border-coral/40 font-bold shadow-2xs'
                         }`}
                       >
                         <Heart className={`w-3.5 h-3.5 ${hasWaved ? 'fill-current text-emerald-600' : 'text-coral'}`} />
@@ -708,7 +715,7 @@ export const NearbyPage: React.FC = () => {
         <div className="p-12 text-center bg-white rounded-3xl border border-borderSoft shadow-sm space-y-3">
           <p className="text-4xl">📍</p>
           <h3 className="text-base font-bold text-ink">No members found within {radiusKm} km</h3>
-          <p className="text-xs text-ink-muted max-w-sm mx-auto">
+          <p className="text-xs text-slate-600 font-medium max-w-sm mx-auto">
             Try expanding your search radius to 50 km or switching to another metro city like Mumbai, Bengaluru, or Delhi.
           </p>
           <button

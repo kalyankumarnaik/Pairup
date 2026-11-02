@@ -370,6 +370,270 @@ export const MOCK_DISCOVERY_CARDS: DiscoveryCard[] = [
     ],
     prompts: [],
     verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_11',
+    userId: 'usr_demo_11',
+    displayName: 'Elena Rostova',
+    age: 27,
+    bio: 'Art curator and classical pianist based in London. Passionate about Tate Modern exhibitions, West End plays, and rainy afternoon bookstores.',
+    gender: Gender.WOMAN,
+    pronouns: 'she/her',
+    relationshipIntention: RelationshipIntention.LONG_TERM,
+    connectionMode: ConnectionMode.DATING,
+    city: 'London',
+    approximateDistanceKm: 7190,
+    latitude: 51.5074,
+    longitude: -0.1278,
+    interests: [
+      { id: '29', name: 'Contemporary Art', category: 'Creative', emoji: '🎨' },
+      { id: '30', name: 'Classical Music', category: 'Music', emoji: '🎻' },
+      { id: '31', name: 'Architecture', category: 'Arts', emoji: '🏛️' }
+    ],
+    photos: [
+      {
+        id: 'p12',
+        profileId: '11',
+        url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_12',
+    userId: 'usr_demo_12',
+    displayName: 'Marcus Vance',
+    age: 29,
+    bio: 'AI researcher and trail runner in San Francisco. Loves exploring Marin headlands, specialty pour-overs, and discussing the future of robotics.',
+    gender: Gender.MAN,
+    pronouns: 'he/him',
+    relationshipIntention: RelationshipIntention.LONG_TERM,
+    connectionMode: ConnectionMode.BOTH,
+    city: 'San Francisco',
+    approximateDistanceKm: 13500,
+    latitude: 37.7749,
+    longitude: -122.4194,
+    interests: [
+      { id: '32', name: 'AI & Tech', category: 'Career', emoji: '🤖' },
+      { id: '33', name: 'Trail Running', category: 'Sports', emoji: '🏃' },
+      { id: '34', name: 'Specialty Coffee', category: 'Food & Dining', emoji: '☕' }
+    ],
+    photos: [
+      {
+        id: 'p13',
+        profileId: '12',
+        url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_13',
+    userId: 'usr_demo_13',
+    displayName: 'Kenji Takahashi',
+    age: 28,
+    bio: 'Creative director & sound designer in Tokyo. Exploring synthesizer jams, retro ramen joints, and neon-lit street photography.',
+    gender: Gender.MAN,
+    pronouns: 'he/him',
+    relationshipIntention: RelationshipIntention.NEW_FRIENDS,
+    connectionMode: ConnectionMode.FRIENDSHIP,
+    city: 'Tokyo',
+    approximateDistanceKm: 6730,
+    latitude: 35.6580,
+    longitude: 139.7016,
+    interests: [
+      { id: '35', name: 'Sound Design', category: 'Creative', emoji: '🎧' },
+      { id: '36', name: 'Street Photography', category: 'Creative', emoji: '📷' },
+      { id: '37', name: 'Japanese Cuisine', category: 'Food & Dining', emoji: '🍜' }
+    ],
+    photos: [
+      {
+        id: 'p14',
+        profileId: '13',
+        url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_14',
+    userId: 'usr_demo_14',
+    displayName: 'Sophie Dupont',
+    age: 26,
+    bio: 'Pastry chef and vintage collector in Le Marais, Paris. Let’s find the crispiest croissants and explore flea markets along the Seine.',
+    gender: Gender.WOMAN,
+    pronouns: 'she/her',
+    relationshipIntention: RelationshipIntention.DATING_TO_MARRY,
+    connectionMode: ConnectionMode.DATING,
+    city: 'Paris',
+    approximateDistanceKm: 7010,
+    latitude: 48.8566,
+    longitude: 2.3522,
+    interests: [
+      { id: '38', name: 'Baking & Pastry', category: 'Food & Dining', emoji: '🥐' },
+      { id: '39', name: 'Vintage Fashion', category: 'Lifestyle', emoji: '👗' },
+      { id: '40', name: 'Cinema', category: 'Arts', emoji: '🎬' }
+    ],
+    photos: [
+      {
+        id: 'p15',
+        profileId: '14',
+        url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_15',
+    userId: 'usr_demo_15',
+    displayName: 'Liam O’Connor',
+    age: 29,
+    bio: 'Surfer and marine architect at Bondi Beach, Sydney. Morning waves, flat whites, and coastal hikes along the cliffs.',
+    gender: Gender.MAN,
+    pronouns: 'he/him',
+    relationshipIntention: RelationshipIntention.LONG_TERM,
+    connectionMode: ConnectionMode.BOTH,
+    city: 'Sydney',
+    approximateDistanceKm: 10150,
+    latitude: -33.8688,
+    longitude: 151.2093,
+    interests: [
+      { id: '41', name: 'Surfing', category: 'Sports', emoji: '🏄' },
+      { id: '42', name: 'Ocean Conservation', category: 'Outdoors', emoji: '🌊' },
+      { id: '43', name: 'Coffee', category: 'Lifestyle', emoji: '☕' }
+    ],
+    photos: [
+      {
+        id: 'p16',
+        profileId: '15',
+        url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_16',
+    userId: 'usr_demo_16',
+    displayName: 'Chloe Martin',
+    age: 25,
+    bio: 'Fashion publicist and podcast host living in SoHo, NYC. Always hunting for jazz speakeasies, rooftop sunsets, and spicy Thai food.',
+    gender: Gender.WOMAN,
+    pronouns: 'she/her',
+    relationshipIntention: RelationshipIntention.DATING_TO_MARRY,
+    connectionMode: ConnectionMode.DATING,
+    city: 'New York',
+    approximateDistanceKm: 12540,
+    latitude: 40.7128,
+    longitude: -74.0060,
+    interests: [
+      { id: '44', name: 'Fashion & Media', category: 'Creative', emoji: '✨' },
+      { id: '45', name: 'Jazz Clubs', category: 'Music', emoji: '🎷' },
+      { id: '46', name: 'Podcasting', category: 'Media', emoji: '🎙️' }
+    ],
+    photos: [
+      {
+        id: 'p17',
+        profileId: '16',
+        url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_17',
+    userId: 'usr_demo_17',
+    displayName: 'Mia Chen',
+    age: 26,
+    bio: 'Fintech product lead and urban botanist in Singapore. Passionate about hawker food stalls, night cycling along Marina Bay, and indie gaming.',
+    gender: Gender.WOMAN,
+    pronouns: 'she/her',
+    relationshipIntention: RelationshipIntention.LONG_TERM,
+    connectionMode: ConnectionMode.BOTH,
+    city: 'Singapore',
+    approximateDistanceKm: 3920,
+    latitude: 1.3521,
+    longitude: 103.8198,
+    interests: [
+      { id: '47', name: 'Urban Gardening', category: 'Lifestyle', emoji: '🌿' },
+      { id: '48', name: 'Hawker Food', category: 'Food & Dining', emoji: '🍜' },
+      { id: '49', name: 'Cycling', category: 'Sports', emoji: '🚲' }
+    ],
+    photos: [
+      {
+        id: 'p18',
+        profileId: '17',
+        url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
+  },
+  {
+    id: 'disc_18',
+    userId: 'usr_demo_18',
+    displayName: 'Zain Al-Mansoor',
+    age: 31,
+    bio: 'Venture investor and desert astrophotographer in Downtown Dubai. Loves supercar roadtrips, stargazing under dune skies, and specialty coffee.',
+    gender: Gender.MAN,
+    pronouns: 'he/him',
+    relationshipIntention: RelationshipIntention.DATING_TO_MARRY,
+    connectionMode: ConnectionMode.DATING,
+    city: 'Dubai',
+    approximateDistanceKm: 1930,
+    latitude: 25.2048,
+    longitude: 55.2708,
+    interests: [
+      { id: '50', name: 'Astrophotography', category: 'Creative', emoji: '🌌' },
+      { id: '51', name: 'Venture Capital', category: 'Career', emoji: '📈' },
+      { id: '52', name: 'Desert Camping', category: 'Outdoors', emoji: '⛺' }
+    ],
+    photos: [
+      {
+        id: 'p19',
+        profileId: '18',
+        url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800',
+        order: 0,
+        isPrimary: true,
+        isModerated: true,
+        createdAt: ''
+      }
+    ],
+    prompts: [],
+    verificationStatus: VerificationStatus.VERIFIED
   }
 ];
 
