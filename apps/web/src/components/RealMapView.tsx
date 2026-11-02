@@ -79,14 +79,15 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
       'pairup_osm_live_verified_key'
     );
   });
-  const [mapProvider, setMapProvider] = useState<'carto' | 'maptiler' | 'geoapify' | 'satellite'>(() => {
+  const [mapProvider, setMapProvider] = useState<'osm' | 'esri_streets' | 'satellite' | 'maptiler' | 'geoapify'>(() => {
     const saved = localStorage.getItem('pairup_map_provider');
+    if (saved === 'esri_streets' || saved === 'satellite') return saved;
     const key = localStorage.getItem('pairup_map_api_key');
-    // Only use proprietary external providers if user supplied an authentic external key
     if (saved === 'maptiler' && key && !key.startsWith('pairup_') && key.length > 15) return 'maptiler';
     if (saved === 'geoapify' && key && !key.startsWith('pairup_') && key.length > 15) return 'geoapify';
-    if (saved === 'satellite') return 'satellite';
-    return 'carto';
+    // Clear any previous 'carto' or mock provider from local storage so watermarks never show
+    localStorage.setItem('pairup_map_provider', 'osm');
+    return 'osm';
   });
   const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>(mapApiKey);
@@ -94,12 +95,22 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
 
   const getTileConfig = (provider: string, key: string) => {
     switch (provider) {
+      case 'esri_streets':
+        return {
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, DeLorme'
+        };
+      case 'satellite':
+        return {
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+        };
       case 'maptiler':
-        // If key is a demo or unauthenticated key, fallback to Carto/OSM so MapTiler doesn't paint "Invalid key" watermarks
+        // If key is a demo or unauthenticated key, fallback to official OpenStreetMap to avoid "Invalid key" watermarks
         if (!key || key.startsWith('pairup_') || key.length < 15) {
           return {
-            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           };
         }
         return {
@@ -109,24 +120,19 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
       case 'geoapify':
         if (!key || key.startsWith('pairup_') || key.length < 15) {
           return {
-            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           };
         }
         return {
           url: `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${key}`,
           attribution: '&copy; <a href="https://www.geoapify.com/">Geoapify</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         };
-      case 'satellite':
-        return {
-          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
-        };
-      case 'carto':
+      case 'osm':
       default:
         return {
-          url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         };
     }
   };
@@ -234,10 +240,11 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
       maxZoom: 19
     });
 
-    // Graceful fallback to CARTO if provider/API key experiences tile error
+    // Graceful fallback to official OpenStreetMap if provider/API key experiences tile error
     layer.on('tileerror', () => {
-      if (mapProvider !== 'carto') {
-        setMapProvider('carto');
+      if (mapProvider !== 'osm') {
+        setMapProvider('osm');
+        localStorage.setItem('pairup_map_provider', 'osm');
       }
     });
 
@@ -866,7 +873,8 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
                 </label>
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
-                    { id: 'carto', name: 'CartoDB Voyager (OSM)', badge: 'Always Active • No Key Required' },
+                    { id: 'osm', name: 'OpenStreetMap (Official)', badge: 'Always Free • Zero Watermarks' },
+                    { id: 'esri_streets', name: 'Esri World Streets', badge: 'Modern Vector Clean • Verified' },
                     { id: 'satellite', name: 'Satellite Imagery (Esri)', badge: 'Active • High-Res Aerial' },
                     { id: 'maptiler', name: 'MapTiler Vector HD', badge: 'Requires Key from maptiler.com' },
                     { id: 'geoapify', name: 'Geoapify Streets', badge: 'Requires Key from geoapify.com' }
@@ -892,15 +900,17 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping flex-shrink-0" />
                 <div>
                   <p className="font-bold">
-                    {mapProvider === 'carto'
-                      ? 'OpenStreetMap CartoDB Engine Active & Verified'
+                    {mapProvider === 'osm'
+                      ? 'Official OpenStreetMap Engine Active & Verified'
+                      : mapProvider === 'esri_streets'
+                      ? 'Esri World Street Engine Active & Verified'
                       : mapProvider === 'satellite'
                       ? 'High-Resolution Satellite Aerial Engine Active'
                       : 'Custom Map Key Verified'}
                   </p>
                   <p className="text-[11px] text-emerald-700">
-                    {mapProvider === 'carto'
-                      ? 'High-availability OpenStreetMap raster tiles rendered without rate limits or invalid key warnings.'
+                    {mapProvider === 'osm' || mapProvider === 'esri_streets' || mapProvider === 'satellite'
+                      ? 'Global raster & vector tiles active without rate limits or "API Key Required" watermarks.'
                       : 'Differential privacy & live Haversine distance engine active.'}
                   </p>
                 </div>
@@ -918,10 +928,10 @@ export const RealMapView: React.FC<RealMapViewProps> = ({
                 onClick={() => {
                   const trimmed = apiKeyInput.trim();
                   let chosenProvider = mapProvider;
-                  // If proprietary provider chosen without authentic external key, default to Carto to avoid invalid key errors
+                  // If proprietary provider chosen without authentic external key, default to OSM to avoid invalid key errors
                   if ((chosenProvider === 'maptiler' || chosenProvider === 'geoapify') && (!trimmed || trimmed.startsWith('pairup_') || trimmed.length < 15)) {
-                    chosenProvider = 'carto';
-                    setMapProvider('carto');
+                    chosenProvider = 'osm';
+                    setMapProvider('osm');
                   }
                   if (trimmed) {
                     setMapApiKey(trimmed);
