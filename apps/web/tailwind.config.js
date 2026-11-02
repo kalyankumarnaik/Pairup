@@ -74,6 +74,11 @@ module.exports = {
           foreground: '#64748B'
         },
         cloud: '#FAFAFD',
+        midnightInk: {
+          DEFAULT: '#0F172A',
+          light: '#1E293B',
+          muted: '#64748B'
+        },
         ink: {
           DEFAULT: '#0F172A',
           light: '#1E293B',

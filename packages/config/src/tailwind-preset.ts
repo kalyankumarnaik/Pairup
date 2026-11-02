@@ -28,6 +28,11 @@ export const tailwindPreset = {
           light: '#F5F3FF'
         },
         cloud: '#FAFAFD',
+        midnightInk: {
+          DEFAULT: '#0F172A',
+          light: '#1E293B',
+          muted: '#64748B'
+        },
         dangerRed: {
           DEFAULT: '#EF4444',
           hover: '#DC2626',

@@ -290,14 +290,14 @@ export const SafetyPage: React.FC = () => {
       {/* Header */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-borderSoft shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald/10 text-emerald text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold uppercase tracking-wider mb-2">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Community Trust & Date Safety</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-ink">
+          <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-slate-900">
             PairUp Safety Center
           </h1>
-          <p className="text-xs text-ink-muted mt-1 max-w-xl">
+          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1 max-w-xl">
             Live date check-in timers, 24/7 SOS dispatch, location masking, confidential reporting, and safety checklists.
           </p>
         </div>
@@ -313,7 +313,7 @@ export const SafetyPage: React.FC = () => {
 
       {statusMessage && (
         <div className="p-4 rounded-2xl bg-lavender-light border border-violet/30 text-xs font-bold text-violet animate-in fade-in flex items-center gap-2 shadow-xs">
-          <CheckCircle className="w-4 h-4 text-emerald" />
+          <CheckCircle className="w-4 h-4 text-emerald-600" />
           <span>{statusMessage}</span>
         </div>
       )}
@@ -321,7 +321,7 @@ export const SafetyPage: React.FC = () => {
       {/* ================================================================= */}
       {/* 1. DATE CHECK-IN REMINDER & LIVE TIMER (PERSISTENT) */}
       {/* ================================================================= */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-midnightInk via-midnightInk to-midnightInk/95 text-white shadow-xl relative overflow-hidden border border-white/10">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#0F172A] bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] text-white shadow-xl relative overflow-hidden border border-white/15">
         <div className="absolute top-0 right-0 w-80 h-80 bg-coral/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
         <div className="relative z-10 space-y-6">
@@ -331,10 +331,10 @@ export const SafetyPage: React.FC = () => {
                 <Bell className="w-3.5 h-3.5 animate-bounce" />
                 <span>Active Date Safety Guard</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-display font-bold">
+              <h2 className="text-xl sm:text-2xl font-display font-bold text-white">
                 Live Date Check-In & Safety Timer
               </h2>
-              <p className="text-xs text-white/70 mt-1 max-w-lg">
+              <p className="text-xs text-white/85 font-medium mt-1 max-w-lg leading-relaxed">
                 Meeting someone in person? Set a timer. When it expires, you can confirm you're safe, trigger an excuse call, or dispatch an emergency SOS.
               </p>
             </div>
@@ -349,11 +349,11 @@ export const SafetyPage: React.FC = () => {
           </div>
 
           {/* Timer Card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-5 rounded-2xl border border-white/15 backdrop-blur-sm">
             {/* Left: Configuration Inputs */}
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <div>
-                <label className="block text-[11px] font-bold text-white/80 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1.5">
                   Who Are You Meeting?
                 </label>
                 <input
@@ -362,29 +362,29 @@ export const SafetyPage: React.FC = () => {
                   onChange={(e) => setDatePartnerName(e.target.value)}
                   placeholder="Match name (e.g. Ananya)"
                   disabled={isTimerRunning}
-                  className="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs focus:outline-none focus:border-coral disabled:opacity-50"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 text-xs font-medium focus:outline-none focus:border-coral disabled:opacity-50"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-white/80 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1.5">
                   Location / Venue
                 </label>
                 <div className="relative">
-                  <MapPin className="w-3.5 h-3.5 text-coral absolute left-3 top-3" />
+                  <MapPin className="w-4 h-4 text-coral absolute left-3 top-3" />
                   <input
                     type="text"
                     value={dateVenue}
                     onChange={(e) => setDateVenue(e.target.value)}
                     placeholder="Cafe or restaurant name"
                     disabled={isTimerRunning}
-                    className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs focus:outline-none focus:border-coral disabled:opacity-50"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 text-xs font-medium focus:outline-none focus:border-coral disabled:opacity-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-white/80 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1.5">
                   Emergency Contact (SMS Guardian)
                 </label>
                 <input
@@ -393,13 +393,13 @@ export const SafetyPage: React.FC = () => {
                   onChange={(e) => setEmergencyContact(e.target.value)}
                   placeholder="Friend name and phone number"
                   disabled={isTimerRunning}
-                  className="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs focus:outline-none focus:border-coral disabled:opacity-50"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 text-xs font-medium focus:outline-none focus:border-coral disabled:opacity-50"
                 />
               </div>
 
               {/* Duration presets */}
               <div>
-                <label className="block text-[11px] font-bold text-white/80 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1.5">
                   Check-In Interval
                 </label>
                 <div className="flex items-center gap-1.5">
@@ -415,7 +415,7 @@ export const SafetyPage: React.FC = () => {
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                         selectedDurationMins === mins
                           ? 'bg-coral text-white shadow-sm'
-                          : 'bg-white/10 text-white/70 hover:bg-white/20 disabled:opacity-40'
+                          : 'bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40'
                       }`}
                     >
                       {mins}m
@@ -426,18 +426,18 @@ export const SafetyPage: React.FC = () => {
             </div>
 
             {/* Right: Live Clock Display */}
-            <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-black/20 border border-white/10 text-center">
+            <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-black/25 border border-white/15 text-center">
               <div className="relative flex items-center justify-center w-36 h-36 my-2">
                 <div
                   className={`w-full h-full rounded-full border-4 ${
                     isTimerRunning ? 'border-coral animate-pulse' : 'border-white/20'
                   } flex flex-col items-center justify-center`}
                 >
-                  <Clock className={`w-5 h-5 mb-1 ${isTimerRunning ? 'text-coral' : 'text-white/40'}`} />
-                  <span className="text-3xl font-display font-black tracking-tight">
+                  <Clock className={`w-5 h-5 mb-1 ${isTimerRunning ? 'text-coral' : 'text-white/50'}`} />
+                  <span className="text-3xl font-display font-black tracking-tight text-white">
                     {formatTimer(secondsRemaining)}
                   </span>
-                  <span className="text-[10px] text-white/60 font-semibold">
+                  <span className="text-xs text-white/80 font-bold mt-1">
                     {isTimerRunning ? 'Active Safe Timer' : 'Ready to Start'}
                   </span>
                 </div>
@@ -449,13 +449,13 @@ export const SafetyPage: React.FC = () => {
                   <>
                     <button
                       onClick={() => handleExtendTimer(30)}
-                      className="flex-1 py-2 rounded-xl bg-emerald hover:bg-emerald/90 text-white text-xs font-bold shadow-sm transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all"
                     >
                       +30m Extend
                     </button>
                     <button
                       onClick={handleStopTimer}
-                      className="flex-1 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all"
                     >
                       End Date Safe
                     </button>
@@ -475,7 +475,7 @@ export const SafetyPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowCheckInAlert(true)}
-                className="mt-3 text-[10px] text-coral hover:underline font-semibold"
+                className="mt-3 text-xs text-peach hover:underline font-bold"
               >
                 Test Check-In Reminder Alert Popup 🔔
               </button>
@@ -490,11 +490,11 @@ export const SafetyPage: React.FC = () => {
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-display font-bold text-ink flex items-center gap-2">
+            <h3 className="text-base font-display font-bold text-slate-900 flex items-center gap-2">
               <Sliders className="w-4 h-4 text-violet" />
               <span>Privacy & Discovery Shield Settings</span>
             </h3>
-            <p className="text-xs text-ink-muted mt-0.5">
+            <p className="text-xs text-slate-600 font-medium mt-0.5">
               Control how your profile and presence are exposed to nearby members.
             </p>
           </div>
@@ -505,21 +505,21 @@ export const SafetyPage: React.FC = () => {
           <div
             onClick={() => togglePreference('locationMasking')}
             className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
-              preferences.locationMasking ? 'bg-lavender-light/40 border-violet/30' : 'bg-cloud border-borderSoft'
+              preferences.locationMasking ? 'bg-violet-50/70 border-violet/40' : 'bg-slate-50 border-slate-200'
             }`}
           >
             <div>
-              <p className="text-xs font-bold text-ink flex items-center gap-1.5">
+              <p className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-violet" />
                 <span>Location Masking</span>
               </p>
-              <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
                 Generalize distance to ~3–5km zone. Exact GPS coordinates are never stored or revealed.
               </p>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
-                preferences.locationMasking ? 'bg-violet justify-end' : 'bg-borderSoft justify-start'
+              className={`w-11 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
+                preferences.locationMasking ? 'bg-violet justify-end' : 'bg-slate-300 justify-start'
               }`}
             >
               <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
@@ -530,21 +530,21 @@ export const SafetyPage: React.FC = () => {
           <div
             onClick={() => togglePreference('incognitoBrowsing')}
             className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
-              preferences.incognitoBrowsing ? 'bg-lavender-light/40 border-violet/30' : 'bg-cloud border-borderSoft'
+              preferences.incognitoBrowsing ? 'bg-violet-50/70 border-violet/40' : 'bg-slate-50 border-slate-200'
             }`}
           >
             <div>
-              <p className="text-xs font-bold text-ink flex items-center gap-1.5">
+              <p className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <EyeOff className="w-3.5 h-3.5 text-violet" />
                 <span>Incognito Browsing Mode</span>
               </p>
-              <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
                 Browse public profiles and swipe decks without leaving visitor footprints.
               </p>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
-                preferences.incognitoBrowsing ? 'bg-violet justify-end' : 'bg-borderSoft justify-start'
+              className={`w-11 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
+                preferences.incognitoBrowsing ? 'bg-violet justify-end' : 'bg-slate-300 justify-start'
               }`}
             >
               <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
@@ -555,21 +555,21 @@ export const SafetyPage: React.FC = () => {
           <div
             onClick={() => togglePreference('strictAdultShield')}
             className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
-              preferences.strictAdultShield ? 'bg-lavender-light/40 border-violet/30' : 'bg-cloud border-borderSoft'
+              preferences.strictAdultShield ? 'bg-emerald-50/70 border-emerald-400' : 'bg-slate-50 border-slate-200'
             }`}
           >
             <div>
-              <p className="text-xs font-bold text-ink flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald" />
+              <p className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Strict 18+ Age Verification Shield</span>
               </p>
-              <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
                 Only show profiles that have completed government ID or date-of-birth validation.
               </p>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
-                preferences.strictAdultShield ? 'bg-emerald justify-end' : 'bg-borderSoft justify-start'
+              className={`w-11 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
+                preferences.strictAdultShield ? 'bg-emerald-600 justify-end' : 'bg-slate-300 justify-start'
               }`}
             >
               <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
@@ -580,21 +580,21 @@ export const SafetyPage: React.FC = () => {
           <div
             onClick={() => togglePreference('photoSafetyBlur')}
             className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
-              preferences.photoSafetyBlur ? 'bg-lavender-light/40 border-violet/30' : 'bg-cloud border-borderSoft'
+              preferences.photoSafetyBlur ? 'bg-rose-50/70 border-rose-300' : 'bg-slate-50 border-slate-200'
             }`}
           >
             <div>
-              <p className="text-xs font-bold text-ink flex items-center gap-1.5">
+              <p className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-coral" />
                 <span>Chat Media Safety Blur</span>
               </p>
-              <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
                 Automatically blur images in chats until you explicitly tap to view them.
               </p>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
-                preferences.photoSafetyBlur ? 'bg-coral justify-end' : 'bg-borderSoft justify-start'
+              className={`w-11 h-6 rounded-full transition-colors flex items-center p-0.5 flex-shrink-0 ${
+                preferences.photoSafetyBlur ? 'bg-coral justify-end' : 'bg-slate-300 justify-start'
               }`}
             >
               <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
@@ -606,69 +606,69 @@ export const SafetyPage: React.FC = () => {
       {/* ================================================================= */}
       {/* 3. DATE READINESS SAFETY CHECKLIST */}
       {/* ================================================================= */}
-      <div className="p-6 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-display font-bold text-ink flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-emerald" />
+            <h3 className="text-base font-display font-bold text-slate-900 flex items-center gap-2">
+              <CheckSquare className="w-4 h-4 text-emerald-600" />
               <span>In-Person Date Safety Checklist</span>
             </h3>
-            <p className="text-xs text-ink-muted mt-0.5">
+            <p className="text-xs text-slate-600 font-medium mt-0.5">
               Before meeting anyone from PairUp, complete this recommended safety routine.
             </p>
           </div>
-          <span className="px-3 py-1 rounded-xl bg-emerald/10 text-emerald font-black text-xs">
+          <span className="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-black text-xs">
             {checklistScore} / 4 Ready
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
           <button
             onClick={() => toggleChecklistItem('publicVenue')}
-            className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-3 ${
-              checklist.publicVenue ? 'bg-emerald/5 border-emerald/30 text-ink' : 'bg-cloud border-borderSoft text-ink-muted'
+            className={`p-3.5 rounded-2xl border text-left transition-all flex items-center gap-3 ${
+              checklist.publicVenue ? 'bg-emerald-50/70 border-emerald-300 text-slate-900' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}
           >
-            <div className={`w-5 h-5 rounded-lg flex items-center justify-center ${checklist.publicVenue ? 'bg-emerald text-white' : 'border border-borderSoft'}`}>
-              {checklist.publicVenue && <Check className="w-3.5 h-3.5" />}
+            <div className={`w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 ${checklist.publicVenue ? 'bg-emerald-600 text-white' : 'border-2 border-slate-300 bg-white'}`}>
+              {checklist.publicVenue && <Check className="w-3.5 h-3.5 stroke-[3]" />}
             </div>
-            <span className="text-xs font-semibold">Meeting in a public, well-lit cafe or restaurant</span>
+            <span className="text-xs font-bold leading-snug">Meeting in a public, well-lit cafe or restaurant</span>
           </button>
 
           <button
             onClick={() => toggleChecklistItem('shareWithFriend')}
-            className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-3 ${
-              checklist.shareWithFriend ? 'bg-emerald/5 border-emerald/30 text-ink' : 'bg-cloud border-borderSoft text-ink-muted'
+            className={`p-3.5 rounded-2xl border text-left transition-all flex items-center gap-3 ${
+              checklist.shareWithFriend ? 'bg-emerald-50/70 border-emerald-300 text-slate-900' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}
           >
-            <div className={`w-5 h-5 rounded-lg flex items-center justify-center ${checklist.shareWithFriend ? 'bg-emerald text-white' : 'border border-borderSoft'}`}>
-              {checklist.shareWithFriend && <Check className="w-3.5 h-3.5" />}
+            <div className={`w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 ${checklist.shareWithFriend ? 'bg-emerald-600 text-white' : 'border-2 border-slate-300 bg-white'}`}>
+              {checklist.shareWithFriend && <Check className="w-3.5 h-3.5 stroke-[3]" />}
             </div>
-            <span className="text-xs font-semibold">Shared venue and meeting time with a trusted friend</span>
+            <span className="text-xs font-bold leading-snug">Shared venue and meeting time with a trusted friend</span>
           </button>
 
           <button
             onClick={() => toggleChecklistItem('ownTransport')}
-            className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-3 ${
-              checklist.ownTransport ? 'bg-emerald/5 border-emerald/30 text-ink' : 'bg-cloud border-borderSoft text-ink-muted'
+            className={`p-3.5 rounded-2xl border text-left transition-all flex items-center gap-3 ${
+              checklist.ownTransport ? 'bg-emerald-50/70 border-emerald-300 text-slate-900' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}
           >
-            <div className={`w-5 h-5 rounded-lg flex items-center justify-center ${checklist.ownTransport ? 'bg-emerald text-white' : 'border border-borderSoft'}`}>
-              {checklist.ownTransport && <Check className="w-3.5 h-3.5" />}
+            <div className={`w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 ${checklist.ownTransport ? 'bg-emerald-600 text-white' : 'border-2 border-slate-300 bg-white'}`}>
+              {checklist.ownTransport && <Check className="w-3.5 h-3.5 stroke-[3]" />}
             </div>
-            <span className="text-xs font-semibold">Arranged own transport to and from the location</span>
+            <span className="text-xs font-bold leading-snug">Arranged own transport to and from the location</span>
           </button>
 
           <button
             onClick={() => toggleChecklistItem('phoneCharged')}
-            className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-3 ${
-              checklist.phoneCharged ? 'bg-emerald/5 border-emerald/30 text-ink' : 'bg-cloud border-borderSoft text-ink-muted'
+            className={`p-3.5 rounded-2xl border text-left transition-all flex items-center gap-3 ${
+              checklist.phoneCharged ? 'bg-emerald-50/70 border-emerald-300 text-slate-900' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}
           >
-            <div className={`w-5 h-5 rounded-lg flex items-center justify-center ${checklist.phoneCharged ? 'bg-emerald text-white' : 'border border-borderSoft'}`}>
-              {checklist.phoneCharged && <Check className="w-3.5 h-3.5" />}
+            <div className={`w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 ${checklist.phoneCharged ? 'bg-emerald-600 text-white' : 'border-2 border-slate-300 bg-white'}`}>
+              {checklist.phoneCharged && <Check className="w-3.5 h-3.5 stroke-[3]" />}
             </div>
-            <span className="text-xs font-semibold">Phone battery charged & emergency contacts saved</span>
+            <span className="text-xs font-bold leading-snug">Phone battery charged & emergency contacts saved</span>
           </button>
         </div>
       </div>
@@ -680,26 +680,26 @@ export const SafetyPage: React.FC = () => {
         {/* Blocked Users Manager */}
         <div className="p-6 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-display font-bold text-sm text-ink flex items-center gap-2">
+            <h3 className="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
               <UserX className="w-4 h-4 text-dangerRed" />
               <span>Blocked Profiles ({blockedUsers.length})</span>
             </h3>
           </div>
-          <p className="text-[11px] text-ink-muted">
+          <p className="text-xs text-slate-600 font-medium">
             Blocked members cannot see your profile on the radar or message you.
           </p>
 
-          <div className="divide-y divide-borderSoft/60 max-h-48 overflow-y-auto">
+          <div className="divide-y divide-slate-100 max-h-48 overflow-y-auto">
             {blockedUsers.length > 0 ? (
               blockedUsers.map((u) => (
                 <div key={u.id} className="py-2.5 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs font-bold text-ink">{u.name}</p>
-                    <p className="text-[10px] text-ink-muted">{u.reason} • {u.date}</p>
+                    <p className="text-xs font-bold text-slate-900">{u.name}</p>
+                    <p className="text-[11px] text-slate-500 font-medium">{u.reason} • {u.date}</p>
                   </div>
                   <button
                     onClick={() => handleUnblockUser(u.id, u.name)}
-                    className="px-2.5 py-1 rounded-lg bg-cloud hover:bg-lavender-light text-[10px] font-bold text-violet transition-colors flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-xs font-bold text-violet transition-colors flex items-center gap-1"
                   >
                     <Unlock className="w-3 h-3" />
                     <span>Unblock</span>
@@ -707,7 +707,7 @@ export const SafetyPage: React.FC = () => {
                 </div>
               ))
             ) : (
-              <p className="py-4 text-xs text-ink-muted text-center italic">No blocked users</p>
+              <p className="py-4 text-xs text-slate-500 font-medium text-center italic">No blocked users</p>
             )}
           </div>
         </div>
@@ -715,30 +715,30 @@ export const SafetyPage: React.FC = () => {
         {/* Submitted Reports History */}
         <div className="p-6 rounded-3xl bg-white border border-borderSoft shadow-sm space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-display font-bold text-sm text-ink flex items-center gap-2">
+            <h3 className="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
               <FileText className="w-4 h-4 text-violet" />
               <span>Your Safety Reports ({submittedReports.length})</span>
             </h3>
           </div>
-          <p className="text-[11px] text-ink-muted">
+          <p className="text-xs text-slate-600 font-medium">
             Reports are reviewed by human safety officers 24/7.
           </p>
 
-          <div className="divide-y divide-borderSoft/60 max-h-48 overflow-y-auto">
+          <div className="divide-y divide-slate-100 max-h-48 overflow-y-auto">
             {submittedReports.length > 0 ? (
               submittedReports.map((r) => (
                 <div key={r.id} className="py-2.5 flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-ink truncate">{r.reportedUser}</p>
-                    <p className="text-[10px] text-ink-muted truncate">{r.category} • {r.date}</p>
+                    <p className="text-xs font-bold text-slate-900 truncate">{r.reportedUser}</p>
+                    <p className="text-[11px] text-slate-500 font-medium truncate">{r.category} • {r.date}</p>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-extrabold flex-shrink-0">
+                  <span className="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black tracking-wide flex-shrink-0">
                     {r.status}
                   </span>
                 </div>
               ))
             ) : (
-              <p className="py-4 text-xs text-ink-muted text-center italic">No active safety reports filed</p>
+              <p className="py-4 text-xs text-slate-500 font-medium text-center italic">No active safety reports filed</p>
             )}
           </div>
         </div>
@@ -747,62 +747,62 @@ export const SafetyPage: React.FC = () => {
       {/* ================================================================= */}
       {/* 5. EMERGENCY CONTACT HELPLINES (INDIA 24x7) */}
       {/* ================================================================= */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-midnightInk text-white space-y-4">
-        <h3 className="font-display font-bold text-base flex items-center gap-2">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#0F172A] text-white space-y-4 border border-white/15 shadow-xl">
+        <h3 className="font-display font-bold text-base text-white flex items-center gap-2">
           <PhoneCall className="w-5 h-5 text-coral" />
           <span>Emergency Assistance Helplines (India 24x7 Direct Dial)</span>
         </h3>
-        <p className="text-xs text-white/70">
+        <p className="text-xs text-white/85 font-medium leading-relaxed">
           In case of immediate threat, touch to call national response lines without unlocking PairUp:
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs pt-1">
           <a
             href="tel:112"
-            className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors block cursor-pointer group"
+            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 block cursor-pointer group shadow-sm"
           >
-            <p className="font-bold text-peach flex items-center justify-between">
+            <p className="font-bold text-amber-300 flex items-center justify-between text-xs">
               <span>National Police & SOS</span>
-              <span className="text-[10px] group-hover:underline">Call ↗</span>
+              <span className="text-[10px] group-hover:underline text-amber-200">Call ↗</span>
             </p>
-            <p className="text-xl font-display font-black mt-0.5">112</p>
-            <p className="text-[10px] text-white/70">Police, Ambulance, Fire</p>
+            <p className="text-2xl font-display font-black text-white mt-1">112</p>
+            <p className="text-[11px] text-white/85 font-medium mt-0.5">Police, Ambulance, Fire</p>
           </a>
 
           <a
             href="tel:1091"
-            className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors block cursor-pointer group"
+            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 block cursor-pointer group shadow-sm"
           >
-            <p className="font-bold text-coral flex items-center justify-between">
+            <p className="font-bold text-rose-300 flex items-center justify-between text-xs">
               <span>Women Helpline</span>
-              <span className="text-[10px] group-hover:underline">Call ↗</span>
+              <span className="text-[10px] group-hover:underline text-rose-200">Call ↗</span>
             </p>
-            <p className="text-xl font-display font-black mt-0.5">1091</p>
-            <p className="text-[10px] text-white/70">Toll-free 24x7 Support</p>
+            <p className="text-2xl font-display font-black text-white mt-1">1091</p>
+            <p className="text-[11px] text-white/85 font-medium mt-0.5">Toll-free 24x7 Support</p>
           </a>
 
           <a
             href="tel:1930"
-            className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors block cursor-pointer group"
+            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 block cursor-pointer group shadow-sm"
           >
-            <p className="font-bold text-violet-light flex items-center justify-between">
+            <p className="font-bold text-violet-300 flex items-center justify-between text-xs">
               <span>Cyber Fraud Reporting</span>
-              <span className="text-[10px] group-hover:underline">Call ↗</span>
+              <span className="text-[10px] group-hover:underline text-violet-200">Call ↗</span>
             </p>
-            <p className="text-xl font-display font-black mt-0.5">1930</p>
-            <p className="text-[10px] text-white/70">Financial fraud defense</p>
+            <p className="text-2xl font-display font-black text-white mt-1">1930</p>
+            <p className="text-[11px] text-white/85 font-medium mt-0.5">Financial fraud defense</p>
           </a>
 
           <a
             href="tel:108"
-            className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors block cursor-pointer group"
+            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 block cursor-pointer group shadow-sm"
           >
-            <p className="font-bold text-emerald flex items-center justify-between">
+            <p className="font-bold text-emerald-300 flex items-center justify-between text-xs">
               <span>Emergency Medical</span>
-              <span className="text-[10px] group-hover:underline">Call ↗</span>
+              <span className="text-[10px] group-hover:underline text-emerald-200">Call ↗</span>
             </p>
-            <p className="text-xl font-display font-black mt-0.5">108</p>
-            <p className="text-[10px] text-white/70">Paramedic Ambulance</p>
+            <p className="text-2xl font-display font-black text-white mt-1">108</p>
+            <p className="text-[11px] text-white/85 font-medium mt-0.5">Paramedic Ambulance</p>
           </a>
         </div>
       </div>
@@ -811,23 +811,23 @@ export const SafetyPage: React.FC = () => {
       {/* MODAL: CHECK-IN REMINDER POPUP */}
       {/* ================================================================= */}
       {showCheckInAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/80 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-borderSoft text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 text-center">
             <div className="w-14 h-14 rounded-full bg-coral-light text-coral flex items-center justify-center mx-auto mb-3 shadow-sm animate-bounce">
               <Bell className="w-7 h-7" />
             </div>
 
-            <h3 className="text-lg font-display font-bold text-ink">
+            <h3 className="text-lg font-display font-bold text-slate-900">
               PairUp Safety Check-In 💖
             </h3>
-            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
-              Hey! Your check-in timer for your meetup with <strong className="text-ink">{datePartnerName}</strong> at <strong className="text-ink">{dateVenue}</strong> just rang. Are you having a comfortable time?
+            <p className="text-xs text-slate-600 font-medium mt-1.5 leading-relaxed">
+              Hey! Your check-in timer for your meetup with <strong className="text-slate-900 font-bold">{datePartnerName}</strong> at <strong className="text-slate-900 font-bold">{dateVenue}</strong> just rang. Are you having a comfortable time?
             </p>
 
-            <div className="space-y-2 mt-6">
+            <div className="space-y-2.5 mt-6">
               <button
                 onClick={() => handleExtendTimer(45)}
-                className="w-full py-3 rounded-2xl bg-emerald text-white text-xs font-bold shadow-md hover:bg-emerald/90 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-2xl bg-emerald-600 text-white text-xs font-bold shadow-md hover:bg-emerald-500 transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 <span>I'm Safe & Having Fun (+45m Extend)</span>
@@ -863,14 +863,14 @@ export const SafetyPage: React.FC = () => {
       {/* MODAL: FAKE CALL EXCUSE SIMULATION */}
       {/* ================================================================= */}
       {fakeCallActive && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/90 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-sm rounded-3xl bg-midnightInk text-white p-7 text-center shadow-2xl border border-white/20">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-[#0F172A] text-white p-7 text-center shadow-2xl border border-white/20">
             <div className="w-20 h-20 rounded-full bg-coral/20 ring-4 ring-coral/50 flex items-center justify-center mx-auto my-4 animate-pulse">
               <Phone className="w-10 h-10 text-coral" />
             </div>
-            <h3 className="text-xl font-bold font-display">Incoming Call...</h3>
+            <h3 className="text-xl font-bold font-display text-white">Incoming Call...</h3>
             <p className="text-xs text-coral font-bold mt-1">Mom / Work Emergency</p>
-            <p className="text-[11px] text-white/70 mt-3 leading-relaxed">
+            <p className="text-xs text-white/85 font-medium mt-3 leading-relaxed">
               "Hey, I need you home right now!" Use this screen as a polite, immediate excuse to leave your date safely.
             </p>
 
@@ -888,8 +888,8 @@ export const SafetyPage: React.FC = () => {
       {/* MODAL: EMERGENCY SOS PROTOCOL */}
       {/* ================================================================= */}
       {showSosModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/90 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-md rounded-3xl bg-midnightInk text-white p-6 sm:p-7 shadow-2xl border border-dangerRed/40 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-md rounded-3xl bg-[#0F172A] text-white p-6 sm:p-7 shadow-2xl border border-dangerRed/50 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-dangerRed">
                 <AlertTriangle className="w-6 h-6 animate-ping" />
@@ -897,13 +897,13 @@ export const SafetyPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowSosModal(false)}
-                className="p-1 rounded-full hover:bg-white/10 text-white/70"
+                className="p-1 rounded-full hover:bg-white/10 text-white/80"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-white/80 leading-relaxed">
+            <p className="text-xs text-white/90 font-medium leading-relaxed">
               If you are in immediate danger, call national emergency response lines right away. PairUp has prepared your distress alert.
             </p>
 
@@ -926,26 +926,26 @@ export const SafetyPage: React.FC = () => {
             </div>
 
             {/* SOS SMS message preview */}
-            <div className="p-4 rounded-2xl bg-white/10 border border-white/10 text-xs space-y-2">
+            <div className="p-4 rounded-2xl bg-white/10 border border-white/15 text-xs space-y-2">
               <div className="flex items-center justify-between">
-                <p className="font-bold text-coral flex items-center gap-1">
+                <p className="font-bold text-peach flex items-center gap-1.5">
                   <Send className="w-3.5 h-3.5" />
                   <span>Distress Alert for {emergencyContact}</span>
                 </p>
                 <button
                   onClick={copyDistressMessage}
-                  className="px-2 py-0.5 rounded-lg bg-white/20 hover:bg-white/30 text-[10px] font-bold text-white flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-xs font-bold text-white flex items-center gap-1 transition-colors"
                 >
-                  <Copy className="w-3 h-3" />
+                  <Copy className="w-3.5 h-3.5" />
                   <span>{smsCopied ? 'Copied!' : 'Copy'}</span>
                 </button>
               </div>
-              <p className="text-[11px] text-white/80 italic leading-relaxed bg-black/20 p-2.5 rounded-xl border border-white/5">
+              <p className="text-xs text-white font-medium italic leading-relaxed bg-black/30 p-3 rounded-xl border border-white/10">
                 "{sosMessageText}"
               </p>
               <a
                 href={`sms:${emergencyContact.split(' ')[0]}?body=${encodeURIComponent(sosMessageText)}`}
-                className="w-full py-2 rounded-xl bg-coral hover:bg-coral-hover text-white text-center font-bold text-xs block transition-colors"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-coral to-rose hover:opacity-95 text-white text-center font-bold text-xs block transition-all shadow-md"
               >
                 Open SMS App & Send Alert ↗
               </a>
@@ -969,27 +969,27 @@ export const SafetyPage: React.FC = () => {
       {/* MODAL: FILE A SAFETY REPORT */}
       {/* ================================================================= */}
       {showReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
-            <div className="flex items-center justify-between mb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-borderSoft">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5 text-dangerRed" />
-                <h3 className="text-base font-display font-bold text-ink">Submit Confidential Report</h3>
+                <h3 className="text-base font-display font-bold text-slate-900">Submit Confidential Report</h3>
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
+                className="p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-ink-muted mb-4">
+            <p className="text-xs text-slate-600 font-medium mb-4">
               All safety reports are strictly confidential. Our Trust & Safety team will review the account within 15 minutes.
             </p>
 
-            <form onSubmit={handleFileReport} className="space-y-3">
+            <form onSubmit={handleFileReport} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Member Display Name or User ID
                 </label>
                 <input
@@ -998,18 +998,18 @@ export const SafetyPage: React.FC = () => {
                   value={reportedUserName}
                   onChange={(e) => setReportedUserName(e.target.value)}
                   placeholder="e.g. Vikram Joshi or @username"
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:border-violet focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Violation Category
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as ReportCategory)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-semibold focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:border-violet focus:bg-white focus:outline-none"
                 >
                   <option value="HARASSMENT">Harassment, Threats or Abusive Language</option>
                   <option value="INAPPROPRIATE_CONTENT">Explicit or Non-Consensual Photos</option>
@@ -1021,7 +1021,7 @@ export const SafetyPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Detailed Explanation
                 </label>
                 <textarea
@@ -1030,12 +1030,12 @@ export const SafetyPage: React.FC = () => {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="Describe what occurred with as much detail as possible..."
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:border-violet focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
                   Evidence Notes / Screenshot Links (Optional)
                 </label>
                 <input
@@ -1043,7 +1043,7 @@ export const SafetyPage: React.FC = () => {
                   value={evidenceNotes}
                   onChange={(e) => setEvidenceNotes(e.target.value)}
                   placeholder="e.g. In chat on Oct 28 at 9:30 AM"
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:border-violet focus:bg-white focus:outline-none"
                 />
               </div>
 
@@ -1051,7 +1051,7 @@ export const SafetyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowReportModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-cloud text-ink text-xs font-bold"
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
                 >
                   Cancel
                 </button>
