@@ -97,7 +97,7 @@ export const RoomsPage: React.FC = () => {
               <span>Audio Stage</span>
             </span>
           </h1>
-          <p className="text-sm text-slate-600 font-medium mt-1">
+          <p className="text-xs text-ink-muted mt-1">
             Drop into live audio conversations. Listen in, raise your hand, and make friends.
           </p>
         </div>
@@ -118,14 +118,14 @@ export const RoomsPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-3xl">{activeRoom.emoji}</span>
               <div>
-                <h2 className="text-lg font-display font-bold leading-tight text-white">{activeRoom.title}</h2>
-                <p className="text-xs text-slate-300 font-medium">Category: {activeRoom.category}</p>
+                <h2 className="text-lg font-display font-bold leading-tight">{activeRoom.title}</h2>
+                <p className="text-xs text-white/70">Category: {activeRoom.category}</p>
               </div>
             </div>
 
             <button
               onClick={handleLeaveRoom}
-              className="px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-bold text-white transition-colors"
+              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors"
             >
               Leave Quietly ✌️
             </button>
@@ -133,7 +133,7 @@ export const RoomsPage: React.FC = () => {
 
           {/* Speakers Stage */}
           <div className="mb-8">
-            <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">
+            <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-4">
               Speakers On Stage 🎙️
             </p>
             <div className="flex items-center gap-6 flex-wrap">
@@ -171,7 +171,7 @@ export const RoomsPage: React.FC = () => {
                   />
                 </div>
                 <p className="text-xs font-bold text-white">You</p>
-                <span className="text-xs text-slate-300 font-medium">Listener</span>
+                <span className="text-[10px] text-white/60">Listener</span>
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@ export const RoomsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+            <div className="flex items-center gap-2 text-xs text-white/70">
               <Users className="w-4 h-4 text-coral" />
               <span>{activeRoom.activeCount} members listening</span>
             </div>
@@ -231,16 +231,16 @@ export const RoomsPage: React.FC = () => {
               </div>
 
               <h3 className="font-display font-bold text-base text-ink mb-1">{room.title}</h3>
-              <p className="text-xs text-slate-600 font-medium mb-4">{room.category}</p>
+              <p className="text-xs text-ink-muted mb-4">{room.category}</p>
 
               {/* Host Snippet */}
-              <div className="flex items-center gap-2 p-2.5 rounded-2xl bg-slate-50 border border-borderSoft mb-4">
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl bg-cloud mb-4">
                 <div className="w-8 h-8 rounded-full bg-lavender flex items-center justify-center font-bold text-violet text-xs">
                   {room.hostName[0]}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-ink truncate">Host: {room.hostName}</p>
-                  <p className="text-xs text-slate-500 font-medium">Public community room</p>
+                  <p className="text-[10px] text-ink-muted">Public community room</p>
                 </div>
               </div>
             </div>
@@ -257,13 +257,13 @@ export const RoomsPage: React.FC = () => {
 
       {/* Create Room Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-display font-bold text-ink">Start a Voice Room</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-1 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
+                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -271,7 +271,7 @@ export const RoomsPage: React.FC = () => {
 
             <form onSubmit={handleCreateRoom} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Room Title
                 </label>
                 <input
@@ -280,18 +280,18 @@ export const RoomsPage: React.FC = () => {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. Filter Coffee & Indie Jam ☕"
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Category
                 </label>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium text-slate-900"
+                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-sm font-medium"
                 >
                   <option value="Music & Chai">Music & Chai</option>
                   <option value="Travel & Outdoors">Travel & Outdoors</option>
@@ -301,7 +301,7 @@ export const RoomsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Room Emoji
                 </label>
                 <div className="flex gap-2">

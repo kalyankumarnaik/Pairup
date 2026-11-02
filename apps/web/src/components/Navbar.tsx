@@ -3,18 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Bell,
   Heart,
-  MapPin,
   MessageCircle,
   Shield,
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useLocation } from '../context/LocationContext';
 import { NotificationDrawer } from './NotificationDrawer';
 
 export const Navbar: React.FC = () => {
   const { user, profile, logout } = useAuth();
-  const { location } = useLocation();
   const navigate = useNavigate();
 
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
@@ -46,27 +43,14 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {user ? (
             <>
-              {/* Location Proximity Pill */}
-              <Link
-                to="/nearby"
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-violet-light border border-borderSoft hover:border-violet text-ink transition-all shadow-2xs"
-                title={`Current Location: ${location.city}${location.isGps ? ' (GPS Live)' : ''}`}
-              >
-                <MapPin className="w-3.5 h-3.5 text-coral" />
-                <span className="font-extrabold">{location.city}</span>
-                {location.isGps && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                )}
-              </Link>
-
               <Link
                 to="/discover"
-                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-violet text-white hover:bg-violet-hover transition-all shadow-sm shadow-violet/25 hover:scale-105 active:scale-95"
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold bg-violet-light text-violet hover:bg-violet hover:text-white transition-all shadow-sm"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4" />
                 <span>Swipe Deck</span>
               </Link>
 
@@ -74,12 +58,12 @@ export const Navbar: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowNotificationCenter(true)}
-                  className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-violet-light text-ink hover:text-violet transition-all shadow-2xs relative"
+                  className="p-2.5 rounded-xl hover:bg-cloud text-ink-muted hover:text-ink transition-colors relative"
                   title="Notifications & Activity"
                 >
-                  <Bell className="w-4 h-4" />
+                  <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-coral text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-pulse">
+                    <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-coral text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-pulse">
                       {unreadCount}
                     </span>
                   )}
@@ -95,11 +79,11 @@ export const Navbar: React.FC = () => {
               {/* Messages Link */}
               <Link
                 to="/messages"
-                className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-coral-light text-ink hover:text-coral transition-all shadow-2xs relative"
-                title="Messages & Video Calls"
+                className="p-2.5 rounded-xl hover:bg-muted text-ink-muted hover:text-ink transition-colors relative"
+                title="Messages"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-coral ring-2 ring-white"></span>
+                <MessageCircle className="w-5 h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-coral ring-2 ring-white"></span>
               </Link>
 
               <div className="flex items-center gap-3 pl-2 border-l border-borderSoft">
@@ -124,7 +108,7 @@ export const Navbar: React.FC = () => {
 
                 <button
                   onClick={logout}
-                  className="text-xs font-bold text-ink-muted hover:text-dangerRed px-2.5 py-1.5 rounded-xl border border-borderSoft hover:border-dangerRed/30 hover:bg-dangerRedLight/50 transition-colors"
+                  className="text-xs font-medium text-ink-muted hover:text-danger-red px-2 py-1 rounded-lg hover:bg-dangerRedLight/30 transition-colors"
                 >
                   Logout
                 </button>

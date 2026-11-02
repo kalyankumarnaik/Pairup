@@ -244,7 +244,7 @@ export const CommunitiesPage: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-ink">
             PairUp Communities
           </h1>
-          <p className="text-sm text-slate-600 font-medium mt-1 max-w-xl">
+          <p className="text-xs text-ink-muted mt-1 max-w-xl">
             Join local micro-communities based on real passions. Discuss topics, organize group meetups, and find friends who share your wavelength.
           </p>
         </div>
@@ -276,12 +276,12 @@ export const CommunitiesPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-2xl p-2 rounded-2xl bg-cloud">{club.emoji}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-xs font-bold text-slate-600">
+                  <span className="px-2 py-0.5 rounded-full bg-cloud text-[10px] font-bold text-ink-muted">
                     {club.memberCount} members
                   </span>
                 </div>
                 <h4 className="font-display font-bold text-sm text-ink leading-snug">{club.name}</h4>
-                <p className="text-xs text-slate-600 font-medium mt-2 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-ink-muted mt-2 line-clamp-2 leading-relaxed">
                   {club.description}
                 </p>
               </div>
@@ -290,7 +290,7 @@ export const CommunitiesPage: React.FC = () => {
                 <button
                   onClick={() => setSelectedClubId(selectedClubId === club.id ? 'ALL' : club.id)}
                   className={`text-xs font-bold ${
-                    selectedClubId === club.id ? 'text-violet underline' : 'text-slate-600 hover:text-slate-900'
+                    selectedClubId === club.id ? 'text-violet underline' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   {selectedClubId === club.id ? 'Viewing Posts' : 'View Feed'}
@@ -300,7 +300,7 @@ export const CommunitiesPage: React.FC = () => {
                   onClick={() => toggleJoinClub(club.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     club.isJoined
-                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-300 font-bold shadow-2xs'
+                      ? 'bg-cloud text-ink font-semibold'
                       : 'bg-violet text-white shadow-xs hover:bg-violet-hover'
                   }`}
                 >
@@ -343,13 +343,13 @@ export const CommunitiesPage: React.FC = () => {
                   />
                   <div>
                     <p className="text-xs font-bold text-ink">{post.authorName}</p>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-[10px] text-ink-muted">
                       {post.clubName} • {post.timeAgo}
                     </p>
                   </div>
                 </div>
 
-                <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-bold">
+                <span className="px-2.5 py-1 rounded-full bg-cloud text-ink text-[10px] font-bold">
                   Discussion
                 </span>
               </div>
@@ -358,25 +358,25 @@ export const CommunitiesPage: React.FC = () => {
                 <h4 className="text-sm sm:text-base font-display font-bold text-ink">
                   {post.title}
                 </h4>
-                <p className="text-sm text-slate-700 font-normal mt-1 leading-relaxed">
+                <p className="text-xs text-ink-muted mt-1 leading-relaxed">
                   {post.content}
                 </p>
               </div>
 
               {/* Engagement Bar */}
-              <div className="pt-3 border-t border-borderSoft/60 flex items-center justify-between text-xs text-slate-600 font-medium">
+              <div className="pt-3 border-t border-borderSoft/60 flex items-center justify-between text-xs text-ink-muted">
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => handleLikePost(post.id)}
                     className={`flex items-center gap-1.5 font-bold transition-colors ${
-                      post.hasLiked ? 'text-coral' : 'hover:text-slate-900'
+                      post.hasLiked ? 'text-coral' : 'hover:text-ink'
                     }`}
                   >
                     <Heart className={`w-4 h-4 ${post.hasLiked ? 'fill-current text-coral' : ''}`} />
                     <span>{post.likesCount} Likes</span>
                   </button>
 
-                  <button className="flex items-center gap-1.5 font-bold hover:text-slate-900 transition-colors">
+                  <button className="flex items-center gap-1.5 font-bold hover:text-ink transition-colors">
                     <MessageCircle className="w-4 h-4" />
                     <span>{post.commentsCount} Comments</span>
                   </button>
@@ -393,13 +393,13 @@ export const CommunitiesPage: React.FC = () => {
 
       {/* New Discussion Modal */}
       {showCreatePost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-display font-bold text-ink">Start a Discussion</h3>
               <button
                 onClick={() => setShowCreatePost(false)}
-                className="p-1 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
+                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -407,7 +407,7 @@ export const CommunitiesPage: React.FC = () => {
 
             <form onSubmit={handleCreatePost} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Topic Title
                 </label>
                 <input
@@ -416,12 +416,12 @@ export const CommunitiesPage: React.FC = () => {
                   value={postTitle}
                   onChange={(e) => setPostTitle(e.target.value)}
                   placeholder="e.g. Any coffee lovers visiting Bandra this Sunday?"
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Discussion Details
                 </label>
                 <textarea
@@ -430,7 +430,7 @@ export const CommunitiesPage: React.FC = () => {
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
                   placeholder="Share details, suggest a meetup venue or ask the community..."
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-violet focus:outline-none"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:border-violet focus:outline-none"
                 />
               </div>
 

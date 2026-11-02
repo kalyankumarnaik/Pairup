@@ -13,7 +13,6 @@ import {
   Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { apiClient } from '../lib/api';
 import { SwipeAction } from '@pairup/domain-types';
 
@@ -77,7 +76,6 @@ const MOCK_LIKES: LikeReceived[] = [
 ];
 
 export const LikesPage: React.FC = () => {
-  const { popNotification } = useNotificationPopup();
   const [likes, setLikes] = useState<LikeReceived[]>(MOCK_LIKES);
   const [filterType, setFilterType] = useState<'ALL' | 'SUPER' | 'NEARBY'>('ALL');
   const [unlockedGold, setUnlockedGold] = useState(false);
@@ -108,15 +106,6 @@ export const LikesPage: React.FC = () => {
   const handleMatchInstantly = async (like: LikeReceived) => {
     setMatchedIds((prev) => ({ ...prev, [like.id]: true }));
     setCelebrationMatch(like);
-
-    popNotification({
-      title: `Matched with ${like.name}! 💖`,
-      body: `You both liked each other! Start chatting or start an HD call now.`,
-      category: 'MATCH',
-      emoji: '💖',
-      actionUrl: '/messages'
-    });
-
     try {
       await apiClient.swipe(like.id, SwipeAction.LIKE, 'DATING');
     } catch {
@@ -164,7 +153,7 @@ export const LikesPage: React.FC = () => {
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   filterType === t
                     ? 'bg-violet text-white shadow-xs'
-                    : 'bg-white border border-borderSoft text-ink hover:text-violet hover:border-violet shadow-2xs'
+                    : 'bg-cloud text-ink-muted hover:text-ink'
                 }`}
               >
                 {t === 'ALL' ? 'All Likes (4)' : t === 'SUPER' ? '⭐ Super Likes (2)' : '📍 Nearby <5km (2)'}
@@ -173,7 +162,7 @@ export const LikesPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="text-xs text-slate-600 font-semibold">
+        <div className="text-xs text-ink-muted font-medium">
           {unlockedGold ? '🔓 Photos fully revealed' : '🔒 Photos blurred (Simulate Gold to reveal)'}
         </div>
       </div>
@@ -188,7 +177,7 @@ export const LikesPage: React.FC = () => {
               key={item.id}
               className="group rounded-3xl overflow-hidden bg-white border border-borderSoft shadow-sm hover:shadow-xl transition-all flex flex-col"
             >
-              <div className="relative h-72 overflow-hidden bg-slate-950">
+              <div className="relative h-72 overflow-hidden bg-midnightInk">
                 <img
                   src={item.photoUrl}
                   alt=""
@@ -196,7 +185,7 @@ export const LikesPage: React.FC = () => {
                     !unlockedGold && !isMatched ? 'blur-md scale-110' : 'group-hover:scale-105'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-midnightInk via-transparent to-transparent" />
 
                 {/* Super Like Badge */}
                 {item.isSuperLike && (
@@ -207,7 +196,7 @@ export const LikesPage: React.FC = () => {
                 )}
 
                 {/* Distance Badge */}
-                <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-slate-950/80 text-white text-xs font-bold backdrop-blur-md">
+                <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-midnightInk/70 text-white text-[10px] font-bold backdrop-blur-md">
                   ~{item.distanceKm} km
                 </div>
 
@@ -218,7 +207,7 @@ export const LikesPage: React.FC = () => {
                       <Lock className="w-5 h-5 text-amber" />
                     </div>
                     <p className="text-xs font-bold text-white">Liked You {item.timeAgo}</p>
-                    <p className="text-xs text-slate-200 font-medium mt-0.5">Match back to reveal profile</p>
+                    <p className="text-[10px] text-white/80 mt-0.5">Match back to reveal profile</p>
                   </div>
                 )}
 
@@ -227,7 +216,7 @@ export const LikesPage: React.FC = () => {
                   <h3 className="font-display font-bold text-lg leading-tight">
                     {unlockedGold || isMatched ? `${item.name}, ${item.age}` : `${item.name[0]}***, ${item.age}`}
                   </h3>
-                  <p className="text-xs text-slate-200 font-medium">{item.city} • Liked {item.timeAgo}</p>
+                  <p className="text-xs text-white/80">{item.city} • Liked {item.timeAgo}</p>
                 </div>
               </div>
 
@@ -237,7 +226,7 @@ export const LikesPage: React.FC = () => {
                   {item.interests.map((int, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded-lg bg-slate-100 text-xs font-bold text-slate-800"
+                      className="px-2 py-0.5 rounded-lg bg-cloud text-[10px] font-bold text-ink"
                     >
                       {int}
                     </span>
@@ -247,7 +236,7 @@ export const LikesPage: React.FC = () => {
                 {isMatched ? (
                   <Link
                     to="/messages"
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold text-center shadow-md flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl bg-emerald text-white text-xs font-bold text-center shadow-md flex items-center justify-center gap-1.5"
                   >
                     <Check className="w-4 h-4" />
                     <span>Matched! Open Chat 💬</span>
@@ -269,12 +258,12 @@ export const LikesPage: React.FC = () => {
 
       {/* Match Celebration Dialog */}
       {celebrationMatch && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-sm rounded-3xl bg-slate-900 text-white p-7 text-center shadow-2xl border border-coral/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/85 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-midnightInk text-white p-7 text-center shadow-2xl border border-coral/40">
             <span className="text-4xl animate-bounce">🎉</span>
             <h3 className="text-xl font-display font-black text-coral mt-2">IT'S A MATCH!</h3>
-            <p className="text-xs text-slate-200 font-medium mt-1">
-              You and <strong className="text-white font-bold">{celebrationMatch.name}</strong> liked each other!
+            <p className="text-xs text-white/80 mt-1">
+              You and <strong className="text-white">{celebrationMatch.name}</strong> liked each other!
             </p>
 
             <div className="flex items-center justify-center gap-3 my-6">
@@ -302,7 +291,7 @@ export const LikesPage: React.FC = () => {
               </Link>
               <button
                 onClick={() => setCelebrationMatch(null)}
-                className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors"
+                className="w-full py-2.5 rounded-xl bg-white/10 text-white/80 text-xs font-bold"
               >
                 Keep Exploring Likes
               </button>

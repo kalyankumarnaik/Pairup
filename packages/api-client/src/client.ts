@@ -204,12 +204,10 @@ export class PairUpApiClient {
     });
   }
 
-  async getNearbyProfiles(radiusKm: number = 25, city?: string): Promise<ApiResponse<DiscoveryCard[]>> {
-    let url = `${API_ROUTES.LOCATION.NEARBY_USERS}?radiusKm=${radiusKm}`;
-    if (city && city !== 'All') {
-      url += `&city=${encodeURIComponent(city)}`;
-    }
-    return this.request<DiscoveryCard[]>(url);
+  async getNearbyProfiles(radiusKm: number = 25): Promise<ApiResponse<DiscoveryCard[]>> {
+    return this.request<DiscoveryCard[]>(
+      `${API_ROUTES.LOCATION.NEARBY_USERS}?radiusKm=${radiusKm}`
+    );
   }
 
   // ---------------------------------------------------------------------------

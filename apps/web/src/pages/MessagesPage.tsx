@@ -28,8 +28,6 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useCall } from '../context/CallContext';
-import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { apiClient } from '../lib/api';
 import { ChatMessage, Conversation, MessageStatus, MessageType, ReportCategory } from '@pairup/domain-types';
 import { MOCK_CONVERSATIONS } from '../lib/mockData';
@@ -50,10 +48,18 @@ const ICEBREAKER_PROMPTS = [
   '🎭 Two truths and a lie: what is your most chaotic travel story so far?'
 ];
 
+interface CallSession {
+  active: boolean;
+  type: 'AUDIO' | 'VIDEO';
+  status: 'calling' | 'connected';
+  duration: number;
+  isMuted: boolean;
+  isSpeakerOn: boolean;
+  isVideoMuted: boolean;
+}
+
 export const MessagesPage: React.FC = () => {
   const { user } = useAuth();
-  const { startCall: triggerGlobalCall } = useCall();
-  const { popMessage } = useNotificationPopup();
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
   const [activeConvId, setActiveConvId] = useState<string | null>(MOCK_CONVERSATIONS[0].id);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -70,6 +76,10 @@ export const MessagesPage: React.FC = () => {
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [voicePlaybackProgress, setVoicePlaybackProgress] = useState(0);
   const playbackTimerRef = useRef<any>(null);
+
+  // Real-time Voice / Video Call state
+  const [callSession, setCallSession] = useState<CallSession | null>(null);
+  const callDurationRef = useRef<any>(null);
 
   // Rich Media Sharing modal & Lightbox
   const [showImageModal, setShowImageModal] = useState(false);
@@ -129,6 +139,18 @@ export const MessagesPage: React.FC = () => {
     }
     return () => clearInterval(playbackTimerRef.current);
   }, [playingVoiceId]);
+
+  // Call timer simulation
+  useEffect(() => {
+    if (callSession && callSession.status === 'connected') {
+      callDurationRef.current = setInterval(() => {
+        setCallSession((prev) => prev ? { ...prev, duration: prev.duration + 1 } : null);
+      }, 1000);
+    } else {
+      clearInterval(callDurationRef.current);
+    }
+    return () => clearInterval(callDurationRef.current);
+  }, [callSession?.status]);
 
   const loadConversations = async () => {
     try {
@@ -195,37 +217,6 @@ export const MessagesPage: React.FC = () => {
     } catch {
       // Offline fallback: message stays in state
     }
-
-    // Simulate peer replying and popping an interactive message toast
-    setTimeout(() => {
-      if (otherMember) {
-        const replyText = content.toLowerCase().includes('coffee')
-          ? 'Filter coffee in Bandra sounds great! ☕ What time works for you?'
-          : content.toLowerCase().includes('hi') || content.toLowerCase().includes('hello')
-          ? `Hey! Awesome to connect with you ✨`
-          : 'That sounds really interesting! Tell me more about it 😊';
-
-        const replyMsg: ChatMessage = {
-          id: `msg_reply_${Date.now()}`,
-          conversationId: activeConvId,
-          senderId: otherMember.userId || 'usr_peer',
-          type: MessageType.TEXT,
-          content: replyText,
-          status: MessageStatus.DELIVERED,
-          attachments: [],
-          reactions: [],
-          createdAt: new Date().toISOString()
-        };
-        setMessages((prev) => [...prev, replyMsg]);
-        popMessage({
-          senderId: otherMember.userId || 'usr_peer',
-          senderName: otherMember.displayName,
-          senderAvatar: otherMember.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
-          content: replyText,
-          conversationId: activeConvId
-        });
-      }
-    }, 2500);
   };
 
   // Image Upload handler
@@ -325,13 +316,49 @@ export const MessagesPage: React.FC = () => {
 
   // Real-time Voice / Video Call handlers
   const startCall = (type: 'AUDIO' | 'VIDEO') => {
-    if (!otherMember) return;
-    triggerGlobalCall(type, {
-      id: otherMember.userId || 'usr_peer',
-      name: otherMember.displayName || 'Match',
-      avatarUrl: otherMember.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600',
-      city: 'PairUp Match'
+    setCallSession({
+      active: true,
+      type,
+      status: 'calling',
+      duration: 0,
+      isMuted: false,
+      isSpeakerOn: true,
+      isVideoMuted: false
     });
+
+    // Simulate other participant picking up after 2.5 seconds
+    setTimeout(() => {
+      setCallSession((prev) => (prev ? { ...prev, status: 'connected' } : null));
+    }, 2500);
+  };
+
+  const endCall = () => {
+    if (!callSession || !activeConvId) {
+      setCallSession(null);
+      return;
+    }
+
+    const durationStr = formatDuration(callSession.duration);
+    const callLogMsg: ChatMessage = {
+      id: `msg_call_${Date.now()}`,
+      conversationId: activeConvId,
+      senderId: user?.id || 'usr_current',
+      type: MessageType.TEXT,
+      content: `${callSession.type === 'AUDIO' ? '📞 Voice Call' : '📹 Video Call'} ended • ${durationStr}`,
+      status: MessageStatus.READ,
+      attachments: [],
+      reactions: [],
+      createdAt: new Date().toISOString()
+    };
+
+    setMessages((prev) => [...prev, callLogMsg]);
+    setCallSession(null);
+  };
+
+  const formatDuration = (sec: number) => {
+    const mins = Math.floor(sec / 60);
+    const remainingSecs = sec % 60;
+    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
   };
 
   // Reactions
@@ -453,11 +480,11 @@ export const MessagesPage: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold text-ink truncate">{other?.displayName || 'Chat'}</p>
-                    <span className="text-xs text-slate-500 font-medium">
+                    <span className="text-[10px] text-ink-muted">
                       {conv.lastMessage ? 'Active' : ''}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 font-medium truncate mt-0.5">
+                  <p className="text-xs text-ink-muted truncate mt-0.5">
                     {conv.lastMessage?.content || 'Say hello ✨'}
                   </p>
                 </div>
@@ -493,29 +520,26 @@ export const MessagesPage: React.FC = () => {
             </div>
 
             {/* Calling & Menu Action Buttons */}
-            <div className="flex items-center gap-2 relative">
+            <div className="flex items-center gap-1.5 text-ink-muted relative">
               <button
                 onClick={() => startCall('AUDIO')}
-                title="Start Encrypted HD Voice Call"
-                className="px-3.5 py-2 rounded-xl bg-violet hover:bg-violet-hover text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-violet/25 hover:scale-105 active:scale-95 transition-all"
+                title="Start Voice Call"
+                className="p-2.5 rounded-xl bg-cloud hover:bg-violet-light text-ink hover:text-violet transition-all hover:scale-105 active:scale-95 shadow-2xs"
               >
-                <Phone className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Voice Call</span>
+                <Phone className="w-4 h-4" />
               </button>
               <button
                 onClick={() => startCall('VIDEO')}
-                title="Start Encrypted HD Video Call"
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-coral to-rose-500 hover:from-coral-hover hover:to-rose-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-coral/25 hover:scale-105 active:scale-95 transition-all"
+                title="Start Video Call"
+                className="p-2.5 rounded-xl bg-cloud hover:bg-coral-light text-ink hover:text-coral transition-all hover:scale-105 active:scale-95 shadow-2xs"
               >
-                <Video className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Video Call</span>
+                <Video className="w-4 h-4" />
               </button>
 
               <div className="relative">
                 <button
                   onClick={() => setShowOptionsMenu(!showOptionsMenu)}
-                  className="p-2 rounded-xl border border-borderSoft bg-white hover:bg-cloud text-ink shadow-2xs transition-colors"
-                  title="More Chat Options"
+                  className="p-2.5 rounded-xl hover:bg-cloud text-ink transition-colors"
                 >
                   <MoreVertical className="w-4 h-4" />
                 </button>
@@ -556,7 +580,7 @@ export const MessagesPage: React.FC = () => {
               <div className="inline-flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-white border border-borderSoft shadow-2xs">
                 <span className="text-2xl">💫</span>
                 <p className="text-xs font-bold text-ink">You and {otherMember?.displayName} matched!</p>
-                <p className="text-xs text-slate-500 font-medium">Encrypted end-to-end. Keep personal phone numbers private initially.</p>
+                <p className="text-[10px] text-ink-muted">Encrypted end-to-end. Keep personal phone numbers private initially.</p>
               </div>
             </div>
 
@@ -669,7 +693,7 @@ export const MessagesPage: React.FC = () => {
                           className="px-2 py-0.5 rounded-full bg-white border border-borderSoft text-[10px] shadow-2xs font-semibold flex items-center gap-1"
                         >
                           <span>{r.emoji}</span>
-                          <span className="text-slate-600 text-[10px] font-medium">1</span>
+                          <span className="text-ink-muted text-[9px]">1</span>
                         </span>
                       ))}
                     </div>
@@ -677,7 +701,7 @@ export const MessagesPage: React.FC = () => {
 
                   {/* Timestamp & Read Receipt */}
                   <div className="flex items-center gap-1 mt-1 px-1">
-                    <span className="text-[11px] text-slate-500 font-medium">
+                    <span className="text-[10px] text-ink-muted/70">
                       {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {isMe && (
@@ -700,7 +724,7 @@ export const MessagesPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setShowIcebreakers(false)}
-                  className="text-xs text-slate-600 hover:text-ink font-semibold"
+                  className="text-[11px] text-ink-muted hover:text-ink font-semibold"
                 >
                   Close
                 </button>
@@ -712,7 +736,7 @@ export const MessagesPage: React.FC = () => {
                     onClick={() => {
                       setInputContent(prompt);
                     }}
-                    className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-white border border-violet/30 hover:border-violet text-xs font-medium text-ink hover:text-violet shadow-2xs text-left max-w-xs transition-all hover:scale-102"
+                    className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-white border border-violet/30 hover:border-violet text-[11px] font-medium text-ink hover:text-violet shadow-2xs text-left max-w-xs transition-all hover:scale-102"
                   >
                     {prompt}
                   </button>
@@ -749,7 +773,7 @@ export const MessagesPage: React.FC = () => {
                       setIsRecordingVoice(false);
                       clearInterval(voiceTimerRef.current);
                     }}
-                    className="px-3 py-1 text-xs text-slate-600 hover:text-ink font-bold"
+                    className="px-3 py-1 text-xs text-ink-muted hover:text-ink font-semibold"
                   >
                     Cancel
                   </button>
@@ -768,10 +792,10 @@ export const MessagesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowIcebreakers(!showIcebreakers)}
-                  className={`p-2.5 rounded-xl border-2 transition-all font-bold ${
+                  className={`p-2.5 rounded-xl border transition-all ${
                     showIcebreakers
                       ? 'bg-violet text-white border-violet shadow-sm'
-                      : 'bg-violet-light text-violet border-violet/30 hover:bg-violet hover:text-white shadow-2xs'
+                      : 'bg-cloud hover:bg-lavender-light border-borderSoft text-violet hover:text-violet-hover'
                   }`}
                   title="AI Icebreakers & Starters"
                 >
@@ -782,20 +806,20 @@ export const MessagesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowImageModal(true)}
-                  className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-cloud text-ink hover:text-coral transition-colors shadow-2xs"
+                  className="p-2.5 rounded-xl hover:bg-cloud text-ink-muted hover:text-ink transition-colors"
                   title="Share Photo"
                 >
-                  <ImageIcon className="w-5 h-5 text-coral" />
+                  <ImageIcon className="w-5 h-5" />
                 </button>
 
                 {/* Voice Record Button */}
                 <button
                   type="button"
                   onClick={startVoiceRecording}
-                  className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-coral-light text-ink hover:text-coral transition-colors shadow-2xs"
+                  className="p-2.5 rounded-xl hover:bg-cloud text-ink-muted hover:text-coral transition-colors"
                   title="Record Voice Note"
                 >
-                  <Mic className="w-5 h-5 text-violet" />
+                  <Mic className="w-5 h-5" />
                 </button>
 
                 <input
@@ -803,28 +827,101 @@ export const MessagesPage: React.FC = () => {
                   value={inputContent}
                   onChange={(e) => setInputContent(e.target.value)}
                   placeholder={`Message ${otherMember?.displayName || 'match'}...`}
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400"
+                  className="flex-1 px-4 py-2.5 rounded-2xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet text-xs sm:text-sm font-medium"
                 />
 
                 <button
                   type="submit"
                   disabled={!inputContent.trim()}
-                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-violet to-violet-hover text-white hover:opacity-95 disabled:opacity-40 transition-all shadow-md shadow-violet/25 flex items-center gap-1.5 font-bold text-xs"
+                  className="p-2.5 rounded-2xl bg-gradient-to-r from-violet to-violet-hover text-white hover:opacity-95 disabled:opacity-40 transition-all shadow-sm"
                 >
-                  <span>Send</span>
-                  <Send className="w-3.5 h-3.5" />
+                  <Send className="w-4 h-4" />
                 </button>
               </form>
             )}
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-ink-muted">
           <p className="text-4xl mb-3">💬</p>
           <p className="text-base font-bold text-ink">Select a match to start chatting</p>
-          <p className="text-xs text-slate-600 font-medium mt-1 max-w-xs">
+          <p className="text-xs text-ink-muted mt-1 max-w-xs">
             Send icebreakers, share photos, leave voice notes, or initiate encrypted voice calls!
           </p>
+        </div>
+      )}
+
+      {/* ================================================================= */}
+      {/* 1. REAL-TIME VOICE / VIDEO CALL OVERLAY MODAL */}
+      {/* ================================================================= */}
+      {callSession && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/85 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-midnightInk text-white p-8 text-center shadow-2xl border border-white/10 flex flex-col items-center relative overflow-hidden">
+            {/* Ambient Background Aura */}
+            <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-violet/30 to-transparent pointer-events-none" />
+
+            {/* Avatar with Pulsing Rings */}
+            <div className="relative my-6">
+              <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-coral/50 shadow-2xl relative z-10">
+                <img
+                  src={otherMember?.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400'}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="animate-ping absolute inset-0 rounded-full bg-coral opacity-30"></span>
+              <span className="animate-pulse absolute -inset-3 rounded-full bg-violet opacity-20"></span>
+            </div>
+
+            <h3 className="text-xl font-display font-black text-white">
+              {otherMember?.displayName}
+            </h3>
+            <p className="text-xs font-bold text-coral mt-1 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-coral animate-ping" />
+              <span>
+                {callSession.status === 'calling'
+                  ? 'Calling & Ringing...'
+                  : `Connected • ${formatDuration(callSession.duration)}`}
+              </span>
+            </p>
+            <p className="text-[11px] text-white/60 mt-1">
+              Encrypted {callSession.type === 'AUDIO' ? 'HD Voice' : 'HD Video'} Stream
+            </p>
+
+            {/* In-Call Controls */}
+            <div className="flex items-center gap-4 mt-8">
+              {/* Mic Toggle */}
+              <button
+                onClick={() => setCallSession({ ...callSession, isMuted: !callSession.isMuted })}
+                className={`p-3.5 rounded-full transition-all ${
+                  callSession.isMuted ? 'bg-dangerRed text-white' : 'bg-white/20 hover:bg-white/30 text-white'
+                }`}
+                title="Mute Mic"
+              >
+                {callSession.isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+
+              {/* End Call Button */}
+              <button
+                onClick={endCall}
+                className="p-5 rounded-full bg-dangerRed hover:bg-dangerRed/90 text-white shadow-xl hover:scale-110 active:scale-95 transition-all"
+                title="End Call"
+              >
+                <PhoneOff className="w-7 h-7" />
+              </button>
+
+              {/* Speaker Toggle */}
+              <button
+                onClick={() => setCallSession({ ...callSession, isSpeakerOn: !callSession.isSpeakerOn })}
+                className={`p-3.5 rounded-full transition-all ${
+                  callSession.isSpeakerOn ? 'bg-violet text-white' : 'bg-white/20 hover:bg-white/30 text-white'
+                }`}
+                title="Speaker Mode"
+              >
+                {callSession.isSpeakerOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -832,7 +929,7 @@ export const MessagesPage: React.FC = () => {
       {/* 2. RICH MEDIA PHOTO ATTACHMENT MODAL */}
       {/* ================================================================= */}
       {showImageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -844,7 +941,7 @@ export const MessagesPage: React.FC = () => {
                   setShowImageModal(false);
                   setSelectedImageUrl('');
                 }}
-                className="p-1.5 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
+                className="p-1.5 rounded-full hover:bg-cloud text-ink-muted"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -853,11 +950,11 @@ export const MessagesPage: React.FC = () => {
             {/* Selected Image Preview or File Picker */}
             {selectedImageUrl ? (
               <div className="space-y-3">
-                <div className="relative h-52 rounded-2xl overflow-hidden bg-slate-950 border border-borderSoft">
+                <div className="relative h-52 rounded-2xl overflow-hidden bg-midnightInk border border-borderSoft">
                   <img src={selectedImageUrl} alt="Preview" className="w-full h-full object-cover" />
                   <button
                     onClick={() => setSelectedImageUrl('')}
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-950/70 text-white hover:bg-slate-950"
+                    className="absolute top-2 right-2 p-1.5 rounded-full bg-midnightInk/70 text-white hover:bg-midnightInk"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -867,7 +964,7 @@ export const MessagesPage: React.FC = () => {
                   value={imageCaption}
                   onChange={(e) => setImageCaption(e.target.value)}
                   placeholder="Add a nice caption (optional)..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:outline-none focus:border-violet"
                 />
                 <button
                   onClick={handleSendImage}
@@ -895,12 +992,12 @@ export const MessagesPage: React.FC = () => {
                     <Camera className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-bold text-ink">Choose Photo from Device</span>
-                  <span className="text-xs text-slate-500 font-medium">Supports JPG, PNG, WEBP</span>
+                  <span className="text-[10px] text-ink-muted">Supports JPG, PNG, WEBP</span>
                 </button>
 
                 {/* Instant curated photos */}
                 <div>
-                  <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+                  <p className="text-[11px] font-bold text-ink uppercase tracking-wider mb-2">
                     Or select an instant sample
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -912,7 +1009,7 @@ export const MessagesPage: React.FC = () => {
                         className="rounded-xl overflow-hidden border border-borderSoft hover:ring-2 hover:ring-coral relative group h-20"
                       >
                         <img src={sample.url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                        <span className="absolute bottom-1 inset-x-1 text-[10px] font-bold bg-slate-950/80 text-white rounded px-1 py-0.5 truncate text-center">
+                        <span className="absolute bottom-1 inset-x-1 text-[9px] font-bold bg-midnightInk/70 text-white rounded px-1 py-0.5 truncate text-center">
                           {sample.label}
                         </span>
                       </button>
@@ -931,13 +1028,13 @@ export const MessagesPage: React.FC = () => {
       {lightboxUrl && (
         <div
           onClick={() => setLightboxUrl(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md cursor-zoom-out animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/90 backdrop-blur-md cursor-zoom-out animate-in fade-in"
         >
           <div className="relative max-w-3xl max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-white/20">
             <img src={lightboxUrl} alt="" className="w-full h-full object-contain" />
             <button
               onClick={() => setLightboxUrl(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-slate-950/80 text-white hover:bg-slate-950"
+              className="absolute top-4 right-4 p-2 rounded-full bg-midnightInk/80 text-white hover:bg-midnightInk"
             >
               <X className="w-5 h-5" />
             </button>
@@ -949,7 +1046,7 @@ export const MessagesPage: React.FC = () => {
       {/* 4. REPORT USER SAFETY MODAL */}
       {/* ================================================================= */}
       {showReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -960,24 +1057,24 @@ export const MessagesPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="p-1 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
+                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 font-medium mb-4">
+            <p className="text-xs text-ink-muted mb-4">
               Your report is completely confidential. PairUp human moderators review reports within 15 minutes.
             </p>
 
             <form onSubmit={handleFileReport} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Reason for Report
                 </label>
                 <select
                   value={reportCategory}
                   onChange={(e) => setReportCategory(e.target.value as ReportCategory)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900"
+                  className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 >
                   <option value="HARASSMENT">Harassment or Abusive Language</option>
                   <option value="INAPPROPRIATE_CONTENT">Inappropriate or Explicit Photos</option>
@@ -989,7 +1086,7 @@ export const MessagesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Details / Evidence
                 </label>
                 <textarea
@@ -997,7 +1094,7 @@ export const MessagesPage: React.FC = () => {
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
                   placeholder="Tell us what occurred during this chat..."
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 />
               </div>
 
@@ -1025,7 +1122,7 @@ export const MessagesPage: React.FC = () => {
       {/* 5. BLOCK USER CONFIRMATION MODAL */}
       {/* ================================================================= */}
       {showBlockModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
           <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft text-center">
             <div className="w-12 h-12 rounded-full bg-dangerRedLight text-dangerRed flex items-center justify-center mx-auto mb-3">
               <UserX className="w-6 h-6" />
@@ -1033,7 +1130,7 @@ export const MessagesPage: React.FC = () => {
             <h3 className="text-base font-display font-bold text-ink">
               Block {otherMember?.displayName}?
             </h3>
-            <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
               They will no longer be able to message you, see your profile on the radar, or encounter you in voice rooms.
             </p>
 

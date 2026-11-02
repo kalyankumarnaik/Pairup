@@ -1,48 +1,20 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Calendar,
   CheckCircle,
   Clock,
   MapPin,
-  Navigation,
   Plus,
-  Sliders,
   Users,
   X
 } from 'lucide-react';
 import { apiClient } from '../lib/api';
 import { SocialEvent } from '@pairup/domain-types';
 import { MOCK_EVENTS } from '../lib/mockData';
-import { useLocation, formatDistance } from '../context/LocationContext';
 
 export const EventsPage: React.FC = () => {
-  const { location, calculateDistanceFromUser } = useLocation();
   const [events, setEvents] = useState<SocialEvent[]>(MOCK_EVENTS);
   const [loading, setLoading] = useState(false);
-  const [filterRadius, setFilterRadius] = useState<number | 'ALL'>('ALL');
-  const [cityFilter, setCityFilter] = useState<string>('All');
-
-  // Compute real distance from user location for each event
-  const eventsWithDistance = useMemo(() => {
-    return events
-      .map((evt) => {
-        const dist = calculateDistanceFromUser(evt.latitude, evt.longitude, evt.city);
-        return {
-          ...evt,
-          approximateDistanceKm: dist
-        };
-      })
-      .filter((evt) => {
-        if (cityFilter !== 'All' && !evt.city.toLowerCase().includes(cityFilter.toLowerCase())) {
-          return false;
-        }
-        if (filterRadius !== 'ALL' && (evt.approximateDistanceKm || 999) > filterRadius) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => (a.approximateDistanceKm || 999) - (b.approximateDistanceKm || 999));
-  }, [events, cityFilter, filterRadius, calculateDistanceFromUser]);
 
   // Create event modal state
   const [showModal, setShowModal] = useState(false);
@@ -143,66 +115,18 @@ export const EventsPage: React.FC = () => {
             <Calendar className="w-6 h-6 text-peach" />
             <span>Local Discovery Events</span>
           </h1>
-          <p className="text-sm text-slate-600 font-medium mt-1">
-            Real meetups, cafe mixers, board game nights, and indie concert hangouts with real map proximity.
+          <p className="text-xs text-ink-muted mt-1">
+            Real meetups, cafe mixers, board game nights, and indie concert hangouts.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-4 py-2.5 rounded-xl bg-violet text-white text-xs font-bold shadow-md hover:bg-violet-hover transition-all flex items-center gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Host an Event</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Proximity & City Filter Bar */}
-      <div className="flex items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-borderSoft shadow-xs flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
-            <Sliders className="w-3.5 h-3.5 text-violet" />
-            <span>Proximity:</span>
-          </span>
-          <button
-            onClick={() => setFilterRadius('ALL')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              filterRadius === 'ALL'
-                ? 'bg-violet text-white shadow-xs'
-                : 'bg-cloud text-slate-600 hover:text-slate-900 font-bold'
-            }`}
-          >
-            All Events
-          </button>
-          <button
-            onClick={() => setFilterRadius(25)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              filterRadius === 25
-                ? 'bg-coral text-white shadow-xs'
-                : 'bg-cloud text-slate-600 hover:text-slate-900 font-bold'
-            }`}
-          >
-            Near Me (&le; 25 km)
-          </button>
-        </div>
-
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-          {['All', 'Mumbai', 'Bengaluru', 'Delhi'].map((c) => (
-            <button
-              key={c}
-              onClick={() => setCityFilter(c)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                cityFilter === c
-                  ? 'bg-slate-900 text-white font-bold'
-                  : 'bg-cloud text-slate-800 hover:text-coral'
-              }`}
-            >
-              {c === 'All' ? '🌐 All Cities' : `📍 ${c}`}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-4 py-2.5 rounded-xl bg-violet text-white text-xs font-bold shadow-md hover:bg-violet-hover transition-all flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Host an Event</span>
+        </button>
       </div>
 
       {/* Events Grid */}
@@ -210,9 +134,9 @@ export const EventsPage: React.FC = () => {
         <div className="py-20 text-center text-sm font-semibold text-ink-muted">
           Loading events...
         </div>
-      ) : eventsWithDistance.length > 0 ? (
+      ) : events.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {eventsWithDistance.map((evt) => {
+          {events.map((evt) => {
             const isFull = evt.registeredCount >= evt.capacity;
 
             return (
@@ -229,21 +153,14 @@ export const EventsPage: React.FC = () => {
                   </div>
 
                   <h3 className="font-display font-bold text-lg text-ink mb-1">{evt.title}</h3>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-2 mb-4">
+                  <p className="text-xs text-ink-muted leading-relaxed line-clamp-2 mb-4">
                     {evt.description}
                   </p>
 
-                  <div className="space-y-2 text-xs text-slate-600 border-t border-borderSoft pt-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 truncate">
-                        <MapPin className="w-3.5 h-3.5 text-coral flex-shrink-0" />
-                        <span className="text-ink font-semibold truncate">{evt.venueName}</span>
-                      </div>
-                      {evt.approximateDistanceKm !== null && evt.approximateDistanceKm !== undefined && (
-                        <span className="px-2 py-0.5 rounded-full bg-peach-light text-peach-dark font-black text-[10px] whitespace-nowrap flex-shrink-0">
-                          ~{formatDistance(evt.approximateDistanceKm)}
-                        </span>
-                      )}
+                  <div className="space-y-2 text-xs text-ink-muted border-t border-borderSoft pt-3">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-coral" />
+                      <span className="text-ink font-medium truncate">{evt.venueName}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -258,7 +175,7 @@ export const EventsPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-ink-muted">
                         <span className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-peach" />
                           <span>Spots Filled</span>
@@ -279,32 +196,24 @@ export const EventsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-4 bg-cloud border-t border-borderSoft flex items-center gap-2">
+                <div className="p-4 bg-cloud border-t border-borderSoft">
                   <button
                     onClick={() => handleToggleRsvp(evt.id, evt.isRegistered)}
                     disabled={isFull && !evt.isRegistered}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
+                    className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
                       evt.isRegistered
-                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-300'
+                        ? 'bg-gradient-to-r from-mint to-success text-white shadow-md shadow-success/20'
                         : isFull
-                          ? 'bg-cloud-dark text-slate-500 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-coral to-violet text-white hover:opacity-95 shadow-md shadow-coral/20'
+                        ? 'bg-ink-muted/30 text-ink-muted cursor-not-allowed'
+                        : 'bg-gradient-to-r from-coral to-violet text-white hover:opacity-95 shadow-md shadow-coral/20 hover:scale-[1.02] active:scale-[0.98]'
                     }`}
                   >
-                    {evt.isRegistered ? '✓ Going! (Cancel RSVP)' : isFull ? 'Event Full' : 'RSVP & Join Event ✨'}
+                    {evt.isRegistered
+                      ? '✓ Attending (Cancel RSVP)'
+                      : isFull
+                      ? 'Event Full'
+                      : 'RSVP & Join Event ✨'}
                   </button>
-
-                  {evt.latitude && evt.longitude && (
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&origin=${location.latitude},${location.longitude}&destination=${evt.latitude},${evt.longitude}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2.5 rounded-xl bg-white hover:bg-violet-light hover:text-violet transition-colors text-ink border border-borderSoft shadow-2xs"
-                      title="Open directions in Google Maps"
-                    >
-                      <Navigation className="w-4 h-4 text-violet" />
-                    </a>
-                  )}
                 </div>
               </div>
             );
@@ -319,13 +228,13 @@ export const EventsPage: React.FC = () => {
 
       {/* Host Event Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/70 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-borderSoft">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-display font-bold text-ink">Host a Social Event</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-full hover:bg-cloud text-slate-500 hover:text-slate-800 transition-colors"
+                className="p-1 rounded-full hover:bg-cloud text-ink-muted"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -333,7 +242,7 @@ export const EventsPage: React.FC = () => {
 
             <form onSubmit={handleCreateEvent} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Event Title
                 </label>
                 <input
@@ -342,12 +251,12 @@ export const EventsPage: React.FC = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Sunset Acoustic Jam & Mixer"
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Venue Name & Area
                 </label>
                 <input
@@ -356,18 +265,18 @@ export const EventsPage: React.FC = () => {
                   value={venueName}
                   onChange={(e) => setVenueName(e.target.value)}
                   placeholder="e.g. Subko Coffee Roastery, Bandra"
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   City
                 </label>
                 <select
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 >
                   <option value="Mumbai">Mumbai</option>
                   <option value="Bengaluru">Bengaluru</option>
@@ -377,7 +286,7 @@ export const EventsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Capacity Limit
                 </label>
                 <input
@@ -386,12 +295,12 @@ export const EventsPage: React.FC = () => {
                   max="100"
                   value={capacity}
                   onChange={(e) => setCapacity(Number(e.target.value))}
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">
                   Description
                 </label>
                 <textarea
@@ -399,7 +308,7 @@ export const EventsPage: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell people what to expect, what to bring..."
-                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400"
+                  className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-medium"
                 />
               </div>
 

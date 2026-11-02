@@ -1,14 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { LocationProvider } from './context/LocationContext';
-import { CallProvider } from './context/CallContext';
-import { NotificationPopupProvider } from './context/NotificationPopupContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
-import { CallModal } from './components/CallModal';
-import { NotificationToastContainer } from './components/NotificationToastContainer';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -85,13 +80,8 @@ const SafetyRoute: React.FC = () => {
 export function App() {
   return (
     <AuthProvider>
-      <LocationProvider>
-        <CallProvider>
-          <BrowserRouter>
-            <NotificationPopupProvider>
-              <NotificationToastContainer />
-              <CallModal />
-              <Routes>
+      <BrowserRouter>
+        <Routes>
           {/* Public Landing & Auth */}
           <Route
             path="/"
@@ -230,10 +220,7 @@ export function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-            </NotificationPopupProvider>
-          </BrowserRouter>
-        </CallProvider>
-      </LocationProvider>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

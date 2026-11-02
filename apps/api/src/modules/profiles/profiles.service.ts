@@ -70,16 +70,9 @@ export class ProfilesService {
     if (updates.occupation !== undefined) profile.occupation = updates.occupation;
     if (updates.city !== undefined) profile.city = updates.city;
     if (updates.state !== undefined) profile.state = updates.state;
-    if (updates.country !== undefined) profile.country = updates.country;
     if (updates.languages) profile.languages = updates.languages;
     if (updates.isVisible !== undefined) profile.isVisible = updates.isVisible;
     if (updates.isIncognito !== undefined) profile.isIncognito = updates.isIncognito;
-
-    if ((updates as any).interests) {
-      profile.interests = (updates as any).interests;
-    } else if (updates.interestIds) {
-      profile.interests = INITIAL_INTERESTS.filter((i) => updates.interestIds?.includes(i.id));
-    }
 
     if (updates.prompts) {
       profile.prompts = updates.prompts.map((p, i) => ({

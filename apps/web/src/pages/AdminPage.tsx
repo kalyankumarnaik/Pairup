@@ -95,7 +95,7 @@ export const AdminPage: React.FC = () => {
             <span>Staff Administration & Moderation</span>
           </div>
           <h1 className="text-2xl font-display font-extrabold">System Control Dashboard</h1>
-          <p className="text-xs text-slate-300 font-medium mt-0.5">
+          <p className="text-xs text-white/70 mt-0.5">
             Role: {user?.role || 'MODERATOR'} • Authenticated Session
           </p>
         </div>
@@ -126,7 +126,7 @@ export const AdminPage: React.FC = () => {
       {metrics && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="p-5 rounded-2xl bg-white border border-borderSoft shadow-xs">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Registered Users</p>
+            <p className="text-xs font-bold text-ink-muted uppercase tracking-wider">Registered Users</p>
             <p className="text-2xl font-display font-black text-ink mt-1">
               {metrics.totalRegisteredUsers}
             </p>
@@ -134,23 +134,23 @@ export const AdminPage: React.FC = () => {
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-borderSoft shadow-xs">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Active Matches</p>
+            <p className="text-xs font-bold text-ink-muted uppercase tracking-wider">Active Matches</p>
             <p className="text-2xl font-display font-black text-coral mt-1">
               {metrics.activeMatches}
             </p>
-            <p className="text-xs text-slate-500 font-semibold mt-0.5">High compatibility</p>
+            <p className="text-[10px] text-ink-muted font-semibold mt-0.5">High compatibility</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-borderSoft shadow-xs">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Pending Reports</p>
+            <p className="text-xs font-bold text-ink-muted uppercase tracking-wider">Pending Reports</p>
             <p className="text-2xl font-display font-black text-dangerRed mt-1">
               {reports.length}
             </p>
-            <p className="text-xs text-dangerRed font-semibold mt-0.5">Requires moderator action</p>
+            <p className="text-[10px] text-dangerRed font-semibold mt-0.5">Requires moderator action</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-borderSoft shadow-xs">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Monthly Revenue</p>
+            <p className="text-xs font-bold text-ink-muted uppercase tracking-wider">Monthly Revenue</p>
             <p className="text-2xl font-display font-black text-violet mt-1">
               ₹{(metrics.subscriptionRevenueMonthly).toLocaleString()}
             </p>
@@ -166,7 +166,7 @@ export const AdminPage: React.FC = () => {
             <ShieldAlert className="w-5 h-5 text-coral" />
             <span>Moderation Queue ({reports.length})</span>
           </h2>
-          <span className="text-xs text-slate-600 font-medium">SLO Target: &lt;15 mins</span>
+          <span className="text-xs text-ink-muted font-medium">SLO Target: &lt;15 mins</span>
         </div>
 
         {reports.length > 0 ? (
@@ -178,12 +178,12 @@ export const AdminPage: React.FC = () => {
                     <span className="text-xs px-2.5 py-0.5 rounded-md font-bold uppercase bg-dangerRedLight text-dangerRed">
                       {rep.category}
                     </span>
-                    <span className="text-xs text-slate-500 font-medium">Report ID: {rep.id}</span>
+                    <span className="text-xs text-ink-muted">Report ID: {rep.id}</span>
                   </div>
                   <p className="text-xs font-bold text-ink">
                     Reported User ID: {rep.reportedUserId}
                   </p>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
+                  <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
                     Reason: "{rep.reason}"
                   </p>
                 </div>
@@ -191,7 +191,7 @@ export const AdminPage: React.FC = () => {
                 <div className="flex items-center gap-2 self-end sm:self-center">
                   <button
                     onClick={() => handleResolveReport(rep.id, 'DISMISSED')}
-                    className="px-3 py-1.5 rounded-xl border border-borderSoft hover:bg-cloud text-xs font-semibold text-slate-600 transition-colors"
+                    className="px-3 py-1.5 rounded-xl border border-borderSoft hover:bg-cloud text-xs font-semibold text-ink-muted transition-colors"
                   >
                     Dismiss
                   </button>
@@ -212,10 +212,10 @@ export const AdminPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-xs text-slate-600">
+          <div className="p-8 text-center text-xs text-ink-muted">
             <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
             <p className="font-bold text-ink">Zero pending reports!</p>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">Community guidelines are being respected.</p>
+            <p className="text-[11px] mt-0.5">Community guidelines are being respected.</p>
           </div>
         )}
       </div>
@@ -227,7 +227,7 @@ export const AdminPage: React.FC = () => {
             <Scale className="w-5 h-5 text-violet" />
             <span>Due Process & Account Appeals ({appeals.length})</span>
           </h2>
-          <span className="text-xs text-slate-600 font-medium">Fair Hearing & Restorations</span>
+          <span className="text-xs text-ink-muted font-medium">Fair Hearing & Restorations</span>
         </div>
 
         {appeals.length > 0 ? (
@@ -242,7 +242,7 @@ export const AdminPage: React.FC = () => {
                     <span className="text-xs px-2.5 py-0.5 rounded-md font-bold uppercase bg-violet-light text-violet">
                       Appeal ID: {appeal.id}
                     </span>
-                    <span className="text-xs text-slate-500 font-medium">
+                    <span className="text-xs text-ink-muted">
                       Target Report: {appeal.reportId}
                     </span>
                     {appeal.statementOfTruth && (
@@ -254,7 +254,7 @@ export const AdminPage: React.FC = () => {
                   <p className="text-xs font-bold text-ink">
                     User: {appeal.userDisplayName} ({appeal.userId})
                   </p>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
+                  <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
                     Statement: "{appeal.reason}"
                   </p>
                 </div>
@@ -277,10 +277,10 @@ export const AdminPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-xs text-slate-600">
+          <div className="p-8 text-center text-xs text-ink-muted">
             <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
             <p className="font-bold text-ink">Zero pending appeals!</p>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">All due process cases have been addressed.</p>
+            <p className="text-[11px] mt-0.5">All due process cases have been addressed.</p>
           </div>
         )}
       </div>
@@ -296,7 +296,7 @@ export const AdminPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-cloud flex items-center justify-between">
             <div>
               <p className="font-bold text-ink">AI Match Explanations</p>
-              <p className="text-xs text-slate-500 font-medium">Show compatibility reasons</p>
+              <p className="text-[10px] text-ink-muted">Show compatibility reasons</p>
             </div>
             <span className="px-2 py-0.5 rounded-md bg-success/20 text-success font-bold text-[10px]">
               ENABLED
@@ -306,7 +306,7 @@ export const AdminPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-cloud flex items-center justify-between">
             <div>
               <p className="font-bold text-ink">Voice Rooms SFU</p>
-              <p className="text-xs text-slate-500 font-medium">LiveKit media bridge</p>
+              <p className="text-[10px] text-ink-muted">LiveKit media bridge</p>
             </div>
             <span className="px-2 py-0.5 rounded-md bg-success/20 text-success font-bold text-[10px]">
               ENABLED
@@ -316,7 +316,7 @@ export const AdminPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-cloud flex items-center justify-between">
             <div>
               <p className="font-bold text-ink">Adult Age Screening</p>
-              <p className="text-xs text-slate-500 font-medium">Strict 18+ enforcement</p>
+              <p className="text-[10px] text-ink-muted">Strict 18+ enforcement</p>
             </div>
             <span className="px-2 py-0.5 rounded-md bg-success/20 text-success font-bold text-[10px]">
               ENABLED

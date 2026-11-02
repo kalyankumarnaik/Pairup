@@ -1,46 +1,46 @@
 export const Colors = {
   // Brand Primary & Accents
-  passionCoral: '#FF3366',
-  electricViolet: '#7047EB',
-  sunsetPeach: '#FF7A45',
-  dreamLavender: '#EDE9FE',
-  cloudWhite: '#FAFAFD',
-  midnightInk: '#0F172A',
-  successGreen: '#10B981',
-  softBorder: '#E2E8F0',
+  passionCoral: '#FF4F81',
+  electricViolet: '#7C3AED',
+  sunsetPeach: '#FF8A5B',
+  dreamLavender: '#E9D5FF',
+  cloudWhite: '#F8F7FF',
+  midnightInk: '#242039',
+  successGreen: '#16845B',
+  softBorder: '#E8E7EF',
   warningAmber: '#F59E0B',
   dangerRed: '#EF4444',
 
   // Gradients
-  primaryGradient: ['#FF3366', '#7047EB'],
-  coralPeachGradient: ['#FF3366', '#FF7A45'],
-  violetIndigoGradient: ['#7047EB', '#4F46E5'],
+  primaryGradient: ['#FF4F81', '#7C3AED'],
+  coralPeachGradient: ['#FF4F81', '#FF8A5B'],
+  violetIndigoGradient: ['#7C3AED', '#4F46E5'],
   goldGradient: ['#F59E0B', '#D97706'],
 
   // Backgrounds & Neutrals
-  background: '#FAFAFD',
+  background: '#F8F7FF',
   surface: '#FFFFFF',
-  surfaceAlt: '#F1F5F9',
+  surfaceAlt: '#F3F0FA',
   card: '#FFFFFF',
   modal: '#FFFFFF',
 
   // Text Colors
-  textPrimary: '#0F172A',
-  textSecondary: '#64748B',
-  textMuted: '#94A3B8',
+  textPrimary: '#242039',
+  textSecondary: '#6B7280',
+  textMuted: '#9CA3AF',
   textInverse: '#FFFFFF',
 
   // Border & Dividers
-  border: '#E2E8F0',
+  border: '#E8E7EF',
   borderStrong: '#CBD5E1',
 
   // Semantic
   online: '#10B981',
-  offline: '#94A3B8',
-  verified: '#7047EB',
-  superLike: '#0EA5E9',
-  pass: '#94A3B8',
-  like: '#FF3366'
+  offline: '#9CA3AF',
+  verified: '#7C3AED',
+  superLike: '#3B82F6',
+  pass: '#9CA3AF',
+  like: '#FF4F81'
 } as const;
 
 export const Typography = {
