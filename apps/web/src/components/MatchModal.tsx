@@ -32,7 +32,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#FF4F81', '#7C3AED', '#FF8A5B', '#E9D5FF']
+        colors: ['#FF3366', '#7047EB', '#FF7A45', '#EDE9FE', '#06B6D4']
       });
     }
   }, [isOpen]);
@@ -155,7 +155,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 rounded-2xl text-sm font-semibold text-ink-muted hover:bg-cloud transition-colors"
+                className="flex-1 py-3 rounded-2xl text-sm font-bold text-ink bg-white border border-borderSoft hover:bg-cloud transition-colors shadow-2xs"
               >
                 Keep Swiping
               </button>
@@ -165,7 +165,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
                   onClose();
                   navigate('/messages');
                 }}
-                className="flex-1 py-3 rounded-2xl text-sm font-semibold bg-violet text-white hover:bg-violet-hover shadow-md shadow-violet/20 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 rounded-2xl text-sm font-extrabold bg-gradient-to-r from-coral to-violet text-white hover:opacity-95 shadow-md shadow-coral/25 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Go to Chat</span>

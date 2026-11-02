@@ -300,7 +300,7 @@ export const CommunitiesPage: React.FC = () => {
                   onClick={() => toggleJoinClub(club.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     club.isJoined
-                      ? 'bg-cloud text-ink font-semibold'
+                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-300 font-bold shadow-2xs'
                       : 'bg-violet text-white shadow-xs hover:bg-violet-hover'
                   }`}
                 >

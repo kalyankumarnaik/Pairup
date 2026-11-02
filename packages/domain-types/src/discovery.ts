@@ -32,6 +32,8 @@ export interface DiscoveryCard {
   connectionMode: ConnectionMode;
   city?: string | null;
   approximateDistanceKm?: number | null; // Privacy-safe approximate distance
+  latitude?: number;
+  longitude?: number;
   interests: InterestTag[];
   photos: ProfilePhoto[];
   prompts: ProfilePrompt[];

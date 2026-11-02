@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Sparkles, UserCheck } from 'lucide-react';
+import { Heart, MessageCircle, Phone, Sparkles, UserCheck, Video } from 'lucide-react';
+import { useCall } from '../context/CallContext';
 import { apiClient } from '../lib/api';
 import { MatchSummary } from '@pairup/domain-types';
 import { MOCK_MATCHES } from '../lib/mockData';
 
 export const MatchesPage: React.FC = () => {
+  const { startCall } = useCall();
   const [matches, setMatches] = useState<MatchSummary[]>(MOCK_MATCHES);
   const [loading, setLoading] = useState(false);
 
@@ -86,8 +88,44 @@ export const MatchesPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-2 rounded-xl bg-cloud group-hover:bg-violet group-hover:text-white text-ink-muted transition-colors">
-                <MessageCircle className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    startCall('AUDIO', {
+                      id: (m as any).matchedUserId || m.id,
+                      name: m.matchedProfile.displayName,
+                      avatarUrl: m.matchedProfile.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
+                      city: m.matchedProfile.city || undefined
+                    });
+                  }}
+                  className="p-2 rounded-xl bg-violet-light text-violet hover:bg-violet hover:text-white border border-violet/20 transition-all shadow-2xs hover:scale-105 active:scale-95"
+                  title="Start Voice Call"
+                >
+                  <Phone className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    startCall('VIDEO', {
+                      id: (m as any).matchedUserId || m.id,
+                      name: m.matchedProfile.displayName,
+                      avatarUrl: m.matchedProfile.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
+                      city: m.matchedProfile.city || undefined
+                    });
+                  }}
+                  className="p-2 rounded-xl bg-coral-light text-coral hover:bg-coral hover:text-white border border-coral/20 transition-all shadow-2xs hover:scale-105 active:scale-95"
+                  title="Start Video Call"
+                >
+                  <Video className="w-4 h-4" />
+                </button>
+                <div className="p-2 rounded-xl bg-white border border-borderSoft group-hover:bg-violet group-hover:text-white text-ink-muted shadow-2xs transition-colors">
+                  <MessageCircle className="w-4 h-4" />
+                </div>
               </div>
             </Link>
           ))}

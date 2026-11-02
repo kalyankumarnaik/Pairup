@@ -12,6 +12,7 @@ import {
   Zap
 } from 'lucide-react';
 import { apiClient } from '../lib/api';
+import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { SubscriptionTier } from '@pairup/domain-types';
 
 interface PricingTier {
@@ -31,7 +32,7 @@ const TIERS: PricingTier[] = [
     name: 'Explorer',
     price: '₹0',
     period: 'Forever free',
-    color: '#6B6684',
+    color: '#64748B',
     features: [
       '50 standard profile swipes per day',
       'Encrypted end-to-end messaging with matches',
@@ -46,7 +47,7 @@ const TIERS: PricingTier[] = [
     price: '₹499',
     period: 'per month',
     highlight: false,
-    color: '#7C3AED',
+    color: '#7047EB',
     badge: 'Popular for Dating',
     features: [
       'Unlimited profile swipes',
@@ -63,7 +64,7 @@ const TIERS: PricingTier[] = [
     price: '₹999',
     period: 'per month',
     highlight: true,
-    color: '#FF8A5B',
+    color: '#FF7A45',
     badge: 'Best Value & VIP',
     features: [
       'Everything in PairUp Plus',
@@ -78,6 +79,7 @@ const TIERS: PricingTier[] = [
 ];
 
 export const SubscriptionPage: React.FC = () => {
+  const { popNotification } = useNotificationPopup();
   const [currentTier, setCurrentTier] = useState<string>('free');
   const [promoCode, setPromoCode] = useState('');
   const [promoMessage, setPromoMessage] = useState('');
@@ -138,6 +140,14 @@ export const SubscriptionPage: React.FC = () => {
     setPromoMessage(`🎉 Upgraded successfully to ${tierId.toUpperCase()} tier! Enjoy premium benefits.`);
     setTimeout(() => setPromoMessage(''), 5000);
 
+    popNotification({
+      title: `👑 Upgraded to PairUp ${tierId.toUpperCase()}!`,
+      body: `Enjoy unlimited swipes, priority radar, and HD encrypted calling stages.`,
+      category: 'MATCH',
+      emoji: '👑',
+      actionUrl: '/subscription'
+    });
+
     try {
       const targetTier = tierId.toUpperCase() === 'GOLD' ? SubscriptionTier.GOLD : SubscriptionTier.PLUS;
       await apiClient.upgradeSubscription({
@@ -169,16 +179,16 @@ export const SubscriptionPage: React.FC = () => {
         <div className="flex items-center justify-center gap-2 pt-2">
           <button
             onClick={() => setActiveTab('tiers')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'tiers' ? 'bg-violet text-white shadow-sm' : 'bg-white text-ink-muted border border-borderSoft'
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs ${
+              activeTab === 'tiers' ? 'bg-violet text-white shadow-md shadow-violet/25' : 'bg-white text-ink border border-borderSoft hover:border-violet'
             }`}
           >
             Membership Plans
           </button>
           <button
             onClick={() => setActiveTab('billing')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'billing' ? 'bg-violet text-white shadow-sm' : 'bg-white text-ink-muted border border-borderSoft'
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs ${
+              activeTab === 'billing' ? 'bg-violet text-white shadow-md shadow-violet/25' : 'bg-white text-ink border border-borderSoft hover:border-violet'
             }`}
           >
             Billing & Invoices
@@ -235,12 +245,12 @@ export const SubscriptionPage: React.FC = () => {
                     <button
                       onClick={() => handleUpgrade(tier.id)}
                       disabled={isCurrent}
-                      className={`w-full py-3 rounded-2xl text-xs font-bold shadow-md transition-all ${
+                      className={`w-full py-3 rounded-2xl text-xs font-bold transition-all ${
                         isCurrent
-                          ? 'bg-cloud text-ink font-bold opacity-60 cursor-default'
+                          ? 'bg-slate-100 text-slate-800 border-2 border-slate-300 font-extrabold cursor-default shadow-xs'
                           : tier.highlight
-                          ? 'bg-gradient-to-r from-amber to-coral text-white hover:opacity-95 hover:scale-102 active:scale-98'
-                          : 'bg-violet text-white hover:bg-violet-hover hover:scale-102 active:scale-98'
+                          ? 'bg-gradient-to-r from-amber-500 via-coral to-rose-500 text-white shadow-lg shadow-coral/30 hover:opacity-95 hover:scale-102 active:scale-98 font-black'
+                          : 'bg-violet text-white hover:bg-violet-hover hover:scale-102 active:scale-98 shadow-md shadow-violet/25 font-bold'
                       }`}
                     >
                       {isCurrent ? 'Current Active Plan ✓' : `Select ${tier.name}`}

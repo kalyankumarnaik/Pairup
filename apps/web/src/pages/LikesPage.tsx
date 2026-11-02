@@ -13,6 +13,7 @@ import {
   Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { apiClient } from '../lib/api';
 import { SwipeAction } from '@pairup/domain-types';
 
@@ -76,6 +77,7 @@ const MOCK_LIKES: LikeReceived[] = [
 ];
 
 export const LikesPage: React.FC = () => {
+  const { popNotification } = useNotificationPopup();
   const [likes, setLikes] = useState<LikeReceived[]>(MOCK_LIKES);
   const [filterType, setFilterType] = useState<'ALL' | 'SUPER' | 'NEARBY'>('ALL');
   const [unlockedGold, setUnlockedGold] = useState(false);
@@ -106,6 +108,15 @@ export const LikesPage: React.FC = () => {
   const handleMatchInstantly = async (like: LikeReceived) => {
     setMatchedIds((prev) => ({ ...prev, [like.id]: true }));
     setCelebrationMatch(like);
+
+    popNotification({
+      title: `Matched with ${like.name}! 💖`,
+      body: `You both liked each other! Start chatting or start an HD call now.`,
+      category: 'MATCH',
+      emoji: '💖',
+      actionUrl: '/messages'
+    });
+
     try {
       await apiClient.swipe(like.id, SwipeAction.LIKE, 'DATING');
     } catch {
@@ -153,7 +164,7 @@ export const LikesPage: React.FC = () => {
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   filterType === t
                     ? 'bg-violet text-white shadow-xs'
-                    : 'bg-cloud text-ink-muted hover:text-ink'
+                    : 'bg-white border border-borderSoft text-ink hover:text-violet hover:border-violet shadow-2xs'
                 }`}
               >
                 {t === 'ALL' ? 'All Likes (4)' : t === 'SUPER' ? '⭐ Super Likes (2)' : '📍 Nearby <5km (2)'}
@@ -236,7 +247,7 @@ export const LikesPage: React.FC = () => {
                 {isMatched ? (
                   <Link
                     to="/messages"
-                    className="w-full py-2.5 rounded-xl bg-emerald text-white text-xs font-bold text-center shadow-md flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold text-center shadow-md flex items-center justify-center gap-1.5"
                   >
                     <Check className="w-4 h-4" />
                     <span>Matched! Open Chat 💬</span>

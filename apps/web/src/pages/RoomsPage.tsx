@@ -234,7 +234,7 @@ export const RoomsPage: React.FC = () => {
               <p className="text-xs text-ink-muted mb-4">{room.category}</p>
 
               {/* Host Snippet */}
-              <div className="flex items-center gap-2 p-2.5 rounded-2xl bg-cloud mb-4">
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl bg-slate-50 border border-borderSoft mb-4">
                 <div className="w-8 h-8 rounded-full bg-lavender flex items-center justify-center font-bold text-violet text-xs">
                   {room.hostName[0]}
                 </div>

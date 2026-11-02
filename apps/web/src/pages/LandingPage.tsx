@@ -52,7 +52,7 @@ export const LandingPage: React.FC = () => {
       particleCount: 50,
       spread: 60,
       origin: { y: 0.7 },
-      colors: ['#FF4F81', '#7C3AED', '#FF8A5B', '#06B6D4', '#F59E0B']
+      colors: ['#FF3366', '#7047EB', '#FF7A45', '#06B6D4', '#F59E0B']
     });
     setTimeout(() => setLiked(false), 2000);
   };

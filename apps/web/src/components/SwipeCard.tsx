@@ -137,7 +137,8 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
               e.stopPropagation();
               setShowFullBio(!showFullBio);
             }}
-            className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white transition-colors"
+            className="pointer-events-auto p-2 rounded-full bg-white/25 hover:bg-white/40 border border-white/30 backdrop-blur-md text-white transition-all shadow-md hover:scale-105 active:scale-95"
+            title="Show details"
           >
             <Info className="w-5 h-5" />
           </button>

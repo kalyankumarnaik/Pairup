@@ -13,6 +13,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from '../context/LocationContext';
 import { apiClient } from '../lib/api';
 import { DiscoveryCard, MatchSummary, SocialEvent, VoiceRoom } from '@pairup/domain-types';
 import {
@@ -24,14 +25,17 @@ import {
 
 export const HomePage: React.FC = () => {
   const { user, profile } = useAuth();
+  const { location, calculateDistanceFromUser } = useLocation();
   const [matches, setMatches] = useState<MatchSummary[]>(MOCK_MATCHES);
-  const [recommendations, setRecommendations] = useState<DiscoveryCard[]>(MOCK_DISCOVERY_CARDS.slice(0, 4));
+  const [recommendations, setRecommendations] = useState<DiscoveryCard[]>(() => {
+    return MOCK_DISCOVERY_CARDS.slice(0, 4);
+  });
   const [rooms, setRooms] = useState<VoiceRoom[]>(MOCK_ROOMS);
   const [events, setEvents] = useState<SocialEvent[]>(MOCK_EVENTS);
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [location.latitude, location.longitude]);
 
   const loadDashboardData = async () => {
     try {
@@ -46,7 +50,17 @@ export const HomePage: React.FC = () => {
         setMatches(matchesRes.value.data);
       }
       if (feedRes.status === 'fulfilled' && feedRes.value.data?.length) {
-        setRecommendations(feedRes.value.data.slice(0, 4));
+        const enriched = feedRes.value.data.slice(0, 4).map((c) => ({
+          ...c,
+          approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
+        }));
+        setRecommendations(enriched);
+      } else {
+        const enriched = MOCK_DISCOVERY_CARDS.slice(0, 4).map((c) => ({
+          ...c,
+          approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
+        }));
+        setRecommendations(enriched);
       }
       if (roomsRes.status === 'fulfilled' && roomsRes.value.data?.length) {
         setRooms(roomsRes.value.data.slice(0, 2));
@@ -55,7 +69,11 @@ export const HomePage: React.FC = () => {
         setEvents(eventsRes.value.data.slice(0, 2));
       }
     } catch {
-      // Keep mock fallback data
+      const enriched = MOCK_DISCOVERY_CARDS.slice(0, 4).map((c) => ({
+        ...c,
+        approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
+      }));
+      setRecommendations(enriched);
     }
   };
 
@@ -78,7 +96,7 @@ export const HomePage: React.FC = () => {
             Hello, {profile?.displayName || 'Explorer'}! 👋
           </h1>
           <p className="text-xs sm:text-sm text-white/95 mt-1.5 max-w-xl font-medium leading-relaxed">
-            {matches.length} active matches and new people nearby waiting to meet you in {profile?.city || 'Mumbai'}.
+            {matches.length} active matches and verified people waiting to connect with you in {location.city}{location.isGps ? ' (GPS Active 📍)' : ''}.
           </p>
         </div>
 
@@ -284,8 +302,12 @@ export const HomePage: React.FC = () => {
                 <p className="font-display font-bold text-base">
                   {card.displayName}, {card.age}
                 </p>
-                <p className="text-[11px] text-white/80 flex items-center gap-1 mt-0.5">
-                  <MapPin className="w-3 h-3 text-peach" /> {card.city}
+                <p className="text-[11px] text-white/90 flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3 h-3 text-peach" />
+                  <span>{card.city}</span>
+                  {card.approximateDistanceKm !== undefined && card.approximateDistanceKm !== null && (
+                    <span className="text-white/70">• ~{card.approximateDistanceKm} km</span>
+                  )}
                 </p>
                 <div className="flex items-center gap-1 mt-2 flex-wrap">
                   {card.interests.slice(0, 2).map((int) => (

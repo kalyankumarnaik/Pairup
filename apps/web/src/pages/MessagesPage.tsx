@@ -28,6 +28,8 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCall } from '../context/CallContext';
+import { useNotificationPopup } from '../context/NotificationPopupContext';
 import { apiClient } from '../lib/api';
 import { ChatMessage, Conversation, MessageStatus, MessageType, ReportCategory } from '@pairup/domain-types';
 import { MOCK_CONVERSATIONS } from '../lib/mockData';
@@ -48,18 +50,10 @@ const ICEBREAKER_PROMPTS = [
   '🎭 Two truths and a lie: what is your most chaotic travel story so far?'
 ];
 
-interface CallSession {
-  active: boolean;
-  type: 'AUDIO' | 'VIDEO';
-  status: 'calling' | 'connected';
-  duration: number;
-  isMuted: boolean;
-  isSpeakerOn: boolean;
-  isVideoMuted: boolean;
-}
-
 export const MessagesPage: React.FC = () => {
   const { user } = useAuth();
+  const { startCall: triggerGlobalCall } = useCall();
+  const { popMessage } = useNotificationPopup();
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
   const [activeConvId, setActiveConvId] = useState<string | null>(MOCK_CONVERSATIONS[0].id);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -76,10 +70,6 @@ export const MessagesPage: React.FC = () => {
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [voicePlaybackProgress, setVoicePlaybackProgress] = useState(0);
   const playbackTimerRef = useRef<any>(null);
-
-  // Real-time Voice / Video Call state
-  const [callSession, setCallSession] = useState<CallSession | null>(null);
-  const callDurationRef = useRef<any>(null);
 
   // Rich Media Sharing modal & Lightbox
   const [showImageModal, setShowImageModal] = useState(false);
@@ -139,18 +129,6 @@ export const MessagesPage: React.FC = () => {
     }
     return () => clearInterval(playbackTimerRef.current);
   }, [playingVoiceId]);
-
-  // Call timer simulation
-  useEffect(() => {
-    if (callSession && callSession.status === 'connected') {
-      callDurationRef.current = setInterval(() => {
-        setCallSession((prev) => prev ? { ...prev, duration: prev.duration + 1 } : null);
-      }, 1000);
-    } else {
-      clearInterval(callDurationRef.current);
-    }
-    return () => clearInterval(callDurationRef.current);
-  }, [callSession?.status]);
 
   const loadConversations = async () => {
     try {
@@ -217,6 +195,37 @@ export const MessagesPage: React.FC = () => {
     } catch {
       // Offline fallback: message stays in state
     }
+
+    // Simulate peer replying and popping an interactive message toast
+    setTimeout(() => {
+      if (otherMember) {
+        const replyText = content.toLowerCase().includes('coffee')
+          ? 'Filter coffee in Bandra sounds great! ☕ What time works for you?'
+          : content.toLowerCase().includes('hi') || content.toLowerCase().includes('hello')
+          ? `Hey! Awesome to connect with you ✨`
+          : 'That sounds really interesting! Tell me more about it 😊';
+
+        const replyMsg: ChatMessage = {
+          id: `msg_reply_${Date.now()}`,
+          conversationId: activeConvId,
+          senderId: otherMember.userId || 'usr_peer',
+          type: MessageType.TEXT,
+          content: replyText,
+          status: MessageStatus.DELIVERED,
+          attachments: [],
+          reactions: [],
+          createdAt: new Date().toISOString()
+        };
+        setMessages((prev) => [...prev, replyMsg]);
+        popMessage({
+          senderId: otherMember.userId || 'usr_peer',
+          senderName: otherMember.displayName,
+          senderAvatar: otherMember.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
+          content: replyText,
+          conversationId: activeConvId
+        });
+      }
+    }, 2500);
   };
 
   // Image Upload handler
@@ -316,49 +325,13 @@ export const MessagesPage: React.FC = () => {
 
   // Real-time Voice / Video Call handlers
   const startCall = (type: 'AUDIO' | 'VIDEO') => {
-    setCallSession({
-      active: true,
-      type,
-      status: 'calling',
-      duration: 0,
-      isMuted: false,
-      isSpeakerOn: true,
-      isVideoMuted: false
+    if (!otherMember) return;
+    triggerGlobalCall(type, {
+      id: otherMember.userId || 'usr_peer',
+      name: otherMember.displayName || 'Match',
+      avatarUrl: otherMember.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600',
+      city: 'PairUp Match'
     });
-
-    // Simulate other participant picking up after 2.5 seconds
-    setTimeout(() => {
-      setCallSession((prev) => (prev ? { ...prev, status: 'connected' } : null));
-    }, 2500);
-  };
-
-  const endCall = () => {
-    if (!callSession || !activeConvId) {
-      setCallSession(null);
-      return;
-    }
-
-    const durationStr = formatDuration(callSession.duration);
-    const callLogMsg: ChatMessage = {
-      id: `msg_call_${Date.now()}`,
-      conversationId: activeConvId,
-      senderId: user?.id || 'usr_current',
-      type: MessageType.TEXT,
-      content: `${callSession.type === 'AUDIO' ? '📞 Voice Call' : '📹 Video Call'} ended • ${durationStr}`,
-      status: MessageStatus.READ,
-      attachments: [],
-      reactions: [],
-      createdAt: new Date().toISOString()
-    };
-
-    setMessages((prev) => [...prev, callLogMsg]);
-    setCallSession(null);
-  };
-
-  const formatDuration = (sec: number) => {
-    const mins = Math.floor(sec / 60);
-    const remainingSecs = sec % 60;
-    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
   };
 
   // Reactions
@@ -520,26 +493,29 @@ export const MessagesPage: React.FC = () => {
             </div>
 
             {/* Calling & Menu Action Buttons */}
-            <div className="flex items-center gap-1.5 text-ink-muted relative">
+            <div className="flex items-center gap-2 relative">
               <button
                 onClick={() => startCall('AUDIO')}
-                title="Start Voice Call"
-                className="p-2.5 rounded-xl bg-cloud hover:bg-violet-light text-ink hover:text-violet transition-all hover:scale-105 active:scale-95 shadow-2xs"
+                title="Start Encrypted HD Voice Call"
+                className="px-3.5 py-2 rounded-xl bg-violet hover:bg-violet-hover text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-violet/25 hover:scale-105 active:scale-95 transition-all"
               >
-                <Phone className="w-4 h-4" />
+                <Phone className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Voice Call</span>
               </button>
               <button
                 onClick={() => startCall('VIDEO')}
-                title="Start Video Call"
-                className="p-2.5 rounded-xl bg-cloud hover:bg-coral-light text-ink hover:text-coral transition-all hover:scale-105 active:scale-95 shadow-2xs"
+                title="Start Encrypted HD Video Call"
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-coral to-rose-500 hover:from-coral-hover hover:to-rose-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-coral/25 hover:scale-105 active:scale-95 transition-all"
               >
-                <Video className="w-4 h-4" />
+                <Video className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Video Call</span>
               </button>
 
               <div className="relative">
                 <button
                   onClick={() => setShowOptionsMenu(!showOptionsMenu)}
-                  className="p-2.5 rounded-xl hover:bg-cloud text-ink transition-colors"
+                  className="p-2 rounded-xl border border-borderSoft bg-white hover:bg-cloud text-ink shadow-2xs transition-colors"
+                  title="More Chat Options"
                 >
                   <MoreVertical className="w-4 h-4" />
                 </button>
@@ -792,10 +768,10 @@ export const MessagesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowIcebreakers(!showIcebreakers)}
-                  className={`p-2.5 rounded-xl border transition-all ${
+                  className={`p-2.5 rounded-xl border-2 transition-all font-bold ${
                     showIcebreakers
                       ? 'bg-violet text-white border-violet shadow-sm'
-                      : 'bg-cloud hover:bg-lavender-light border-borderSoft text-violet hover:text-violet-hover'
+                      : 'bg-violet-light text-violet border-violet/30 hover:bg-violet hover:text-white shadow-2xs'
                   }`}
                   title="AI Icebreakers & Starters"
                 >
@@ -806,20 +782,20 @@ export const MessagesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowImageModal(true)}
-                  className="p-2.5 rounded-xl hover:bg-cloud text-ink-muted hover:text-ink transition-colors"
+                  className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-cloud text-ink hover:text-coral transition-colors shadow-2xs"
                   title="Share Photo"
                 >
-                  <ImageIcon className="w-5 h-5" />
+                  <ImageIcon className="w-5 h-5 text-coral" />
                 </button>
 
                 {/* Voice Record Button */}
                 <button
                   type="button"
                   onClick={startVoiceRecording}
-                  className="p-2.5 rounded-xl hover:bg-cloud text-ink-muted hover:text-coral transition-colors"
+                  className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-coral-light text-ink hover:text-coral transition-colors shadow-2xs"
                   title="Record Voice Note"
                 >
-                  <Mic className="w-5 h-5" />
+                  <Mic className="w-5 h-5 text-violet" />
                 </button>
 
                 <input
@@ -833,9 +809,10 @@ export const MessagesPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={!inputContent.trim()}
-                  className="p-2.5 rounded-2xl bg-gradient-to-r from-violet to-violet-hover text-white hover:opacity-95 disabled:opacity-40 transition-all shadow-sm"
+                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-violet to-violet-hover text-white hover:opacity-95 disabled:opacity-40 transition-all shadow-md shadow-violet/25 flex items-center gap-1.5 font-bold text-xs"
                 >
-                  <Send className="w-4 h-4" />
+                  <span>Send</span>
+                  <Send className="w-3.5 h-3.5" />
                 </button>
               </form>
             )}
@@ -848,80 +825,6 @@ export const MessagesPage: React.FC = () => {
           <p className="text-xs text-ink-muted mt-1 max-w-xs">
             Send icebreakers, share photos, leave voice notes, or initiate encrypted voice calls!
           </p>
-        </div>
-      )}
-
-      {/* ================================================================= */}
-      {/* 1. REAL-TIME VOICE / VIDEO CALL OVERLAY MODAL */}
-      {/* ================================================================= */}
-      {callSession && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/85 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-sm rounded-3xl bg-midnightInk text-white p-8 text-center shadow-2xl border border-white/10 flex flex-col items-center relative overflow-hidden">
-            {/* Ambient Background Aura */}
-            <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-violet/30 to-transparent pointer-events-none" />
-
-            {/* Avatar with Pulsing Rings */}
-            <div className="relative my-6">
-              <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-coral/50 shadow-2xl relative z-10">
-                <img
-                  src={otherMember?.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400'}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <span className="animate-ping absolute inset-0 rounded-full bg-coral opacity-30"></span>
-              <span className="animate-pulse absolute -inset-3 rounded-full bg-violet opacity-20"></span>
-            </div>
-
-            <h3 className="text-xl font-display font-black text-white">
-              {otherMember?.displayName}
-            </h3>
-            <p className="text-xs font-bold text-coral mt-1 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-coral animate-ping" />
-              <span>
-                {callSession.status === 'calling'
-                  ? 'Calling & Ringing...'
-                  : `Connected • ${formatDuration(callSession.duration)}`}
-              </span>
-            </p>
-            <p className="text-[11px] text-white/60 mt-1">
-              Encrypted {callSession.type === 'AUDIO' ? 'HD Voice' : 'HD Video'} Stream
-            </p>
-
-            {/* In-Call Controls */}
-            <div className="flex items-center gap-4 mt-8">
-              {/* Mic Toggle */}
-              <button
-                onClick={() => setCallSession({ ...callSession, isMuted: !callSession.isMuted })}
-                className={`p-3.5 rounded-full transition-all ${
-                  callSession.isMuted ? 'bg-dangerRed text-white' : 'bg-white/20 hover:bg-white/30 text-white'
-                }`}
-                title="Mute Mic"
-              >
-                {callSession.isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
-
-              {/* End Call Button */}
-              <button
-                onClick={endCall}
-                className="p-5 rounded-full bg-dangerRed hover:bg-dangerRed/90 text-white shadow-xl hover:scale-110 active:scale-95 transition-all"
-                title="End Call"
-              >
-                <PhoneOff className="w-7 h-7" />
-              </button>
-
-              {/* Speaker Toggle */}
-              <button
-                onClick={() => setCallSession({ ...callSession, isSpeakerOn: !callSession.isSpeakerOn })}
-                className={`p-3.5 rounded-full transition-all ${
-                  callSession.isSpeakerOn ? 'bg-violet text-white' : 'bg-white/20 hover:bg-white/30 text-white'
-                }`}
-                title="Speaker Mode"
-              >
-                {callSession.isSpeakerOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
         </div>
       )}
 
