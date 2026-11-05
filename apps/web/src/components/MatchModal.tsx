@@ -32,7 +32,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#FF3366', '#7047EB', '#FF7A45', '#EDE9FE', '#06B6D4']
+        colors: ['#FF4F81', '#7C3AED', '#FF8A5B', '#E9D5FF']
       });
     }
   }, [isOpen]);
@@ -60,7 +60,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/75 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -71,7 +71,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full text-slate-500 hover:text-slate-800 hover:bg-cloud transition-colors"
+            className="absolute top-4 right-4 p-2 rounded-full text-ink-muted hover:text-ink hover:bg-cloud transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -90,7 +90,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
           <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-ink mb-2">
             You and {matchedProfile.displayName} liked each other!
           </h2>
-          <p className="text-sm text-slate-600 font-medium mb-6">
+          <p className="text-sm text-ink-muted mb-6">
             Say hello before the spark fades ✨
           </p>
 
@@ -140,7 +140,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
                 value={firstMessage}
                 onChange={(e) => setFirstMessage(e.target.value)}
                 placeholder={`Say something nice to ${matchedProfile.displayName}...`}
-                className="w-full px-4 py-3.5 pr-12 rounded-2xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet focus:ring-2 focus:ring-violet/20 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all"
+                className="w-full px-4 py-3.5 pr-12 rounded-2xl bg-cloud border border-borderSoft focus:outline-none focus:border-violet focus:ring-2 focus:ring-violet/20 text-sm font-medium transition-all"
               />
               <button
                 type="submit"
@@ -155,7 +155,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 rounded-2xl text-sm font-bold text-ink bg-white border border-borderSoft hover:bg-cloud transition-colors shadow-2xs"
+                className="flex-1 py-3 rounded-2xl text-sm font-semibold text-ink-muted hover:bg-cloud transition-colors"
               >
                 Keep Swiping
               </button>
@@ -165,7 +165,7 @@ export const MatchModal: React.FC<MatchModalProps> = ({
                   onClose();
                   navigate('/messages');
                 }}
-                className="flex-1 py-3 rounded-2xl text-sm font-extrabold bg-gradient-to-r from-coral to-violet text-white hover:opacity-95 shadow-md shadow-coral/25 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 rounded-2xl text-sm font-semibold bg-violet text-white hover:bg-violet-hover shadow-md shadow-violet/20 transition-all flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Go to Chat</span>

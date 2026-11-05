@@ -63,7 +63,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
       dragElastic={0.8}
       onDragEnd={isFront ? handleDragEnd : undefined}
       whileTap={isFront ? { cursor: 'grabbing' } : undefined}
-      className={`absolute inset-0 w-full h-[580px] sm:h-[620px] rounded-3xl overflow-hidden shadow-2xl bg-slate-950 text-white cursor-grab select-none ${
+      className={`absolute inset-0 w-full h-[580px] sm:h-[620px] rounded-3xl overflow-hidden shadow-2xl bg-midnightInk text-white cursor-grab select-none ${
         !isFront ? 'scale-[0.96] -translate-y-3 pointer-events-none opacity-85' : 'z-20'
       }`}
     >
@@ -75,7 +75,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
       />
 
       {/* Dark gradient for typography contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-midnightInk via-midnightInk/30 to-black/30 pointer-events-none" />
 
       {/* Photo Pagination Bars */}
       {photos.length > 1 && (
@@ -137,21 +137,20 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
               e.stopPropagation();
               setShowFullBio(!showFullBio);
             }}
-            className="pointer-events-auto p-2 rounded-full bg-white/25 hover:bg-white/40 border border-white/30 backdrop-blur-md text-white transition-all shadow-md hover:scale-105 active:scale-95"
-            title="Show details"
+            className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white transition-colors"
           >
             <Info className="w-5 h-5" />
           </button>
         </div>
 
         {/* Location & Intentions */}
-        <div className="flex items-center gap-3 text-xs text-slate-200 font-medium mb-3 flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-white/80 font-medium mb-3 flex-wrap">
           {card.city && (
             <span className="flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5 text-peach" />
               <span>{card.city}</span>
               {card.approximateDistanceKm !== null && card.approximateDistanceKm !== undefined && (
-                <span className="text-slate-200">• ~{card.approximateDistanceKm} km away</span>
+                <span className="text-white/60">• ~{card.approximateDistanceKm} km away</span>
               )}
             </span>
           )}
@@ -163,7 +162,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
 
         {/* Short Bio */}
         {card.bio && (
-          <p className="text-xs sm:text-sm text-white line-clamp-2 leading-relaxed mb-3 font-normal">
+          <p className="text-xs sm:text-sm text-white/90 line-clamp-2 leading-relaxed mb-3">
             {card.bio}
           </p>
         )}
@@ -174,14 +173,14 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ card, isFront, onSwipe }) 
             {card.interests.slice(0, 4).map((interest) => (
               <span
                 key={interest.id}
-                className="px-2.5 py-1 rounded-xl bg-white/25 backdrop-blur-md text-[11px] font-bold text-white flex items-center gap-1 shadow-sm"
+                className="px-2.5 py-1 rounded-xl bg-white/20 backdrop-blur-md text-[11px] font-semibold text-white flex items-center gap-1 shadow-sm"
               >
                 <span>{interest.emoji || '✨'}</span>
                 <span>{interest.name}</span>
               </span>
             ))}
             {card.interests.length > 4 && (
-              <span className="text-[11px] text-slate-200 font-semibold px-1">
+              <span className="text-[11px] text-white/70 font-semibold px-1">
                 +{card.interests.length - 4} more
               </span>
             )}

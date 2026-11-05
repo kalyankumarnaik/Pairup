@@ -14,9 +14,6 @@ export interface SocialEvent {
   venueName: string;
   approximateLocation: string; // "Bandra West, Mumbai"
   city: string;
-  latitude?: number;
-  longitude?: number;
-  approximateDistanceKm?: number | null;
   startTime: Date | string;
   endTime: Date | string;
   capacity: number;

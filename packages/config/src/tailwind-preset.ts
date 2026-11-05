@@ -5,66 +5,39 @@ export const tailwindPreset = {
     extend: {
       colors: {
         coral: {
-          DEFAULT: '#FF3366',
-          hover: '#E61E50',
-          light: '#FFF0F3',
-          dark: '#BE123C'
+          DEFAULT: '#FF4F81',
+          hover: '#E63D6D',
+          light: '#FFE8EF',
+          dark: '#B8224B'
         },
         violet: {
-          DEFAULT: '#7047EB',
-          hover: '#5F35DB',
-          light: '#F4F0FF',
-          dark: '#43288C'
+          DEFAULT: '#7C3AED',
+          hover: '#6D28D9',
+          light: '#F3E8FF',
+          dark: '#4C1D95'
         },
         peach: {
-          DEFAULT: '#FF7A45',
-          hover: '#EA5E26',
-          light: '#FFF2EB',
-          dark: '#C43D0A'
+          DEFAULT: '#FF8A5B',
+          hover: '#E76F3D',
+          light: '#FFF0EA',
+          dark: '#C74A1B'
         },
         lavender: {
-          DEFAULT: '#EDE9FE',
-          hover: '#DDD6FE',
-          light: '#F5F3FF'
+          DEFAULT: '#E9D5FF',
+          hover: '#D8B4FE',
+          light: '#FAF5FF'
         },
-        cloud: '#FAFAFD',
-        midnightInk: {
-          DEFAULT: '#0F172A',
-          light: '#1E293B',
-          muted: '#64748B'
-        },
-        dangerRed: {
-          DEFAULT: '#EF4444',
-          hover: '#DC2626',
-          light: '#FEE2E2',
-          dark: '#B91C1C'
-        },
-        dangerRedLight: '#FEE2E2',
-        emerald: {
-          DEFAULT: '#10B981',
-          hover: '#059669',
-          light: '#ECFDF5',
-          dark: '#047857',
-          50: '#ECFDF5',
-          100: '#D1FAE5',
-          400: '#34D399',
-          500: '#10B981',
-          600: '#059669'
-        },
-        muted: {
-          DEFAULT: '#F1F5F9',
-          foreground: '#64748B'
-        },
+        cloud: '#F8F7FF',
         ink: {
-          DEFAULT: '#0F172A',
-          light: '#1E293B',
-          muted: '#64748B'
+          DEFAULT: '#242039',
+          light: '#393358',
+          muted: '#6B6684'
         },
         success: {
-          DEFAULT: '#10B981',
-          light: '#ECFDF5'
+          DEFAULT: '#16845B',
+          light: '#E8F5EE'
         },
-        borderSoft: '#E2E8F0'
+        borderSoft: '#E8E7EF'
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
@@ -75,9 +48,9 @@ export const tailwindPreset = {
         button: '1rem'
       },
       boxShadow: {
-        cardHover: '0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 8px 16px -6px rgba(255, 51, 102, 0.08)',
-        coralGlow: '0 0 25px rgba(255, 51, 102, 0.45)',
-        violetGlow: '0 0 25px rgba(112, 71, 235, 0.45)'
+        cardHover: '0 20px 35px -8px rgba(124, 58, 237, 0.15)',
+        coralGlow: '0 0 25px rgba(255, 79, 129, 0.45)',
+        violetGlow: '0 0 25px rgba(124, 58, 237, 0.45)'
       },
       keyframes: {
         float: {

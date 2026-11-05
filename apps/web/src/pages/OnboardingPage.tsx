@@ -193,7 +193,7 @@ export const OnboardingPage: React.FC = () => {
     <div className="max-w-2xl mx-auto py-6 sm:py-10 px-4">
       {/* Step Tracker Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
+        <div className="flex items-center justify-between text-xs font-bold text-ink-muted mb-2">
           <span>Step {currentStep} of 4</span>
           <span>
             {currentStep === 1 && 'Basics & Identity'}
@@ -229,13 +229,13 @@ export const OnboardingPage: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-display font-black text-ink">
                 Let's build your PairUp profile ✨
               </h2>
-              <p className="text-sm text-slate-600 font-medium mt-1">
+              <p className="text-xs text-ink-muted mt-1">
                 Share the basics so friends and matches can get to know who you are.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
                 Display Name
               </label>
               <input
@@ -243,13 +243,13 @@ export const OnboardingPage: React.FC = () => {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="e.g. Ananya, Aarav"
-                className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold focus:outline-none focus:border-violet"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
                   Current City
                 </label>
                 <input
@@ -257,18 +257,18 @@ export const OnboardingPage: React.FC = () => {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="e.g. Mumbai, Bengaluru, Delhi"
-                  className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                  className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold focus:outline-none focus:border-violet"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
                   Gender
                 </label>
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value as Gender)}
-                  className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold text-slate-900 focus:outline-none focus:border-violet"
+                  className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-semibold focus:outline-none focus:border-violet"
                 >
                   <option value={Gender.WOMAN}>Woman</option>
                   <option value={Gender.MAN}>Man</option>
@@ -279,7 +279,7 @@ export const OnboardingPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
                 Discovery Mode
               </label>
               <div className="grid grid-cols-3 gap-2.5">
@@ -299,14 +299,14 @@ export const OnboardingPage: React.FC = () => {
                     }`}
                   >
                     <p className="text-xs font-bold">{item.label}</p>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">{item.desc}</p>
+                    <p className="text-[10px] text-ink-muted mt-0.5">{item.desc}</p>
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
                 About You (Bio)
               </label>
               <textarea
@@ -314,7 +314,7 @@ export const OnboardingPage: React.FC = () => {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Share a fun fact, your favorite weekend activity, or what makes you laugh..."
-                className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet resize-none"
+                className="w-full px-4 py-3 rounded-2xl bg-cloud border border-borderSoft text-xs font-medium focus:outline-none focus:border-violet resize-none"
               />
             </div>
           </div>
@@ -327,7 +327,7 @@ export const OnboardingPage: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-display font-black text-ink">
                 Add your profile photos 📸
               </h2>
-              <p className="text-sm text-slate-600 font-medium mt-1">
+              <p className="text-xs text-ink-muted mt-1">
                 Profiles with at least 2 clear photos get 4x more mutual matches.
               </p>
             </div>
@@ -348,7 +348,7 @@ export const OnboardingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleRemovePhoto(idx)}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-slate-950/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-dangerRed"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-midnightInk/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-dangerRed"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -357,16 +357,16 @@ export const OnboardingPage: React.FC = () => {
 
               {photos.length < 6 && (
                 <div className="aspect-3/4 rounded-2xl border-2 border-dashed border-borderSoft flex flex-col items-center justify-center p-3 text-center bg-cloud/50 hover:bg-cloud transition-colors">
-                  <Camera className="w-6 h-6 text-slate-500 mb-2" />
-                  <p className="text-xs font-bold text-ink">Add Photo</p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Paste URL below</p>
+                  <Camera className="w-6 h-6 text-ink-muted mb-2" />
+                  <p className="text-[11px] font-bold text-ink">Add Photo</p>
+                  <p className="text-[9px] text-ink-muted mt-0.5">Paste URL below</p>
                 </div>
               )}
             </div>
 
             {/* Add Photo Input */}
             <div className="p-4 rounded-2xl bg-cloud border border-borderSoft space-y-2">
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-ink uppercase tracking-wider">
                 Paste Image URL or pick demo avatar
               </label>
               <div className="flex gap-2">
@@ -375,7 +375,7 @@ export const OnboardingPage: React.FC = () => {
                   value={newPhotoUrl}
                   onChange={(e) => setNewPhotoUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/photo-..."
-                  className="flex-1 px-3 py-2 rounded-xl bg-white border border-borderSoft text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                  className="flex-1 px-3 py-2 rounded-xl bg-white border border-borderSoft text-xs focus:outline-none focus:border-violet"
                 />
                 <button
                   type="button"
@@ -389,7 +389,7 @@ export const OnboardingPage: React.FC = () => {
 
               {/* Quick Preset Buttons */}
               <div className="flex items-center gap-1.5 pt-1 overflow-x-auto">
-                <span className="text-xs text-slate-600 font-medium shrink-0">Sample Photos:</span>
+                <span className="text-[10px] text-ink-muted shrink-0">Sample Photos:</span>
                 {SUGGESTED_PHOTOS.map((preset, i) => (
                   <button
                     key={i}
@@ -416,7 +416,7 @@ export const OnboardingPage: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-display font-black text-ink">
                 What are you passionate about? 🎨
               </h2>
-              <p className="text-sm text-slate-600 font-medium mt-1">
+              <p className="text-xs text-ink-muted mt-1">
                 Select at least 3 interests to power your compatibility score with nearby discovery profiles.
               </p>
             </div>
@@ -432,7 +432,7 @@ export const OnboardingPage: React.FC = () => {
                     className={`px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
                       isSelected
                         ? 'bg-violet text-white shadow-xs scale-105'
-                        : 'bg-cloud hover:bg-lavender-light text-slate-800 border border-borderSoft'
+                        : 'bg-cloud hover:bg-lavender-light text-ink border border-borderSoft'
                     }`}
                   >
                     <span className="text-sm">{interest.icon}</span>
@@ -464,7 +464,7 @@ export const OnboardingPage: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-display font-black text-ink">
                 What brings you to PairUp? 💖
               </h2>
-              <p className="text-sm text-slate-600 font-medium mt-1">
+              <p className="text-xs text-ink-muted mt-1">
                 Being clear about what you're looking for helps you match with people on the same wavelength.
               </p>
             </div>
@@ -512,7 +512,7 @@ export const OnboardingPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-ink">{item.title}</h4>
-                    <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">{item.desc}</p>
+                    <p className="text-[11px] text-ink-muted mt-0.5 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -521,7 +521,7 @@ export const OnboardingPage: React.FC = () => {
             {/* Safety Commitment Banner */}
             <div className="p-4 rounded-2xl bg-cloud border border-borderSoft flex items-center gap-3">
               <ShieldCheck className="w-5 h-5 text-emerald shrink-0" />
-              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+              <p className="text-[11px] text-ink-muted leading-relaxed">
                 By entering PairUp, you agree to treat everyone with dignity, respect personal boundaries, and abide by our verified community safety standards.
               </p>
             </div>

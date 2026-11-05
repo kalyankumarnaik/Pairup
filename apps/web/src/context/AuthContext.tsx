@@ -229,31 +229,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await apiClient.getCurrentUser();
       if (res.success && res.data) {
         setUser(res.data.user);
-        
-        // Preserve saved profile overrides from localStorage so page reload never wipes user edits
-        const savedProfileRaw = localStorage.getItem('pairup_profile_saved') || localStorage.getItem('pairup_profile');
-        let effectiveProfile = res.data.profile;
-        if (savedProfileRaw) {
-          try {
-            const parsed = JSON.parse(savedProfileRaw);
-            if (parsed && (!res.data.profile || parsed.id === res.data.profile.id || parsed.userId === res.data.user?.id)) {
-              effectiveProfile = {
-                ...res.data.profile,
-                ...parsed,
-                photos: parsed.photos && parsed.photos.length > 0 ? parsed.photos : res.data.profile?.photos || []
-              };
-            }
-          } catch {
-            // Keep server profile
-          }
-        }
-
-        setProfile(effectiveProfile);
+        setProfile(res.data.profile);
         localStorage.setItem('pairup_user', JSON.stringify(res.data.user));
-        if (effectiveProfile) {
-          localStorage.setItem('pairup_profile', JSON.stringify(effectiveProfile));
-          localStorage.setItem('pairup_profile_saved', JSON.stringify(effectiveProfile));
-        }
+        localStorage.setItem('pairup_profile', JSON.stringify(res.data.profile));
         setIsOfflineMode(false);
       }
     } catch {
@@ -430,7 +408,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updatedProfile = { ...profile, photos: updatedPhotos };
       setProfile(updatedProfile);
       localStorage.setItem('pairup_profile', JSON.stringify(updatedProfile));
-      localStorage.setItem('pairup_profile_saved', JSON.stringify(updatedProfile));
     }
   };
 
@@ -450,7 +427,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updatedProfile = { ...profile, photos: remaining };
       setProfile(updatedProfile);
       localStorage.setItem('pairup_profile', JSON.stringify(updatedProfile));
-      localStorage.setItem('pairup_profile_saved', JSON.stringify(updatedProfile));
     }
   };
 
@@ -463,7 +439,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updatedProfile = { ...profile, photos: updatedPhotos };
       setProfile(updatedProfile);
       localStorage.setItem('pairup_profile', JSON.stringify(updatedProfile));
-      localStorage.setItem('pairup_profile_saved', JSON.stringify(updatedProfile));
 
       try {
         const primary = updatedPhotos.find((p) => p.id === photoId);
@@ -477,16 +452,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProfile = async (updates: Partial<UserProfile>): Promise<boolean> => {
-    let mergedProfile: UserProfile | null = null;
     if (profile) {
-      mergedProfile = {
+      const updatedProfile: UserProfile = {
         ...profile,
         ...updates,
         updatedAt: new Date().toISOString()
       };
-      setProfile(mergedProfile);
-      localStorage.setItem('pairup_profile', JSON.stringify(mergedProfile));
-      localStorage.setItem('pairup_profile_saved', JSON.stringify(mergedProfile));
+      setProfile(updatedProfile);
+      localStorage.setItem('pairup_profile', JSON.stringify(updatedProfile));
     }
 
     if (user && updates.displayName) {
@@ -501,14 +474,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await apiClient.updateProfile(updates as any);
       if (res.success && res.data) {
-        const fullProfile = {
-          ...res.data,
-          ...(mergedProfile || {}),
-          interests: updates.interests || res.data.interests || profile?.interests || []
-        };
-        setProfile(fullProfile);
-        localStorage.setItem('pairup_profile', JSON.stringify(fullProfile));
-        localStorage.setItem('pairup_profile_saved', JSON.stringify(fullProfile));
+        setProfile(res.data);
+        localStorage.setItem('pairup_profile', JSON.stringify(res.data));
       }
     } catch {
       // Offline fallback already updated in local state and storage

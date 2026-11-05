@@ -13,7 +13,6 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useLocation } from '../context/LocationContext';
 import { apiClient } from '../lib/api';
 import { DiscoveryCard, MatchSummary, SocialEvent, VoiceRoom } from '@pairup/domain-types';
 import {
@@ -25,17 +24,14 @@ import {
 
 export const HomePage: React.FC = () => {
   const { user, profile } = useAuth();
-  const { location, calculateDistanceFromUser } = useLocation();
   const [matches, setMatches] = useState<MatchSummary[]>(MOCK_MATCHES);
-  const [recommendations, setRecommendations] = useState<DiscoveryCard[]>(() => {
-    return MOCK_DISCOVERY_CARDS.slice(0, 4);
-  });
+  const [recommendations, setRecommendations] = useState<DiscoveryCard[]>(MOCK_DISCOVERY_CARDS.slice(0, 4));
   const [rooms, setRooms] = useState<VoiceRoom[]>(MOCK_ROOMS);
   const [events, setEvents] = useState<SocialEvent[]>(MOCK_EVENTS);
 
   useEffect(() => {
     loadDashboardData();
-  }, [location.latitude, location.longitude]);
+  }, []);
 
   const loadDashboardData = async () => {
     try {
@@ -50,17 +46,7 @@ export const HomePage: React.FC = () => {
         setMatches(matchesRes.value.data);
       }
       if (feedRes.status === 'fulfilled' && feedRes.value.data?.length) {
-        const enriched = feedRes.value.data.slice(0, 4).map((c) => ({
-          ...c,
-          approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
-        }));
-        setRecommendations(enriched);
-      } else {
-        const enriched = MOCK_DISCOVERY_CARDS.slice(0, 4).map((c) => ({
-          ...c,
-          approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
-        }));
-        setRecommendations(enriched);
+        setRecommendations(feedRes.value.data.slice(0, 4));
       }
       if (roomsRes.status === 'fulfilled' && roomsRes.value.data?.length) {
         setRooms(roomsRes.value.data.slice(0, 2));
@@ -69,11 +55,7 @@ export const HomePage: React.FC = () => {
         setEvents(eventsRes.value.data.slice(0, 2));
       }
     } catch {
-      const enriched = MOCK_DISCOVERY_CARDS.slice(0, 4).map((c) => ({
-        ...c,
-        approximateDistanceKm: calculateDistanceFromUser(undefined, undefined, c.city, c.userId)
-      }));
-      setRecommendations(enriched);
+      // Keep mock fallback data
     }
   };
 
@@ -96,7 +78,7 @@ export const HomePage: React.FC = () => {
             Hello, {profile?.displayName || 'Explorer'}! 👋
           </h1>
           <p className="text-xs sm:text-sm text-white/95 mt-1.5 max-w-xl font-medium leading-relaxed">
-            {matches.length} active matches and verified people waiting to connect with you in {location.city}{location.isGps ? ' (GPS Active 📍)' : ''}.
+            {matches.length} active matches and new people nearby waiting to meet you in {profile?.city || 'Mumbai'}.
           </p>
         </div>
 
@@ -137,7 +119,7 @@ export const HomePage: React.FC = () => {
             <p className="text-xs sm:text-sm font-bold text-ink mt-0.5">
               480+ verified members active in your area right now!
             </p>
-            <p className="text-xs text-slate-600 font-medium">
+            <p className="text-[11px] text-ink-muted">
               Peak social discovery window: Profiles active now receive faster responses and instant connects.
             </p>
           </div>
@@ -163,7 +145,7 @@ export const HomePage: React.FC = () => {
           </div>
           <div>
             <p className="text-xs font-bold text-ink group-hover:text-coral transition-colors">Dating Deck</p>
-            <p className="text-xs text-coral font-bold">Romantic Spark 💖</p>
+            <p className="text-[10px] text-coral font-medium">Romantic Spark 💖</p>
           </div>
         </Link>
 
@@ -176,7 +158,7 @@ export const HomePage: React.FC = () => {
           </div>
           <div>
             <p className="text-xs font-bold text-ink group-hover:text-violet transition-colors">Find Friends</p>
-            <p className="text-xs text-violet font-bold">Genuine Bonds ✨</p>
+            <p className="text-[10px] text-violet font-medium">Genuine Bonds ✨</p>
           </div>
         </Link>
 
@@ -189,7 +171,7 @@ export const HomePage: React.FC = () => {
           </div>
           <div>
             <p className="text-xs font-bold text-ink group-hover:text-peach-dark transition-colors">Nearby Radar</p>
-            <p className="text-xs text-peach-dark font-bold">Radius 5–50km 📍</p>
+            <p className="text-[10px] text-peach-dark font-medium">Radius 5–50km 📍</p>
           </div>
         </Link>
 
@@ -202,7 +184,7 @@ export const HomePage: React.FC = () => {
           </div>
           <div>
             <p className="text-xs font-bold text-ink group-hover:text-cyan-dark transition-colors">Voice Rooms</p>
-            <p className="text-xs text-cyan-dark font-bold">Live Audio 🎧</p>
+            <p className="text-[10px] text-cyan-dark font-medium">Live Audio 🎧</p>
           </div>
         </Link>
       </div>
@@ -225,7 +207,7 @@ export const HomePage: React.FC = () => {
           />
         </div>
         {completeness < 80 && (
-          <p className="text-xs text-slate-600 font-medium mt-2">
+          <p className="text-[11px] text-ink-muted mt-2">
             Tip: Complete your profile prompts and upload photos to boost your match rate by 3x!{' '}
             <Link to="/profile" className="text-violet font-bold hover:underline">
               Edit profile →
@@ -266,7 +248,7 @@ export const HomePage: React.FC = () => {
                   <span className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-success ring-2 ring-white"></span>
                 </div>
                 <p className="text-xs font-bold text-ink truncate">{m.matchedProfile.displayName}</p>
-                <p className="text-xs text-slate-500 font-medium truncate">{m.matchedProfile.city}</p>
+                <p className="text-[10px] text-ink-muted truncate">{m.matchedProfile.city}</p>
               </Link>
             ))}
           </div>
@@ -297,21 +279,17 @@ export const HomePage: React.FC = () => {
                 alt={card.displayName}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-midnightInk via-transparent to-transparent" />
               <div className="absolute bottom-3 inset-x-3 text-white">
                 <p className="font-display font-bold text-base">
                   {card.displayName}, {card.age}
                 </p>
-                <p className="text-xs text-slate-100 font-medium flex items-center gap-1 mt-0.5">
-                  <MapPin className="w-3 h-3 text-peach" />
-                  <span>{card.city}</span>
-                  {card.approximateDistanceKm !== undefined && card.approximateDistanceKm !== null && (
-                    <span className="text-slate-200 font-medium">• ~{card.approximateDistanceKm} km</span>
-                  )}
+                <p className="text-[11px] text-white/80 flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3 h-3 text-peach" /> {card.city}
                 </p>
                 <div className="flex items-center gap-1 mt-2 flex-wrap">
                   {card.interests.slice(0, 2).map((int) => (
-                    <span key={int.id} className="text-xs px-2.5 py-0.5 rounded-lg bg-white/25 font-bold text-white">
+                    <span key={int.id} className="text-[10px] px-2 py-0.5 rounded-lg bg-white/20 font-medium">
                       {int.emoji} {int.name}
                     </span>
                   ))}
@@ -348,7 +326,7 @@ export const HomePage: React.FC = () => {
                     <span>{room.emoji}</span>
                     <span>{room.title}</span>
                   </p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Host: {room.hostName}</p>
+                  <p className="text-[10px] text-ink-muted mt-0.5">Host: {room.hostName}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-end gap-0.5 h-5 px-1 hidden sm:flex">
@@ -390,7 +368,7 @@ export const HomePage: React.FC = () => {
                     <span>{event.emoji}</span>
                     <span>{event.title}</span>
                   </p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{event.venueName}</p>
+                  <p className="text-[10px] text-ink-muted mt-0.5">{event.venueName}</p>
                 </div>
                 <div className="text-[11px] font-bold text-peach px-2.5 py-1 rounded-full bg-white shadow-xs">
                   {event.registeredCount}/{event.capacity} Attending

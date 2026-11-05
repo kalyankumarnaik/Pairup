@@ -73,7 +73,7 @@ export const Sidebar: React.FC = () => {
                 `flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all ${
                   isActive
                     ? 'bg-violet text-white font-semibold shadow-md shadow-violet/20'
-                    : 'text-ink-muted hover:bg-violet-light/60 hover:text-violet'
+                    : 'text-ink-muted hover:bg-cloud hover:text-ink'
                 }`
               }
             >

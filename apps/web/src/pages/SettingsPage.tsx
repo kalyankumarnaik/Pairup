@@ -187,7 +187,7 @@ export const SettingsPage: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-ink">
             Account & Preferences
           </h1>
-          <p className="text-sm text-slate-600 font-medium mt-1 max-w-xl">
+          <p className="text-xs text-ink-muted mt-1 max-w-xl">
             Manage account security, discovery radius filters, push notification channels, and data privacy controls.
           </p>
         </div>
@@ -220,7 +220,7 @@ export const SettingsPage: React.FC = () => {
             {/* Age Range */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <label className="text-xs font-bold text-ink uppercase tracking-wider">
                   Age Range
                 </label>
                 <span className="text-xs font-black text-violet">
@@ -250,7 +250,7 @@ export const SettingsPage: React.FC = () => {
             {/* Max Distance */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <label className="text-xs font-bold text-ink uppercase tracking-wider">
                   Maximum Distance
                 </label>
                 <span className="text-xs font-black text-coral">{maxDistance} km</span>
@@ -270,7 +270,7 @@ export const SettingsPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-cloud border border-borderSoft flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-ink">Global Passport Mode</p>
-              <p className="text-xs text-slate-600 font-medium mt-0.5">
+              <p className="text-[11px] text-ink-muted mt-0.5">
                 See people in other cities across India when you run out of nearby profiles.
               </p>
             </div>
@@ -297,7 +297,7 @@ export const SettingsPage: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-ink">New Mutual Matches</p>
-                <p className="text-xs text-slate-500 font-medium">Instant alert when someone matches back with you.</p>
+                <p className="text-[10px] text-ink-muted">Instant alert when someone matches back with you.</p>
               </div>
               <button
                 type="button"
@@ -313,7 +313,7 @@ export const SettingsPage: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-ink">Chat Messages & Voice Notes</p>
-                <p className="text-xs text-slate-500 font-medium">Notifications for incoming encrypted messages.</p>
+                <p className="text-[10px] text-ink-muted">Notifications for incoming encrypted messages.</p>
               </div>
               <button
                 type="button"
@@ -329,7 +329,7 @@ export const SettingsPage: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-ink">Activity Surges in Your City</p>
-                <p className="text-xs text-slate-500 font-medium">Alerts when 250+ singles become active nearby.</p>
+                <p className="text-[10px] text-ink-muted">Alerts when 250+ singles become active nearby.</p>
               </div>
               <button
                 type="button"
@@ -345,7 +345,7 @@ export const SettingsPage: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-ink">Date Safety Check-In Reminders</p>
-                <p className="text-xs text-slate-500 font-medium">High-priority alerts for in-person meetup safety.</p>
+                <p className="text-[10px] text-ink-muted">High-priority alerts for in-person meetup safety.</p>
               </div>
               <button
                 type="button"
@@ -378,7 +378,7 @@ export const SettingsPage: React.FC = () => {
           <KeyRound className="w-4 h-4 text-violet" />
           <span>Security Credentials & Password</span>
         </h2>
-        <p className="text-xs text-slate-600 font-medium">
+        <p className="text-xs text-ink-muted">
           Changing your password immediately revokes all other active sessions across mobile and web devices.
         </p>
 
@@ -400,7 +400,7 @@ export const SettingsPage: React.FC = () => {
 
         <form onSubmit={handleChangePassword} className="space-y-3 max-w-lg">
           <div>
-            <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-ink uppercase tracking-wider mb-1">
               Current Password
             </label>
             <input
@@ -408,12 +408,12 @@ export const SettingsPage: React.FC = () => {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+              className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:outline-none focus:border-violet"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-ink uppercase tracking-wider mb-1">
                 New Password
               </label>
               <input
@@ -421,11 +421,11 @@ export const SettingsPage: React.FC = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="At least 8 chars"
-                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:outline-none focus:border-violet"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-ink uppercase tracking-wider mb-1">
                 Confirm Password
               </label>
               <input
@@ -433,7 +433,7 @@ export const SettingsPage: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat new password"
-                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-violet"
+                className="w-full px-4 py-2.5 rounded-xl bg-cloud border border-borderSoft text-xs font-medium focus:outline-none focus:border-violet"
               />
             </div>
           </div>
@@ -469,7 +469,7 @@ export const SettingsPage: React.FC = () => {
         {/* Sessions list */}
         <div className="space-y-2">
           {sessions.length === 0 ? (
-            <p className="text-xs text-slate-500 font-medium italic">No active sessions found.</p>
+            <p className="text-xs text-ink-muted italic">No active sessions found.</p>
           ) : (
             sessions.map((sess) => (
               <div
@@ -477,7 +477,7 @@ export const SettingsPage: React.FC = () => {
                 className="p-3.5 rounded-2xl bg-cloud border border-borderSoft flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3">
-                  <Smartphone className="w-4 h-4 text-slate-500 shrink-0" />
+                  <Smartphone className="w-4 h-4 text-ink-muted shrink-0" />
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="text-xs font-bold text-ink">
@@ -493,7 +493,7 @@ export const SettingsPage: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    <p className="text-[10px] text-ink-muted mt-0.5">
                       IP: {sess.ipAddress || '127.0.0.1'} • Started {new Date(sess.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -517,7 +517,7 @@ export const SettingsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-borderSoft">
           <div>
             <p className="text-xs font-bold text-ink">Download My Personal Data Archive</p>
-            <p className="text-xs text-slate-600 font-medium">
+            <p className="text-[11px] text-ink-muted">
               Export an encrypted JSON file containing your profile info, photos, and match activity.
             </p>
           </div>
@@ -536,7 +536,7 @@ export const SettingsPage: React.FC = () => {
             <p className="text-xs font-bold text-ink">
               {isAccountPaused ? 'Account is Currently Paused' : 'Take a Break (Pause Profile)'}
             </p>
-            <p className="text-xs text-slate-600 font-medium">
+            <p className="text-[11px] text-ink-muted">
               Temporarily hide your profile from swipe decks without losing matches or chat history.
             </p>
           </div>
@@ -564,7 +564,7 @@ export const SettingsPage: React.FC = () => {
         <div className="p-4 rounded-2xl bg-dangerRedLight/30 border border-dangerRed/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold text-dangerRed">Permanently Delete Account</p>
-            <p className="text-xs text-slate-600 font-medium">
+            <p className="text-[11px] text-ink-muted">
               Permanently expunges your profile, photos, matches, and messages. This action cannot be undone.
             </p>
           </div>
@@ -579,14 +579,14 @@ export const SettingsPage: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnightInk/75 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-borderSoft text-center">
             <div className="w-12 h-12 rounded-full bg-dangerRedLight text-dangerRed flex items-center justify-center mx-auto mb-3">
               <Trash2 className="w-6 h-6" />
             </div>
             <h3 className="text-base font-display font-bold text-ink">Delete Account?</h3>
-            <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
-              Type <strong className="text-dangerRed font-bold">DELETE</strong> below to permanently erase your profile and messages.
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+              Type <strong className="text-dangerRed">DELETE</strong> below to permanently erase your profile and messages.
             </p>
 
             <input
@@ -594,7 +594,7 @@ export const SettingsPage: React.FC = () => {
               value={deleteConfirmationText}
               onChange={(e) => setDeleteConfirmationText(e.target.value)}
               placeholder="Type DELETE"
-              className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-bold text-center uppercase my-4 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-dangerRed"
+              className="w-full px-4 py-2 rounded-xl bg-cloud border border-borderSoft text-xs font-bold text-center uppercase my-4 focus:outline-none focus:border-dangerRed"
             />
 
             <div className="flex items-center gap-2">

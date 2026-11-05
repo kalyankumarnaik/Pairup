@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Phone, Sparkles, UserCheck, Video } from 'lucide-react';
-import { useCall } from '../context/CallContext';
+import { Heart, MessageCircle, Sparkles, UserCheck } from 'lucide-react';
 import { apiClient } from '../lib/api';
 import { MatchSummary } from '@pairup/domain-types';
 import { MOCK_MATCHES } from '../lib/mockData';
 
 export const MatchesPage: React.FC = () => {
-  const { startCall } = useCall();
   const [matches, setMatches] = useState<MatchSummary[]>(MOCK_MATCHES);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +34,7 @@ export const MatchesPage: React.FC = () => {
             <Heart className="w-6 h-6 text-coral fill-coral" />
             <span>Mutual Matches</span>
           </h1>
-          <p className="text-sm text-slate-600 font-medium mt-1">
+          <p className="text-xs text-ink-muted mt-1">
             People who liked you back! Start a conversation or pick up where you left off.
           </p>
         </div>
@@ -80,52 +78,16 @@ export const MatchesPage: React.FC = () => {
                     {m.connectionMode}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 font-medium truncate mt-1">
+                <p className="text-xs text-ink-muted truncate mt-1">
                   {m.lastMessageSnippet || 'New match! Say hello ✨'}
                 </p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                <p className="text-[10px] text-ink-muted/70 mt-1">
                   {m.matchedProfile.city || 'Nearby'}
                 </p>
               </div>
 
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    startCall('AUDIO', {
-                      id: (m as any).matchedUserId || m.id,
-                      name: m.matchedProfile.displayName,
-                      avatarUrl: m.matchedProfile.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-                      city: m.matchedProfile.city || undefined
-                    });
-                  }}
-                  className="p-2 rounded-xl bg-violet-light text-violet hover:bg-violet hover:text-white border border-violet/20 transition-all shadow-2xs hover:scale-105 active:scale-95"
-                  title="Start Voice Call"
-                >
-                  <Phone className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    startCall('VIDEO', {
-                      id: (m as any).matchedUserId || m.id,
-                      name: m.matchedProfile.displayName,
-                      avatarUrl: m.matchedProfile.primaryPhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-                      city: m.matchedProfile.city || undefined
-                    });
-                  }}
-                  className="p-2 rounded-xl bg-coral-light text-coral hover:bg-coral hover:text-white border border-coral/20 transition-all shadow-2xs hover:scale-105 active:scale-95"
-                  title="Start Video Call"
-                >
-                  <Video className="w-4 h-4" />
-                </button>
-                <div className="p-2 rounded-xl bg-white border border-borderSoft group-hover:bg-violet group-hover:text-white text-slate-500 shadow-2xs transition-colors">
-                  <MessageCircle className="w-4 h-4" />
-                </div>
+              <div className="p-2 rounded-xl bg-cloud group-hover:bg-violet group-hover:text-white text-ink-muted transition-colors">
+                <MessageCircle className="w-4 h-4" />
               </div>
             </Link>
           ))}
@@ -134,7 +96,7 @@ export const MatchesPage: React.FC = () => {
         <div className="p-12 text-center bg-white rounded-3xl border border-borderSoft">
           <p className="text-4xl mb-3">💌</p>
           <h3 className="text-base font-bold text-ink">No matches yet</h3>
-          <p className="text-xs text-slate-600 font-medium max-w-sm mx-auto mt-1 mb-6">
+          <p className="text-xs text-ink-muted max-w-sm mx-auto mt-1 mb-6">
             Swipe right on profiles you like. When they like you back, they will appear here!
           </p>
           <Link
