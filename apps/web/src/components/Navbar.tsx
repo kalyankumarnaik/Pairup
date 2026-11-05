@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Bell,
+  BellRing,
   Heart,
   MapPin,
   MessageCircle,
@@ -77,7 +77,9 @@ export const Navbar: React.FC = () => {
                   className="p-2.5 rounded-xl border border-borderSoft bg-white hover:bg-violet-light text-ink hover:text-violet transition-all shadow-2xs relative"
                   title="Notifications & Activity"
                 >
-                  <Bell className="w-4 h-4" />
+                  
+<BellRing className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+
                   {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-coral text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-pulse">
                       {unreadCount}

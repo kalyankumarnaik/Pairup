@@ -77,9 +77,14 @@ export class ProfilesService {
 
     if ((updates as any).interests) {
       profile.interests = (updates as any).interests;
-    } else if (updates.interestIds) {
-      profile.interests = INITIAL_INTERESTS.filter((i) => updates.interestIds?.includes(i.id));
-    }
+    
+} else if (updates.interestIds) {
+  const selectedIds = new Set(updates.interestIds);
+  profile.interests = this.getAllInterests().filter((interest) =>
+    selectedIds.has(interest.id)
+  );
+}
+
 
     if (updates.prompts) {
       profile.prompts = updates.prompts.map((p, i) => ({
