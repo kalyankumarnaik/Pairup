@@ -1,3 +1,7 @@
+/**
+ * ProfilePage Component
+ * Displays user dating profile, photo gallery, intentions, and "Changes Were Saved" popup modal.
+ */
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {

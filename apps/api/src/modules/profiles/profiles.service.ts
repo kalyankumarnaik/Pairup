@@ -1,8 +1,10 @@
+```typescript
 import {
   BadRequestException,
   Injectable,
   NotFoundException
 } from '@nestjs/common';
+
 import {
   ConnectionMode,
   Gender,
@@ -13,6 +15,7 @@ import {
   UserProfile,
   VerificationStatus
 } from '@pairup/domain-types';
+
 import { MemoryStoreService } from '../../common/database/memory-store.service';
 import { INITIAL_INTERESTS } from '@pairup/database';
 
@@ -22,14 +25,17 @@ export class ProfilesService {
 
   getMyProfile(userId: string): UserProfile {
     const profile = this.store.profiles.get(userId);
+
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }
+
     return profile;
   }
 
   getPublicProfile(targetUserId: string): Partial<UserProfile> {
     const profile = this.store.profiles.get(targetUserId);
+
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }
@@ -57,23 +63,76 @@ export class ProfilesService {
     };
   }
 
-  updateProfile(userId: string, updates: ProfileUpdateRequest): UserProfile {
+  updateProfile(
+    userId: string,
+    updates: ProfileUpdateRequest
+  ): UserProfile {
     const profile = this.getMyProfile(userId);
 
-    if (updates.displayName) profile.displayName = updates.displayName;
-    if (updates.bio !== undefined) profile.bio = updates.bio;
-    if (updates.gender) profile.gender = updates.gender;
-    if (updates.pronouns !== undefined) profile.pronouns = updates.pronouns;
-    if (updates.relationshipIntention) profile.relationshipIntention = updates.relationshipIntention;
-    if (updates.connectionMode) profile.connectionMode = updates.connectionMode;
-    if (updates.education !== undefined) profile.education = updates.education;
-    if (updates.occupation !== undefined) profile.occupation = updates.occupation;
-    if (updates.city !== undefined) profile.city = updates.city;
-    if (updates.state !== undefined) profile.state = updates.state;
-    if (updates.languages) profile.languages = updates.languages;
-    if (updates.isVisible !== undefined) profile.isVisible = updates.isVisible;
-    if (updates.isIncognito !== undefined) profile.isIncognito = updates.isIncognito;
+    if (updates.displayName) {
+      profile.displayName = updates.displayName;
+    }
 
+    if (updates.bio !== undefined) {
+      profile.bio = updates.bio;
+    }
+
+    if (updates.gender) {
+      profile.gender = updates.gender;
+    }
+
+    if (updates.pronouns !== undefined) {
+      profile.pronouns = updates.pronouns;
+    }
+
+    if (updates.relationshipIntention) {
+      profile.relationshipIntention = updates.relationshipIntention;
+    }
+
+    if (updates.connectionMode) {
+      profile.connectionMode = updates.connectionMode;
+    }
+
+    if (updates.education !== undefined) {
+      profile.education = updates.education;
+    }
+
+    if (updates.occupation !== undefined) {
+      profile.occupation = updates.occupation;
+    }
+
+    if (updates.city !== undefined) {
+      profile.city = updates.city;
+    }
+
+    if (updates.state !== undefined) {
+      profile.state = updates.state;
+    }
+
+    if (updates.languages) {
+      profile.languages = updates.languages;
+    }
+
+    if (updates.isVisible !== undefined) {
+      profile.isVisible = updates.isVisible;
+    }
+
+    if (updates.isIncognito !== undefined) {
+      profile.isIncognito = updates.isIncognito;
+    }
+
+    // Update interests using either full interest objects or selected IDs
+    if (updates.interests !== undefined) {
+      profile.interests = updates.interests;
+    } else if (updates.interestIds !== undefined) {
+      const selectedIds = new Set(updates.interestIds);
+
+      profile.interests = this.getAllInterests().filter((interest) =>
+        selectedIds.has(interest.id)
+      );
+    }
+
+    // Update profile prompts
     if (updates.prompts) {
       profile.prompts = updates.prompts.map((p, i) => ({
         id: `prm_${profile.id}_${Date.now()}_${i}`,
@@ -86,11 +145,13 @@ export class ProfilesService {
     profile.updatedAt = new Date().toISOString();
 
     this.store.profiles.set(userId, profile);
+
     return profile;
   }
 
   addPhoto(userId: string, photoUrl: string): ProfilePhoto {
     const profile = this.getMyProfile(userId);
+
     if (profile.photos.length >= 9) {
       throw new BadRequestException('Maximum of 9 profile photos allowed');
     }
@@ -107,6 +168,7 @@ export class ProfilesService {
 
     profile.photos.push(newPhoto);
     profile.completenessScore = this.calculateCompleteness(profile);
+
     this.store.profiles.set(userId, profile);
 
     return newPhoto;
@@ -114,7 +176,9 @@ export class ProfilesService {
 
   deletePhoto(userId: string, photoId: string): { deleted: boolean } {
     const profile = this.getMyProfile(userId);
+
     const initialLen = profile.photos.length;
+
     profile.photos = profile.photos.filter((p) => p.id !== photoId);
 
     if (profile.photos.length === initialLen) {
@@ -122,11 +186,15 @@ export class ProfilesService {
     }
 
     // If deleted photo was primary, make next one primary
-    if (profile.photos.length > 0 && !profile.photos.some((p) => p.isPrimary)) {
+    if (
+      profile.photos.length > 0 &&
+      !profile.photos.some((p) => p.isPrimary)
+    ) {
       profile.photos[0].isPrimary = true;
     }
 
     profile.completenessScore = this.calculateCompleteness(profile);
+
     this.store.profiles.set(userId, profile);
 
     return { deleted: true };
@@ -134,20 +202,25 @@ export class ProfilesService {
 
   reorderPhotos(userId: string, photoIds: string[]): ProfilePhoto[] {
     const profile = this.getMyProfile(userId);
+
     const photoMap = new Map(profile.photos.map((p) => [p.id, p]));
 
     const reordered: ProfilePhoto[] = [];
+
     photoIds.forEach((id, index) => {
-      const p = photoMap.get(id);
-      if (p) {
-        p.order = index;
-        p.isPrimary = index === 0;
-        reordered.push(p);
+      const photo = photoMap.get(id);
+
+      if (photo) {
+        photo.order = index;
+        photo.isPrimary = index === 0;
+        reordered.push(photo);
       }
     });
 
     profile.photos = reordered;
+
     this.store.profiles.set(userId, profile);
+
     return reordered;
   }
 
@@ -162,13 +235,19 @@ export class ProfilesService {
 
   private calculateCompleteness(p: UserProfile): number {
     let score = 20; // Base creation score
+
     if (p.bio && p.bio.length > 20) score += 15;
     if (p.photos.length >= 1) score += 20;
     if (p.photos.length >= 3) score += 10;
     if (p.interests.length >= 3) score += 15;
     if (p.prompts.length >= 1) score += 10;
     if (p.occupation || p.education) score += 5;
-    if (p.verificationStatus === VerificationStatus.VERIFIED) score += 5;
+
+    if (p.verificationStatus === VerificationStatus.VERIFIED) {
+      score += 5;
+    }
+
     return Math.min(100, score);
   }
 }
+```
