@@ -1,6 +1,6 @@
 ```tsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   BellRing,
   Heart,
@@ -13,7 +13,6 @@ import { NotificationDrawer } from './NotificationDrawer';
 
 export const Navbar: React.FC = () => {
   const { user, profile, logout } = useAuth();
-  const navigate = useNavigate();
 
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
   const [unreadCount, setUnreadCount] = useState(2);
@@ -41,6 +40,7 @@ export const Navbar: React.FC = () => {
               <span className="text-2xl font-display font-extrabold tracking-tight bg-gradient-to-r from-coral via-violet to-peach bg-clip-text text-transparent">
                 PairUp
               </span>
+
               <span className="text-base select-none animate-bounce">
                 ✨
               </span>

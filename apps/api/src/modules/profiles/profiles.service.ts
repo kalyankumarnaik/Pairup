@@ -6,12 +6,9 @@ import {
 } from '@nestjs/common';
 
 import {
-  ConnectionMode,
-  Gender,
   InterestTag,
   ProfilePhoto,
   ProfileUpdateRequest,
-  RelationshipIntention,
   UserProfile,
   VerificationStatus
 } from '@pairup/domain-types';
@@ -185,7 +182,7 @@ export class ProfilesService {
       throw new NotFoundException('Photo not found');
     }
 
-    // If deleted photo was primary, make next one primary
+    // If deleted photo was primary, make the next one primary
     if (
       profile.photos.length > 0 &&
       !profile.photos.some((p) => p.isPrimary)
